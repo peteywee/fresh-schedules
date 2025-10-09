@@ -7,5 +7,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Reject docs/notes/todos on main
+      - name: Reject docs/notes/todos and *.place.* on main
         run: bash scripts/guard-main.sh main

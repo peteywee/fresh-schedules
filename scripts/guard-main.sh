@@ -1,20 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
 BRANCH="${1:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '')}"
 
-# notes and develop branches are free; everything else enforced
-if [[ "$BRANCH" == "notes" || "$BRANCH" == "develop" || "$BRANCH" == "" ]]; then
-  echo "guard: branch '$BRANCH' — no enforcement."
+# Enforce NO docs/notes/todos or *.place.* on main only.
+if [[ "$BRANCH" != "main" ]]; then
+  echo "guard: branch '$BRANCH' — no enforcement (docs allowed on develop)."
   exit 0
 fi
 
-echo "guard: enforcing doc/notes/todo policy on branch '$BRANCH'"
+echo "guard: enforcing no-docs policy on 'main'"
 
 FORBIDDEN=(
   "docs/**"
-  "notes/**"
   "todos/**"
+  "notes/**"
   "*.bible.md"
   "*.wt.md"
   "*.guide.md"
@@ -25,81 +24,32 @@ FORBIDDEN=(
   "*.scratch.txt"
   "*.mermaid.md"
   "*.drawio"
+  "*.place.*"
 )
 
 ALLOW=("README.md" "CHANGELOG.md")
 
-# Patterns that are explicitly allowed on the `notes` branch. Files
-# matching these patterns will also be allowed on `develop` per requested policy.
-NOTES_ALLOWED=(
-  "docs/**"
-  "notes/**"
-  "todos/**"
-  "*.bible.md"
-  "*.wt.md"
-  "*.guide.md"
-  "*.r.md"
-  "*.note.md"
-  "*.todo.md"
-  "*.scratch.md"
-  "*.scratch.txt"
-  "*.mermaid.md"
-  "*.drawio"
-)
-
-is_allowed() {
-  local f="$1"
-  for a in "${ALLOW[@]}"; do
-    [[ "$f" == $a ]] && return 0
-  done
-  return 1
-}
+is_allowed() { local f="$1"; for a in "${ALLOW[@]}"; do [[ "$f" == $a ]] && return 0; done; return 1; }
 
 FILES="$(git diff --name-only --cached || true)"
 violations=()
-
 for f in $FILES; do
   [[ -e "$f" ]] || continue
-  if is_allowed "$f"; then continue; fi
+  is_allowed "$f" && continue
   for glob in "${FORBIDDEN[@]}"; do
-    # If we're on develop, allow any file that would be allowed on notes
-    if [[ "$BRANCH" == "develop" ]]; then
-      skip_forbidden=0
-      for na in "${NOTES_ALLOWED[@]}"; do
-        if [[ "$glob" == "$na" ]]; then
-          skip_forbidden=1
-          break
-        fi
-      done
-      [[ $skip_forbidden -eq 1 ]] && continue
-    fi
-
-    case "$f" in
-      $glob)
-        violations+=("$f")
-        break
-        ;;
-    esac
+    [[ "$f" == $glob ]] && { violations+=("$f"); break; }
   done
 done
 
 if (( ${#violations[@]} )); then
-  echo "ERROR: These files are not allowed on '$BRANCH':"
+  echo "ERROR: These files are forbidden on 'main':"
   printf '  - %s\n' "${violations[@]}"
   cat <<MSG
 
-Move them to:
-  docs/bibles/*.bible.md
-  docs/wt/*.wt.md
-  docs/guides/*.guide.md
-  docs/research/*.r.md
-  docs/diagrams/*.(drawio|mermaid.md)
-  notes/*.note.md or *.scratch.*
-  todos/*.todo.md
-
-Or commit them on the 'notes' branch (or 'develop' for notes-type docs per project policy).
+Docs/notes/todos and *.place.* are allowed on 'develop' only.
+Move these off your 'main' commit or open a PR to 'develop' instead.
 MSG
   exit 1
 fi
 
-echo "guard: OK — no forbidden files staged."
+echo "guard: OK — main is clean."
