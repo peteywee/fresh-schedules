@@ -41,3 +41,7 @@ todos/
 # Allow essentials
 !README.md
 !CHANGELOG.md
+node_modules
+.next
+pnpm-lock.yaml
+apps/web/tsconfig.tsbuildinfo
