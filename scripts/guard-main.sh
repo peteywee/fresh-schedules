@@ -29,6 +29,24 @@ FORBIDDEN=(
 
 ALLOW=("README.md" "CHANGELOG.md")
 
+# Patterns that are explicitly allowed on the `notes` branch. Files
+# matching these patterns will also be allowed on `develop` per requested policy.
+NOTES_ALLOWED=(
+  "docs/**"
+  "notes/**"
+  "todos/**"
+  "*.bible.md"
+  "*.wt.md"
+  "*.guide.md"
+  "*.r.md"
+  "*.note.md"
+  "*.todo.md"
+  "*.scratch.md"
+  "*.scratch.txt"
+  "*.mermaid.md"
+  "*.drawio"
+)
+
 is_allowed() {
   local f="$1"
   for a in "${ALLOW[@]}"; do
@@ -44,6 +62,18 @@ for f in $FILES; do
   [[ -e "$f" ]] || continue
   if is_allowed "$f"; then continue; fi
   for glob in "${FORBIDDEN[@]}"; do
+    # If we're on develop, allow any file that would be allowed on notes
+    if [[ "$BRANCH" == "develop" ]]; then
+      skip_forbidden=0
+      for na in "${NOTES_ALLOWED[@]}"; do
+        if [[ "$glob" == "$na" ]]; then
+          skip_forbidden=1
+          break
+        fi
+      done
+      [[ $skip_forbidden -eq 1 ]] && continue
+    fi
+
     case "$f" in
       $glob)
         violations+=("$f")
@@ -67,7 +97,7 @@ Move them to:
   notes/*.note.md or *.scratch.*
   todos/*.todo.md
 
-Or commit them on the 'notes' branch.
+Or commit them on the 'notes' branch (or 'develop' for notes-type docs per project policy).
 MSG
   exit 1
 fi
