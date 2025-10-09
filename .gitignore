@@ -1,4 +1,4 @@
-# Node / Tooling
+# Node/tooling
 node_modules/
 .pnpm-store/
 dist/
@@ -12,10 +12,8 @@ coverage/
 .env.local
 .env.*.local
 *.env
-.firebase/
-.firebaserc
 
-# IDE/OS
+# Editor/OS junk
 .vscode/
 .idea/
 *.swp
@@ -23,7 +21,10 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Docs/notes/todos kept off main & develop
+# Docs ARE allowed on the `notes` branch; keep docs/ and notes/ tracked there.
+# For main/develop we ignore docs/ and notes/ to keep them out of primary branches.
+
+# Shared ignores (build artifacts, tools)
 docs/
 notes/
 todos/
@@ -38,10 +39,14 @@ todos/
 *.mermaid.md
 *.drawio
 
-# Allow essentials
+# Allow essentials to be tracked even if other doc rules exist
 !README.md
 !CHANGELOG.md
+
 node_modules
+.pnpm-store/
 .next
 apps/web/tsconfig.tsbuildinfo
+
 # pnpm-lock.yaml is tracked to ensure reproducible CI installs
+pnpm-lock.yaml
