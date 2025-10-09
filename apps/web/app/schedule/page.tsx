@@ -1,8 +1,9 @@
+export const metadata = { title: 'Schedule' };
 export default function SchedulePage() {
   return (
     <main style={{ padding: 24 }}>
-      <h2>Schedule (Week)</h2>
-      <p>Stub grid. Next: add quick add + assign staff, publish toggle.</p>
+      <h1>Schedule</h1>
+      <p>Placeholder route is present and valid.</p>
     </main>
   );
 }

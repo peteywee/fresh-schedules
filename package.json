@@ -9,5 +9,11 @@
     "typecheck": "pnpm -r typecheck",
     "lint": "echo \"(lint placeholder)\" && exit 0",
     "test": "echo \"(no tests yet)\" && exit 0"
+  },
+  "devDependencies": {
+    "@types/node": "20.11.30",
+    "@types/react": "18.2.64",
+    "@types/react-dom": "^18.3.7",
+    "typescript": "5.5.4"
   }
 }
