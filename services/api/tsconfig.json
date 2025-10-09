@@ -11,7 +11,7 @@
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "@packages/types": ["../../packages/types/src/index.ts"]
+      "@packages/types": ["../../packages/types/dist/index.d.ts"]
     }
   },
   "include": ["src/**/*.ts"],
