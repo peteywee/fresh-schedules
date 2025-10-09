@@ -1,54 +1,49 @@
 # Copilot Instructions — Fresh Schedules (Top Shelf Service LLC)
 
-## Project Identity (NO AMBIGUITY)
+## Identity (NO AMBIGUITY)
 - Framework: **Next.js 14 (App Router)**, React 18, TypeScript 5
 - API: **Express** (Node 20), CORS, Pino
 - Data: **Firebase** (Client: Auth/Firestore; Server: Admin SDK)
-- Styling: Tailwind CSS (optional shadcn/ui)
+- Styling: Tailwind CSS (shadcn/ui optional)
 - Tooling: **pnpm** workspaces, ESLint, Prettier
 - CI: GitHub Actions (lint/typecheck/test/build)
-- Branch model: **main** (prod, clean), **develop** (active), **notes** (docs only)
+- Branches: **main** (prod), **develop** (active), **notes** (docs only)
+> Never scaffold with Vite/CRA.
 
-> Never scaffold with Vite, CRA, or any stack other than the above.
+## Output Rules
+1) Provide **complete files** with paths/imports.
+2) Start with brief **What & Why**.
+3) Include **Acceptance Criteria** + **Success Criteria**.
+4) Add a **TODO list** (with file paths) when follow-ups exist.
+5) Work on **develop**; do not place docs on main/develop.
+6) No secrets; Admin SDK never in client code.
+7) Use pnpm commands; provide exact run/verify steps.
+8) If logic: add a minimal test or stub + exact path.
 
-## Ground Rules for Copilot Outputs
-1. **Give complete files**, correct paths, and imports. No “snippets only” unless asked.
-2. **Explain What & Why** briefly at the top of each answer before code.
-3. **Include Acceptance Criteria** and **Success Criteria** for the change.
-4. **Add a TODO list** when there are follow-ups, with file paths.
-5. **Target develop** (do not change `main` rules/branch).
-6. **Security**: Never embed secrets. Do not use Admin SDK in client code.
-7. **DX**: Keep commands pnpm-first. Show precise commands to run and verify.
-8. **Testing**: If adding logic, include a minimal test or a test stub + exact path.
-9. **No placeholders** like `<your-api-key>` in committed code; use `.env` with `VITE_*` for client and `FIREBASE_*`/JSON for server.
+## Structure
+- `apps/web` — Next.js App Router
+- `services/api` — Express API (src/index.ts)
+- `packages/types` — shared types & zod schemas
+- `scripts/` — automation (guards, doc generator)
+- CI runs on `main` and `develop` only.
 
-## Directory Norms (expected)
-- `apps/web` — Next.js App Router, `app/` pages, `src/` libs
-- `services/api` — Express entry at `src/index.ts`
-- `packages/types` — shared types/schemas (`src/index.ts`)
-- `scripts/` — automation; `scripts/guard-main.sh` enforced in CI
-- CI runs only on `main` and `develop` (not `notes`)
+## Patterns
+- **Next.js**: Server Components by default; client components only when needed.
+- **API**: Typed endpoints, centralized errors, `/health`, `/status`, `/__/probe`, `/hierarchy/echo`.
+- **Firebase (client)**: Auth + Firestore only.
+- **Firebase (server)**: Admin SDK from env JSON; never commit keys.
+- **RBAC**: admin|manager|staff checks in API and Firestore rules.
+- **PWA**: SW behind a feature flag.
 
-## Patterns to Follow
-- **Next.js**: Use Server Components by default; Client Components only when needed. Keep API calls in server routes or the Express API; avoid client secret use.
-- **Express**: Typed handlers, centralized error responses, health endpoints (`/health`, `/status`).
-- **Firebase**:
-  - Client: `initializeApp` + `getAuth` + `getFirestore` (no admin here).
-  - Server: `firebase-admin` initialized from env JSON, never from file on disk.
-- **RBAC**: Roles (`admin|manager|staff`) checked both in API and Firestore rules.
-- **PWA**: Service worker behind a feature flag; safe updates.
-
-## Definition of Done (Every PR)
-- `pnpm install` succeeds; `pnpm build` is green in CI.
-- ESLint + TypeScript checks pass.
-- If UI: compiles under Next.js App Router; pages/routes correct.
-- If API: endpoint documented; curl example included; returns stable JSON.
-- If Data/Rules: exact collections/paths and indexes listed.
+## Definition of Done
+- `pnpm install` + `pnpm build` pass in CI.
+- ESLint + TS checks pass.
+- If UI: Next.js route renders.
+- If API: endpoint documented + curl example.
+- If Data/Rules: exact paths + indexes listed.
 
 ## Forbidden
-- Vite, CRA, or any scaffolding that isn’t **Next.js 14**.
-- Mixing Admin SDK into client bundles.
-- “Pseudo code” without runnable files.
-- Writing docs/notes into `main` (guard will fail).
-
-— End of rules —
+- Vite/CRA or any non-Next scaffolding
+- Admin SDK in client code
+- Pseudo code without runnable files
+- Docs/notes/todos on main/develop (guard will fail)

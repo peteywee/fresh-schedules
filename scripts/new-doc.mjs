@@ -27,15 +27,15 @@ const file = path.join(process.cwd(), info.dir, `${slug}${info.ext}`);
 fs.mkdirSync(path.dirname(file), { recursive: true });
 
 const stamp = new Date().toISOString();
-const boiler = `# ${info.title}: ${slug}
+const body = `# ${info.title}: ${slug}
 
 **Created:** ${stamp}
 
 ## What
-(briefly describe)
+(brief)
 
 ## Why
-(why this matters now)
+(reason)
 
 ## Acceptance Criteria
 - [ ]
@@ -45,8 +45,6 @@ const boiler = `# ${info.title}: ${slug}
 
 ## TODO
 - [ ]
-
 `;
-
-fs.writeFileSync(file, boiler, { encoding: "utf8", flag: "wx" });
+fs.writeFileSync(file, body, { encoding: "utf8", flag: "wx" });
 console.log(file);

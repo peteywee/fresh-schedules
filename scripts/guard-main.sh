@@ -3,7 +3,7 @@ set -euo pipefail
 
 BRANCH="${1:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '')}"
 
-# For both main and develop, enforce code-only; notes branch is free-form.
+# notes branch is free; everything else enforced
 if [[ "$BRANCH" == "notes" || "$BRANCH" == "" ]]; then
   echo "guard: branch '$BRANCH' — no enforcement."
   exit 0
@@ -27,11 +27,7 @@ FORBIDDEN=(
   "*.drawio"
 )
 
-# Allowlist exceptions on non-main branches if you prefer (disabled here)
-ALLOW=(
-  "README.md"
-  "CHANGELOG.md"
-)
+ALLOW=("README.md" "CHANGELOG.md")
 
 is_allowed() {
   local f="$1"
@@ -45,11 +41,8 @@ FILES="$(git diff --name-only --cached || true)"
 violations=()
 
 for f in $FILES; do
-  # Skip deleted files
   [[ -e "$f" ]] || continue
-  if is_allowed "$f"; then
-    continue
-  fi
+  if is_allowed "$f"; then continue; fi
   for glob in "${FORBIDDEN[@]}"; do
     if [[ "$f" == $glob ]]; then
       violations+=("$f")
@@ -69,7 +62,7 @@ Move them to:
   docs/guides/*.guide.md
   docs/research/*.r.md
   docs/diagrams/*.(drawio|mermaid.md)
-  notes/*.note.md or *.scratch.md|*.scratch.txt
+  notes/*.note.md or *.scratch.*
   todos/*.todo.md
 
 Or commit them on the 'notes' branch.

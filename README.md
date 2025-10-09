@@ -1,8 +1,14 @@
 # Fresh Schedules
 
-Production repo (Top Shelf Service LLC). Branch policy:
-- **main**: production code only (no docs/notes/todos).
-- **develop**: integration/staging.
-- **notes**: personal docs, bibles, walkthroughs, research, todos.
+Compliance-first staff scheduling PWA (Top Shelf Service LLC).
 
-Docs/notes/todos have specific file endings and live off `main`. See /scripts/guard-main.sh.
+## Branch policy
+- **main**: production code only (protected, green CI required)
+- **develop**: active integration (no docs/notes/todos)
+- **notes**: personal docs/bibles/walkthroughs/research/todos
+
+## Objective (CEO KPI)
+- Onboarding → published first schedule: < 15 minutes
+- Routine weekly scheduling after onboarding: **< 5 minutes**
+
+See `.github/copilot-instructions.md` for repo-wide AI rules.
