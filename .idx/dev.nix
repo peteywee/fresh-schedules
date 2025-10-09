@@ -6,6 +6,8 @@
 
   # Use https://search.nixos.org/packages to find packages
   packages = [
+    pkgs.pnpm
+    pkgs.corepack
     # pkgs.go
     # pkgs.python311
     # pkgs.python311Packages.pip
@@ -44,7 +46,7 @@
       # Runs when a workspace is first created
       onCreate = {
         # Example: install JS dependencies from NPM
-        # npm-install = "npm install";
+        pnpm-install = "pnpm install";
       };
       # Runs when the workspace is (re)started
       onStart = {
