@@ -1,4 +1,4 @@
-# Node / JS / TS
+# Node/tooling
 node_modules/
 .pnpm-store/
 dist/
@@ -13,19 +13,13 @@ coverage/
 .env.*.local
 *.env
 
-# Editor / IDE
+# Editor/OS junk
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# OS junk
 .DS_Store
 Thumbs.db
 
-# Notes/docs (kept off main)
-docs/
-todos/
-notes/
-*.md
-!README.md  # allow top-level README
+# Docs ARE allowed on this branch; do not ignore them.
+# (intentionally no ignores for docs/, notes/, todos/ or *.bible.md etc.)
