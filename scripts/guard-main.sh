@@ -3,8 +3,8 @@ set -euo pipefail
 
 BRANCH="${1:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '')}"
 
-# notes branch is free; everything else enforced
-if [[ "$BRANCH" == "notes" || "$BRANCH" == "" ]]; then
+# notes and develop branches are free; everything else enforced
+if [[ "$BRANCH" == "notes" || "$BRANCH" == "develop" || "$BRANCH" == "" ]]; then
   echo "guard: branch '$BRANCH' — no enforcement."
   exit 0
 fi
