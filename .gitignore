@@ -1,4 +1,4 @@
-# Node / JS / TS
+# --- Node / tooling ---
 node_modules/
 .pnpm-store/
 dist/
@@ -7,25 +7,36 @@ build/
 coverage/
 *.log
 
-# Env files
+# --- Env files ---
 .env
 .env.local
 .env.*.local
 *.env
 
-# Editor / IDE
+# --- Editor/OS junk ---
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# OS junk
 .DS_Store
 Thumbs.db
 
-# Notes/docs (kept off main)
+# --- Personal docs/notes/todos (kept off main) ---
 docs/
-todos/
 notes/
-*.md
-!README.md  # allow top-level README
+todos/
+
+# File-ending level ignore (double ensure nothing leaks)
+*.bible.md
+*.wt.md
+*.note.md
+*.todo.md
+*.scratch.md
+*.scratch.txt
+*.r.md
+*.mermaid.md
+*.drawio
+
+# Allow top-level README/changelog on main
+!README.md
+!CHANGELOG.md
