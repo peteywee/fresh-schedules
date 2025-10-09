@@ -21,5 +21,32 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Docs ARE allowed on this branch; do not ignore them.
-# (intentionally no ignores for docs/, notes/, todos/ or *.bible.md etc.)
+# Docs ARE allowed on the `notes` branch; keep docs/ and notes/ tracked there.
+# For main/develop we ignore docs/ and notes/ to keep them out of primary branches.
+
+# Shared ignores (build artifacts, tools)
+docs/
+notes/
+todos/
+*.bible.md
+*.wt.md
+*.guide.md
+*.r.md
+*.note.md
+*.todo.md
+*.scratch.md
+*.scratch.txt
+*.mermaid.md
+*.drawio
+
+# Allow essentials to be tracked even if other doc rules exist
+!README.md
+!CHANGELOG.md
+
+node_modules
+.pnpm-store/
+.next
+apps/web/tsconfig.tsbuildinfo
+
+# pnpm-lock.yaml is tracked to ensure reproducible CI installs
+pnpm-lock.yaml

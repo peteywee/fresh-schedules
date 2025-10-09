@@ -44,10 +44,12 @@ for f in $FILES; do
   [[ -e "$f" ]] || continue
   if is_allowed "$f"; then continue; fi
   for glob in "${FORBIDDEN[@]}"; do
-    if [[ "$f" == $glob ]]; then
-      violations+=("$f")
-      break
-    fi
+    case "$f" in
+      $glob)
+        violations+=("$f")
+        break
+        ;;
+    esac
   done
 done
 

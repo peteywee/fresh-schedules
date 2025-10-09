@@ -30,7 +30,8 @@ service cloud.firestore {
       }
       match /timesheets/{tsId} {
         allow read: if hasOrgMembership(orgId);
-        allow create: if isSignedIn();
+        // Only organization members may create timesheets
+        allow create: if hasOrgMembership(orgId);
         allow update: if hasOrgRole(orgId, ['admin','manager']) || (request.auth.uid == resource.data.staffUid);
       }
       match /audit/{auditId} {
