@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() { return request.auth != null; }
+
+    function orgMemberDoc(orgId) {
+      return /databases/$(database)/documents/orgs/$(orgId)/members/$(request.auth.uid);
+    }
+    function hasOrgMembership(orgId) {
+      return isSignedIn() && exists(orgMemberDoc(orgId));
+    }
+    function orgRole(orgId) {
+      return get(orgMemberDoc(orgId)).data.role;
+    }
+    function hasOrgRole(orgId, roles) {
+      return hasOrgMembership(orgId) && (orgRole(orgId) in roles);
+    }
+
+    match /orgs/{orgId} {
+      allow read: if hasOrgMembership(orgId);
+      allow write: if hasOrgRole(orgId, ['admin']);
+      match /members/{uid} {
+        allow read: if hasOrgMembership(orgId);
+        allow write: if hasOrgRole(orgId, ['admin','manager']);
+      }
+      match /shifts/{shiftId} {
+        allow read: if hasOrgMembership(orgId);
+        allow create, update, delete: if hasOrgRole(orgId, ['admin','manager']);
+      }
+      match /timesheets/{tsId} {
+        allow read: if hasOrgMembership(orgId);
+        // Only organization members may create timesheets
+        allow create: if hasOrgMembership(orgId);
+        allow update: if hasOrgRole(orgId, ['admin','manager']) || (request.auth.uid == resource.data.staffUid);
+      }
+      match /audit/{auditId} {
+        allow read: if hasOrgRole(orgId, ['admin','manager']);
+        allow write: if false; // append-only via server
+      }
+    }
+  }
+}

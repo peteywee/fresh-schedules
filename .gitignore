@@ -1,4 +1,4 @@
-# --- Node / tooling ---
+# Node / Tooling
 node_modules/
 .pnpm-store/
 dist/
@@ -7,13 +7,15 @@ build/
 coverage/
 *.log
 
-# --- Env files ---
+# Env
 .env
 .env.local
 .env.*.local
 *.env
+.firebase/
+.firebaserc
 
-# --- Editor/OS junk ---
+# IDE/OS
 .vscode/
 .idea/
 *.swp
@@ -21,22 +23,25 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# --- Personal docs/notes/todos (kept off main) ---
+# Docs/notes/todos kept off main & develop
 docs/
 notes/
 todos/
-
-# File-ending level ignore (double ensure nothing leaks)
 *.bible.md
 *.wt.md
+*.guide.md
+*.r.md
 *.note.md
 *.todo.md
 *.scratch.md
 *.scratch.txt
-*.r.md
 *.mermaid.md
 *.drawio
 
-# Allow top-level README/changelog on main
+# Allow essentials
 !README.md
 !CHANGELOG.md
+node_modules
+.next
+apps/web/tsconfig.tsbuildinfo
+# pnpm-lock.yaml is tracked to ensure reproducible CI installs
