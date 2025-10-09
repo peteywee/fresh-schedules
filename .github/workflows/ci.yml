@@ -15,7 +15,7 @@ jobs:
           node-version: "20"
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck || true
-      - run: pnpm lint || true
-      - run: pnpm test || echo "No tests yet"
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
       - run: pnpm build
