@@ -46,9 +46,36 @@
 - If Data/Rules: exact collections/paths and indexes listed.
 
 ## Forbidden
-- Vite, CRA, or any scaffolding that isn’t **Next.js 14**.
-- Mixing Admin SDK into client bundles.
-- “Pseudo code” without runnable files.
-- Writing docs/notes into `main` (guard will fail).
 
 — End of rules —
+
+## File Ending Rules (STRICT)
+
+- Project Bibles → `*.bible.md` in `docs/bibles/`
+- Walkthroughs → `*.wt.md` in `docs/wt/`
+- Guides → `*.guide.md` in `docs/guides/`
+- Research → `*.r.md` in `docs/research/`
+- Diagrams → `*.mermaid.md` / `*.drawio` in `docs/diagrams/`
+- Notes → `*.note.md` / `*.scratch.md` / `*.scratch.txt` in `notes/`
+- To-Dos → `*.todo.md` in `todos/`
+
+Forbidden generic endings on `main` and `develop`: `*.md`, `*.txt`, `*.docx` unless the file matches the specific allowed patterns above. Only `README.md` and `CHANGELOG.md` are allowed on code branches.
+
+If generating documentation programmatically, ensure filenames and paths match the allowed patterns exactly. Any violation should be rejected by the guard script.
+
+## Suggestions & Recommended Actions
+
+- Always install SDKs outside the repository (recommended path: `$HOME/google-cloud-sdk`). Do NOT unpack archives into the repository working tree.
+- Keep lockfiles (e.g., `pnpm-lock.yaml`) committed and use `pnpm install --frozen-lockfile` in CI for deterministic builds.
+- Add a pre-commit guard (example provided in `scripts/pre-commit-size-guard.sh`) to block large staged files and common SDK archives.
+- For transient large files, prefer `git lfs` or an external artifact store rather than committing binaries to code branches.
+- Documentation that must land on `develop` or `main` should follow the strict file-ending rules above; use the `notes` branch for drafts and working notes.
+
+Example pre-commit installation:
+
+```bash
+chmod +x scripts/pre-commit-size-guard.sh
+ln -sf ../../scripts/pre-commit-size-guard.sh .git/hooks/pre-commit
+```
+
+If you want me to: I can commit the guard script and the docs to `develop` and create a PR, or instead create a `notes` branch for in-progress docs. Ask and I'll proceed.
