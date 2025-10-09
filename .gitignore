@@ -1,4 +1,4 @@
-# Node/tooling
+# Node / Tooling
 node_modules/
 .pnpm-store/
 dist/
@@ -7,13 +7,15 @@ build/
 coverage/
 *.log
 
-# Env files
+# Env
 .env
 .env.local
 .env.*.local
 *.env
+.firebase/
+.firebaserc
 
-# Editor/OS junk
+# IDE/OS
 .vscode/
 .idea/
 *.swp
@@ -21,5 +23,25 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Docs ARE allowed on this branch; do not ignore them.
-# (intentionally no ignores for docs/, notes/, todos/ or *.bible.md etc.)
+# Docs/notes/todos kept off main & develop
+docs/
+notes/
+todos/
+*.bible.md
+*.wt.md
+*.guide.md
+*.r.md
+*.note.md
+*.todo.md
+*.scratch.md
+*.scratch.txt
+*.mermaid.md
+*.drawio
+
+# Allow essentials
+!README.md
+!CHANGELOG.md
+node_modules
+.next
+pnpm-lock.yaml
+apps/web/tsconfig.tsbuildinfo
