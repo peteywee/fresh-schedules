@@ -49,4 +49,21 @@ node_modules
 apps/web/tsconfig.tsbuildinfo
 
 # pnpm-lock.yaml is tracked to ensure reproducible CI installs
-pnpm-lock.yaml
+# pnpm-lock.yaml
+
+# Ignore local SDK installs and archives
+google-cloud-sdk/
+google-cloud-sdk-*.tar.gz
+google-cloud-sdk-*/
+
+# Archives and large binary blobs
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.gz
+
+# OS temp
+*.tmp
+.cache/
