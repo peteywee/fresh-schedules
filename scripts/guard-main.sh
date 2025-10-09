@@ -1,73 +1,80 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Forbidden globs (docs/notes/todos & endings)
+BRANCH="${1:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '')}"
+
+# For both main and develop, enforce code-only; notes branch is free-form.
+if [[ "$BRANCH" == "notes" || "$BRANCH" == "" ]]; then
+  echo "guard: branch '$BRANCH' — no enforcement."
+  exit 0
+fi
+
+echo "guard: enforcing doc/notes/todo policy on branch '$BRANCH'"
+
 FORBIDDEN=(
   "docs/**"
   "notes/**"
   "todos/**"
   "*.bible.md"
   "*.wt.md"
+  "*.guide.md"
+  "*.r.md"
   "*.note.md"
   "*.todo.md"
   "*.scratch.md"
   "*.scratch.txt"
-  "*.r.md"
   "*.mermaid.md"
   "*.drawio"
 )
 
-BRANCH="${1:-}"
-if [[ -z "$BRANCH" ]]; then
-  # Try to detect branch
-  if git rev-parse --abbrev-ref HEAD &>/dev/null; then
-    BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-  else
-    BRANCH=""
-  fi
-fi
+# Allowlist exceptions on non-main branches if you prefer (disabled here)
+ALLOW=(
+  "README.md"
+  "CHANGELOG.md"
+)
 
-# Only enforce on main
-if [[ "$BRANCH" != "main" ]]; then
-  echo "guard-main: branch '$BRANCH' (not main) — no checks enforced."
-  exit 0
-fi
-
-echo "guard-main: enforcing content policy on branch 'main'"
-
-# Get staged (or tracked for CI) files
-if git rev-parse --verify HEAD >/dev/null 2>&1; then
-  FILES=$(git diff --name-only --cached)
-else
-  FILES=$(git ls-files)
-fi
-
-violations=()
-
-match_glob() {
-  local file="$1"
-  for glob in "${FORBIDDEN[@]}"; do
-    if [[ "$file" == $glob ]]; then
-      echo "$file"
-      return 0
-    fi
+is_allowed() {
+  local f="$1"
+  for a in "${ALLOW[@]}"; do
+    [[ "$f" == $a ]] && return 0
   done
   return 1
 }
 
-while IFS= read -r f; do
-  [[ -z "$f" ]] && continue
-  if m=$(match_glob "$f"); then
-    violations+=("$m")
+FILES="$(git diff --name-only --cached || true)"
+violations=()
+
+for f in $FILES; do
+  # Skip deleted files
+  [[ -e "$f" ]] || continue
+  if is_allowed "$f"; then
+    continue
   fi
-done <<< "$FILES"
+  for glob in "${FORBIDDEN[@]}"; do
+    if [[ "$f" == $glob ]]; then
+      violations+=("$f")
+      break
+    fi
+  done
+done
 
 if (( ${#violations[@]} )); then
-  echo "ERROR: The following files are not allowed on 'main':"
+  echo "ERROR: These files are not allowed on '$BRANCH':"
   printf '  - %s\n' "${violations[@]}"
-  echo
-  echo "Move them to the 'notes' branch (docs/, notes/, todos/ or matching *.bible.md, *.wt.md, *.note.md, *.todo.md, *.scratch.*, *.r.md, *.mermaid.md, *.drawio)."
+  cat <<MSG
+
+Move them to:
+  docs/bibles/*.bible.md
+  docs/wt/*.wt.md
+  docs/guides/*.guide.md
+  docs/research/*.r.md
+  docs/diagrams/*.(drawio|mermaid.md)
+  notes/*.note.md or *.scratch.md|*.scratch.txt
+  todos/*.todo.md
+
+Or commit them on the 'notes' branch.
+MSG
   exit 1
 fi
 
-echo "guard-main: OK — no forbidden files staged for 'main'."
+echo "guard: OK — no forbidden files staged."
