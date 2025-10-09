@@ -7,7 +7,7 @@ build/
 coverage/
 *.log
 
-# Env files
+# Env
 .env
 .env.local
 .env.*.local

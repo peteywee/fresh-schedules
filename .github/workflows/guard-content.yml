@@ -1,0 +1,11 @@
+name: Guard Main Content
+on:
+  pull_request:
+    branches: ["main"]
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject docs/notes/todos on main
+        run: bash scripts/guard-main.sh main
