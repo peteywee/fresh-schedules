@@ -43,5 +43,5 @@ todos/
 !CHANGELOG.md
 node_modules
 .next
-pnpm-lock.yaml
 apps/web/tsconfig.tsbuildinfo
+# pnpm-lock.yaml is tracked to ensure reproducible CI installs
