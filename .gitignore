@@ -23,25 +23,7 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Docs/notes/todos kept off main & develop
-docs/
-notes/
-todos/
-*.bible.md
-*.wt.md
-*.guide.md
-*.r.md
-*.note.md
-*.todo.md
-*.scratch.md
-*.scratch.txt
-*.mermaid.md
-*.drawio
-
+# We DO track docs/notes/todos on develop. Main is protected by guard script/CI.
 # Allow essentials
 !README.md
 !CHANGELOG.md
-node_modules
-.next
-apps/web/tsconfig.tsbuildinfo
-# pnpm-lock.yaml is tracked to ensure reproducible CI installs

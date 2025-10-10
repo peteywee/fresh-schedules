@@ -1,3 +1,5 @@
+/// <reference types="react" />
+
 export const metadata = { title: 'Schedule' };
 export default function SchedulePage() {
   return (
