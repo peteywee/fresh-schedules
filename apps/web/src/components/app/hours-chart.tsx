@@ -1,14 +1,40 @@
+import type { WeeklySchedule } from './schedule-calendar';
+
 export type HoursBreakdown = {
   label: string;
   hours: number;
 };
 
-export function HoursChart({ data }: { data: HoursBreakdown[] }) {
-  if (data.length === 0) {
-    return null;
+function calculateHours(schedule: WeeklySchedule): HoursBreakdown[] {
+  const hoursMap: Record<string, number> = {};
+  schedule.shifts.forEach((shift) => {
+    if (shift.assignee) {
+      const start = new Date(`1970-01-01T${shift.start}:00`);
+      const end = new Date(`1970-01-01T${shift.end}:00`);
+      const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+      hoursMap[shift.assignee] = (hoursMap[shift.assignee] || 0) + hours;
+    }
+  });
+  return Object.entries(hoursMap).map(([label, hours]) => ({ label, hours }));
+}
+
+export function HoursChart({ data, schedule }: { data?: HoursBreakdown[]; schedule?: WeeklySchedule }) {
+  const computedData = schedule ? calculateHours(schedule) : data || [];
+  if (computedData.length === 0) {
+    return (
+      <section className="fs-card">
+        <header style={{ marginBottom: '1.25rem' }}>
+          <div className="fs-tag">Manager hours</div>
+          <h2 style={{ margin: '0.75rem 0 0' }}>Coverage snapshot</h2>
+          <p style={{ color: '#cbd5f5', margin: '0.75rem 0 0' }}>
+            No hours assigned yet. Add shifts to see coverage.
+          </p>
+        </header>
+      </section>
+    );
   }
 
-  const maxHours = Math.max(...data.map((item) => item.hours));
+  const maxHours = Math.max(...computedData.map((item) => item.hours));
 
   return (
     <section className="fs-card">
@@ -20,7 +46,7 @@ export function HoursChart({ data }: { data: HoursBreakdown[] }) {
         </p>
       </header>
       <div className="fs-grid" style={{ gap: '1rem' }}>
-        {data.map((item) => {
+        {computedData.map((item) => {
           const percentage = maxHours === 0 ? 0 : Math.round((item.hours / maxHours) * 100);
           return (
             <div key={item.label} className="hours-bar">
