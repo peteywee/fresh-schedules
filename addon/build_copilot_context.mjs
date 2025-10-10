@@ -1,4 +1,3 @@
-
 #!/usr/bin/env node
 /**
  * build_copilot_context.mjs
