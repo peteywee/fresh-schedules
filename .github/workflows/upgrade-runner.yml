@@ -64,5 +64,4 @@ jobs:
 
       - name: Push tags back
         if: always()
-        run: |
-          git push origin --tags || echo "push tags failed"
+        run: git push origin --tags
