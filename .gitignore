@@ -28,3 +28,6 @@ Thumbs.db
 # Allow essentials
 !README.md
 !CHANGELOG.md
+
+# Build artifacts
+*.tsbuildinfo
