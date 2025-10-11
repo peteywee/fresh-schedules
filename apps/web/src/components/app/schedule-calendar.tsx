@@ -69,9 +69,14 @@ export function ScheduleCalendar({
           <div key={day} className="schedule-column">
             <h3>{getLocalizedDayAbbreviation(day)}</h3>
             {slots.length === 0 ? (
-              <div className="schedule-slot" style={{ opacity: 0.6, cursor: editable ? 'pointer' : 'default' }} onClick={() => editable && onShiftEdit?.({ id: `${day}-new`, day, role: '', start: '', end: '' })}>
+              <button
+                type="button"
+                className="schedule-slot"
+                style={{ opacity: 0.6, cursor: editable ? 'pointer' : 'default' }}
+                onClick={() => editable && onShiftEdit?.({ id: `${day}-new`, day, role: '', start: '', end: '' })}
+              >
                 <small>Add shift</small>
-              </div>
+              </button>
             ) : (
               slots.map((slot) => (
                 <div 
