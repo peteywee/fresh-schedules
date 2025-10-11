@@ -16,7 +16,7 @@ app.get("/health", (_req, res) => {
 
 // List files under a directory (relative to repository root)
 app.get("/files", (req, res) => {
-  const repoRoot = path.resolve(__dirname, "..", "..", "..");
+  const repoRoot = process.env.MCP_REPO_ROOT || path.resolve(__dirname, "..", "..", "..");
   const rel = String(req.query.path || ".");
   const target = path.resolve(repoRoot, rel);
 
