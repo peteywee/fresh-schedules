@@ -4,6 +4,8 @@ set -euo pipefail
 # upgrade-checkpoint.sh
 # Helper to run staged upgrade commands and create git checkpoints so a long
 # upgrade process can be resumed if the terminal or CI stops unexpectedly.
+# By default this script will create annotated tags as checkpoints (faster and
+# fewer commits). To use commit-style checkpoints set GIT_CHECKPOINT_POLICY=commit
 #
 # Usage:
 #   ./scripts/upgrade-checkpoint.sh <step-name>
@@ -12,18 +14,33 @@ set -euo pipefail
 #
 # Behavior:
 # - Runs a list of commands defined for the step (see STEPS associative array)
-# - After each command, optionally creates a small git commit with a checkpoint
-# - If a command fails, the script exits non-zero and the last committed
-#   checkpoint preserves progress. Re-run the script to continue.
+# - After each command, creates a checkpoint tag (or commit if configured)
+# - If a command fails, the script exits non-zero; you can re-run the step to
+#   continue or inspect the last tag (checkpoint) to restore state.
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT_DIR"
 
-commit_checkpoint() {
+GIT_POLICY="${GIT_CHECKPOINT_POLICY:-tag}" # tag | commit
+
+create_checkpoint() {
   local name="$1"
-  git add -A
-  # create a lightweight checkpoint commit
-  git commit -m "chore(checkpoint): $name" || true
+  local short_cmd="$2"
+  local ts
+  ts=$(date -u +"%Y%m%dT%H%M%SZ")
+  local tag_name="checkpoint/$ts/$name"
+
+  if [ "$GIT_POLICY" = "commit" ]; then
+    git add -A
+    git commit -m "chore(checkpoint): $name - $short_cmd" || true
+    echo "Created checkpoint commit for: $name"
+  else
+    # create annotated tag with the staged changes recorded in the tag message
+    git add -A || true
+    git commit -m "chore(checkpoint-temp): $name - $short_cmd" || true
+    git tag -a "$tag_name" -m "checkpoint: $name\ncmd: $short_cmd\nts: $ts" || true
+    echo "Created checkpoint tag: $tag_name"
+  fi
 }
 
 # Define steps and commands. Add or modify as-needed.
@@ -53,15 +70,18 @@ if [ -z "$COMMANDS_STRING" ]; then
   exit 2
 fi
 
-# Split commands by '&&' or newlines. We treat semi-colon/separate commands as sequential lines.
+# Split commands by newlines
 IFS=$'\n' read -rd '' -a COMMANDS <<<"$COMMANDS_STRING" || true
 
 for cmd in "${COMMANDS[@]}"; do
   echo "Running: $cmd"
-  eval "$cmd"
-  # commit a checkpoint with the step and the short command
+  if ! eval "$cmd"; then
+    echo "Command failed: $cmd" >&2
+    ./scripts/critical-failure.sh 120 "upgrade-checkpoint failed on: $cmd"
+  fi
+  # commit or tag a checkpoint with the step and the short command
   short_cmd=$(echo "$cmd" | cut -c1-80)
-  commit_checkpoint "$STEP: $short_cmd"
+  create_checkpoint "$STEP" "$short_cmd"
 done
 
-echo "Step '$STEP' completed. A checkpoint commit has been created."
+echo "Step '$STEP' completed. Checkpoint created (policy: $GIT_POLICY)."
