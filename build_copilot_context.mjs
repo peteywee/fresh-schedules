@@ -94,6 +94,6 @@ function main() {
   let md = header() + '\n' + fileTree(textFiles);
   for (const f of textFiles) md += sectionForFile(f);
   fs.writeFileSync(outFile, md, 'utf-8');
-  console.log(\`Wrote \${outFile}\`);
+  console.log('Wrote ' + outFile);
 }
 main();
