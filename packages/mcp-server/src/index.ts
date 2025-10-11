@@ -15,8 +15,8 @@ app.get("/health", (_req, res) => {
 });
 
 // List files under a directory (relative to repository root)
-app.get("/files", (req, res) => {
-  const repoRoot = process.env.MCP_REPO_ROOT || path.resolve(__dirname, "..", "..", "..");
+app.get("/files", async (req, res) => {
+  const repoRoot = path.resolve(__dirname, "..", "..", "..");
   const rel = String(req.query.path || ".");
   const target = path.resolve(repoRoot, rel);
 
@@ -25,15 +25,16 @@ app.get("/files", (req, res) => {
   }
 
   try {
-    const stat = fs.statSync(target);
+    const stat = await fs.promises.stat(target);
     if (!stat.isDirectory()) {
       return res.json({ path: rel, type: "file" });
     }
-    const items = fs.readdirSync(target).map((name) => {
+    const files = await fs.promises.readdir(target);
+    const items = await Promise.all(files.map(async (name) => {
       const p = path.join(target, name);
-      const s = fs.statSync(p);
+      const s = await fs.promises.stat(p);
       return { name, path: path.relative(repoRoot, p), isDirectory: s.isDirectory() };
-    });
+    }));
     res.json({ path: rel, items });
   } catch (err: any) {
     res.status(500).json({ error: String(err.message) });
