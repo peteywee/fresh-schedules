@@ -29,7 +29,7 @@ export function SignInProviders({ status, onEmailSubmit }: SignInProvidersProps)
   }
 
   return (
-    <div>
+    <div className="space-y-4">
       <Card title="Continue with Google" description="Single tap sign-in for Google Workspace teams.">
         {/* TODO: Implement Google OAuth flow here */}
         <Button

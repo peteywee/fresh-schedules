@@ -9,10 +9,16 @@ import { HoursChart } from './hours-chart';
 
 type WizardStep = 'select-week' | 'add-shifts' | 'assign-roles' | 'review';
 
+// Default values used when creating a new shift
+const DEFAULT_ROLE: string = 'Staff';
+const DEFAULT_START: string = '09:00';
+const DEFAULT_END: string = '17:00';
+const DEFAULT_ASSIGNEE: string | undefined = undefined;
+
 export function ScheduleWizard() {
   const [currentStep, setCurrentStep] = useState<WizardStep>('select-week');
   const [schedule, setSchedule] = useState<WeeklySchedule>({
-    weekOf: '2023-10-02',
+    weekOf: new Date().toISOString().slice(0, 10),
     shifts: [],
   });
 
@@ -41,7 +47,7 @@ export function ScheduleWizard() {
     if (shift.id.includes('new')) {
       const newShift: ShiftAssignment = {
         ...shift,
-        id: `${shift.day}-${Date.now()}`,
+        id: `${shift.day}-${crypto.randomUUID()}`,
         role: DEFAULT_ROLE,
         start: DEFAULT_START,
         end: DEFAULT_END,
@@ -67,22 +73,22 @@ export function ScheduleWizard() {
               type="date"
               value={schedule.weekOf}
               onChange={(e) => setSchedule({ ...schedule, weekOf: e.target.value })}
-              className="fs-input"
             />
+            <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
           </Card>
         );
       case 'add-shifts':
         return (
           <Card title="Add shifts for the week" icon={Users}>
-            <p>Click on time slots to add shifts. This step takes about 2 minutes.</p>
             <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
+            <ScheduleCalendar schedule={schedule} />
           </Card>
         );
       case 'assign-roles':
         return (
           <Card title="Assign roles and staff" icon={CheckCircle}>
             <p>Assign specific roles and staff to each shift.</p>
-            <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
+            <ScheduleCalendar schedule={schedule} />
           </Card>
         );
       case 'review':
