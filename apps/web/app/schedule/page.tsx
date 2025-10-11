@@ -1,11 +1,7 @@
-/// <reference types="react" />
+import { ScheduleWizard } from '@/components/app/schedule-wizard';
 
-export const metadata = { title: 'Schedule' };
+export const metadata = { title: 'Schedule · Fresh Schedules' };
+
 export default function SchedulePage() {
-  return (
-    <main style={{ padding: 24 }}>
-      <h1>Schedule</h1>
-      <p>Placeholder route is present and valid.</p>
-    </main>
-  );
+  return <ScheduleWizard />;
 }
