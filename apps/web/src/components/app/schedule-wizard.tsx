@@ -82,7 +82,7 @@ export function ScheduleWizard() {
         return (
           <Card title="Assign roles and staff" icon={CheckCircle}>
             <p>Assign specific roles and staff to each shift.</p>
-            <ScheduleCalendar schedule={schedule} />
+            <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
           </Card>
         );
       case 'review':
