@@ -75,7 +75,7 @@ export function ScheduleWizard() {
         return (
           <Card title="Add shifts for the week" icon={Users}>
             <p>Click on time slots to add shifts. This step takes about 2 minutes.</p>
-            <ScheduleCalendar schedule={schedule} />
+            <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
           </Card>
         );
       case 'assign-roles':
