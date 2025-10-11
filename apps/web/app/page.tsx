@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const heroStats = [
   { label: 'Setup time', value: '< 15 min', hint: 'New org onboarding' },
-  { label: 'Publish time', value: '< 5 min', hint: 'Manager to live schedule' },
+  { label: 'Publish time', value: '5 min', hint: 'Guided schedule creation' },
   { label: 'Coverage score', value: '100%', hint: 'Auto gap detection' },
 ];
 
