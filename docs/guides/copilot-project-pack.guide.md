@@ -73,7 +73,7 @@ or tenant-specific constants:
   - `src/lib/messaging.ts` — FCM token + foreground listener
 - `services/api/`
   - `src/index.ts` — Express app (health, `/api/shifts`)
-  - `src/firebase.place.ts` — Admin init placeholders, replace via env
+  - `src/firebase.ts` — Admin SDK initialization using environment variables
   - `src/routes/shifts.ts` — Create shift (Zod validated); Firestore write TODO
 - `packages/types/`
   - `src/index.ts` — Zod schemas: Org, Event, Shift, Timesheet
@@ -100,11 +100,14 @@ or tenant-specific constants:
 - Manager creates five shifts across a week and publishes in five minutes.
 - Staff sees shifts after publish and receives FCM notifications on changes.
 
-## 9. TODO: Replace Placeholders
+## 9. Environment-Based Configuration
 
-- `services/api/src/firebase.place.ts` — initialize Admin SDK from env.
-- Optional: `apps/web/src/lib/messaging.place.ts` — supply VAPID key source if
-  messaging is separated.
+All placeholder files have been replaced with proper implementations:
+
+- `services/api/src/firebase.ts` — Firebase Admin SDK initialized from environment variables (`FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`).
+- `apps/web/src/lib/messaging.ts` — FCM registration with VAPID key from `NEXT_PUBLIC_FIREBASE_VAPID_KEY` environment variable.
+
+No `.place.` files remain in the repository. All sensitive configuration is loaded from environment variables following security best practices.
 
 ## 10. Prompt Template (use in Copilot Chat)
 
