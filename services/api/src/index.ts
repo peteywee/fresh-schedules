@@ -17,7 +17,7 @@ app.use((req, res, next) => {
 });
 
 // Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: Error, req: express.Request, res: express.Response, _next: express.NextFunction) => {
   log.error({ err, method: req.method, url: req.url }, 'Error occurred');
   res.status(500).json({ ok: false, error: 'Internal server error' });
 });
