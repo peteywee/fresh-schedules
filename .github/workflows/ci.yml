@@ -9,13 +9,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-node@v3
         with:
           node-version: "20"
           cache: "pnpm"
-      - uses: pnpm/action-setup@v2
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
-      - run: pnpm lint
-      - run: pnpm test
-      - run: pnpm build
+          cache-dependency-path: "**/pnpm-lock.yaml"
+
+      - name: Enable Corepack and prepare pnpm
+        run: |
+          corepack enable
+          # Pin to an explicit pnpm version known to work with your repo.
+          # Adjust "8.8.0" to the pnpm major/minor you use. Pinning avoids surprises.
+          corepack prepare pnpm@8.8.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
