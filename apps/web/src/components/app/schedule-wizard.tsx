@@ -106,78 +106,48 @@ export function ScheduleWizard(): JSX.Element {
     switch (currentStep) {
       case "select-week":
         return (
-          <Card>
-            <header className="card-header">
-              <Calendar size={18} />
-              <h3>Choose the week to schedule</h3>
-            </header>
-            <div className="card-body">
-              <p>Select the starting date for your weekly schedule.</p>
-              <input
-                aria-label="Week start"
-                type="date"
-                value={schedule.weekOf}
-                onChange={(e) => setSchedule({ ...schedule, weekOf: e.target.value })}
-              />
-              <div className="mt-4">
-                <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
-              </div>
+          <Card title="Choose the week to schedule">
+            <p>Select the starting date for your weekly schedule.</p>
+            <input
+              aria-label="Week start"
+              type="date"
+              value={schedule.weekOf}
+              onChange={(e) => setSchedule({ ...schedule, weekOf: e.target.value })}
+            />
+            <div className="mt-4">
+              <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
             </div>
           </Card>
         );
 
       case "add-shifts":
         return (
-          <Card>
-            <header className="card-header">
-              <Users size={18} />
-              <h3>Add shifts for the week</h3>
-            </header>
-            <div className="card-body">
-              <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
-            </div>
+          <Card title="Add shifts for the week">
+            <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
           </Card>
         );
 
       case "assign-roles":
         return (
-          <Card>
-            <header className="card-header">
-              <CheckCircle size={18} />
-              <h3>Assign roles and staff</h3>
-            </header>
-            <div className="card-body">
-              <p>Assign specific roles and staff to each shift.</p>
-              <ScheduleCalendar
-                schedule={schedule}
-                onShiftEdit={handleShiftAssign}
-                editable
-              />
-            </div>
+          <Card title="Assign roles and staff">
+            <p>Assign specific roles and staff to each shift.</p>
+            <ScheduleCalendar
+              schedule={schedule}
+              onShiftEdit={handleShiftAssign}
+              editable
+            />
           </Card>
         );
 
       case "review":
         return (
           <div className="fs-grid">
-            <Card>
-              <header className="card-header">
-                <Calendar size={18} />
-                <h3>Schedule Overview</h3>
-              </header>
-              <div className="card-body">
-                <ScheduleCalendar schedule={schedule} />
-              </div>
+            <Card title="Schedule Overview">
+              <ScheduleCalendar schedule={schedule} />
             </Card>
 
-            <Card>
-              <header className="card-header">
-                <CheckCircle size={18} />
-                <h3>Hours Summary</h3>
-              </header>
-              <div className="card-body">
-                <HoursChart schedule={schedule} />
-              </div>
+            <Card title="Hours Summary">
+              <HoursChart schedule={schedule} />
             </Card>
           </div>
         );

@@ -45,7 +45,7 @@ const orderedDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sa
  * @param {string} [locale=navigator.language] - The locale to use for formatting.
  * @returns {string} The abbreviated day name.
  */
-function getLocalizedDayAbbreviation(day: string, locale: string = navigator.language): string {
+function getLocalizedDayAbbreviation(day: string, locale: string = typeof navigator !== 'undefined' ? navigator.language : 'en-US'): string {
   // Find the next date that matches the given day name
   const baseDate = new Date(Date.UTC(2024, 0, 1)); // Monday, Jan 1, 2024
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

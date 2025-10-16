@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { createShiftInput } from '@packages/types';
 
-import { getFirestore } from '../firebase.place';
+import { getFirestore } from '../firebase';
 
 const RoleHeader = z.enum(['admin', 'manager', 'staff']);
 

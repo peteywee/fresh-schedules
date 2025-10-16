@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Sign In Page', () => {
   test('should render sign in page and display providers', async ({ page }) => {
     await page.goto('/signin');
-    await expect(page).toHaveTitle(/Sign In/);
+    await expect(page).toHaveTitle(/Sign in/);
 
     // Check if sign-in experience renders
     const signInTitle = page.getByRole('heading', { name: /sign in/i });

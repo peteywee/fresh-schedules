@@ -100,11 +100,11 @@ or tenant-specific constants:
 - Manager creates five shifts across a week and publishes in five minutes.
 - Staff sees shifts after publish and receives FCM notifications on changes.
 
-## 9. TODO: Replace Placeholders
+## 9. Placeholders Replaced
 
-- `services/api/src/firebase.place.ts` — initialize Admin SDK from env.
-- Optional: `apps/web/src/lib/messaging.place.ts` — supply VAPID key source if
-  messaging is separated.
+All placeholders have been replaced with proper implementations using environment variables.
+- `services/api/src/firebase.ts` — Firebase Admin SDK initialized from env vars.
+- `apps/web/src/lib/messaging.ts` — VAPID key configured from env vars.
 
 ## 10. Prompt Template (use in Copilot Chat)
 
