@@ -88,7 +88,11 @@ export function createShiftRouter() {
     
     // Type guard: OrgShiftsCache has required 'shifts' array and required 'cachedAt'
     const isOrgCache = (val: CachedShift | OrgShiftsCache | undefined): val is OrgShiftsCache => {
-      return val !== undefined && 'shifts' in val && Array.isArray(val.shifts);
+      return val !== undefined && 
+             'shifts' in val && 
+             Array.isArray(val.shifts) && 
+             'cachedAt' in val && 
+             typeof val.cachedAt === 'number';
     };
     
     if (isOrgCache(cached) && Date.now() - cached.cachedAt < CACHE_TTL) {
