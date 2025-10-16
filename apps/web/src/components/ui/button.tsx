@@ -1,7 +1,7 @@
 /**
  * @fileoverview A customizable button component with support for variants, icons, and standard button attributes.
  */
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes } from 'react';
 import clsx from 'clsx';
 import type { LucideIcon } from 'lucide-react';
 
