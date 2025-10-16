@@ -12,13 +12,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set up Node.js and pnpm
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          package-manager: "pnpm"
           cache: "pnpm"
           cache-dependency-path: "**/pnpm-lock.yaml"
+
+      - name: Ensure pnpm is available (enable Corepack and prepare)
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.10.0 --activate
+
+      - name: Verify pnpm is on PATH
+        run: |
+          echo "PATH=$PATH"
+          which pnpm || true
+          pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
