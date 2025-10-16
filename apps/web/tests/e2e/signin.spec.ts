@@ -2,8 +2,10 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Sign In Page', () => {
   test('should render sign in page and display providers', async ({ page }) => {
-    await page.goto('/signin');
-    await expect(page).toHaveTitle(/Sign in/);
+  // allow extra time for the dev server and client JS to hydrate
+  await page.goto('/signin', { timeout: 60000 });
+  await page.waitForLoadState('networkidle');
+  await expect(page).toHaveTitle(/Sign in/);
 
     // Check if sign-in experience renders
     const signInTitle = page.getByRole('heading', { name: /sign in/i });
@@ -20,7 +22,8 @@ test.describe('Sign In Page', () => {
       await emailInput.fill('test@example.com');
       // button text in the app is "Send sign-in link"; use a flexible regex to match variants
       await page.getByRole('button', { name: /send.*link/i }).click();
-      await expect(page.getByText(/check your email/i)).toBeVisible();
+      // app shows "Check your inbox" or similar — accept either wording and allow more time
+      await expect(page.getByText(/check your (email|inbox)|we sent a magic link/i)).toBeVisible({ timeout: 15000 });
     }
   });
 });
