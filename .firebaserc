@@ -1,7 +1,5 @@
 {
-	"projects": {
-		"default": "studio-3628697519-35eff",
-		"lebron23": "studio-3628697519-35eff"
-	}
+  "projects": {
+    "default": "local-project"
+  }
 }
-

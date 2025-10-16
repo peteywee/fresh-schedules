@@ -2,6 +2,7 @@
  * @fileoverview A component to display a chart of hours worked by each staff member.
  * It can either take pre-calculated hours breakdown or calculate it from a weekly schedule.
  */
+import { memo, useMemo } from 'react';
 import type { WeeklySchedule } from './schedule-calendar';
 
 /**
@@ -41,8 +42,8 @@ function calculateHours(schedule: WeeklySchedule): HoursBreakdown[] {
  * @param {WeeklySchedule} [props.schedule] - A weekly schedule to calculate hours data from. If provided, it overrides `data`.
  * @returns {JSX.Element} The rendered hours chart component.
  */
-export function HoursChart({ data, schedule }: { data?: HoursBreakdown[]; schedule?: WeeklySchedule }): JSX.Element {
-  const computedData = schedule ? calculateHours(schedule) : data || [];
+export const HoursChart = memo(function HoursChart({ data, schedule }: { data?: HoursBreakdown[]; schedule?: WeeklySchedule }): JSX.Element {
+  const computedData = useMemo(() => schedule ? calculateHours(schedule) : data || [], [data, schedule]);
   if (computedData.length === 0) {
     return (
       <section className="fs-card">
@@ -86,4 +87,4 @@ export function HoursChart({ data, schedule }: { data?: HoursBreakdown[]; schedu
       </div>
     </section>
   );
-}
+});

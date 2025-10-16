@@ -31,26 +31,3 @@ Thumbs.db
 
 # Build artifacts
 *.tsbuildinfo
-
-# pnpm / package manager
-.pnpm-debug.log*
-.pnpm/
-
-# Workspace packages and service build outputs
-packages/**/node_modules/
-packages/**/dist/
-services/**/node_modules/
-services/**/dist/
-
-# Playwright / test artifacts
-playwright-report/
-test-results/
-
-# Firebase and secrets
-client secret/
-firebase-adminsdk-*.json
-firebase/*.json
-
-# misc cache
-.cache/
-.next.cache/

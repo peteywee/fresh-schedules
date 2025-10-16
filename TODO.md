@@ -1,25 +1,39 @@
-# TODO: Address Documentation Issues and Fix Placeholders
+# Refactoring Plan for Speed and Optimization
 
-## Acceptance Criteria
-- All placeholder files (e.g., `firebase.place.ts`, `messaging.place.ts`) are replaced with proper implementations using environment variables.
-- Files are renamed from `.place.` to standard extensions.
-- No hardcoded secrets or configuration values remain in the repository.
-- Documentation is updated to reflect the changes, removing all TODOs and placeholders.
-- The project builds successfully with `pnpm -r build`.
-- Placeholder scanner passes without detecting any issues.
+## React Components Optimization (Speed Focus)
 
-## Success Metrics
-- CI pipeline passes on `develop` branch.
-- No `.place.` files exist in the repository.
-- All Firebase integrations (Admin SDK, Messaging) function correctly in development and production environments.
-- Documentation accurately describes the current state of the codebase.
+- [x] Create custom hooks (e.g., useScheduleState) in apps/web/src/hooks/
+- [x] Refactor ScheduleWizard to use useReducer for state management
+- [x] Add React.memo, useMemo, useCallback to ScheduleWizard steps
+- [x] Memoize calculations in ScheduleCalendar (grouped shifts, format functions)
+- [x] Add React.memo, useMemo to ScheduleCalendar component
+- [x] Memoize hours calculation in HoursChart
+- [x] Add React.memo to HoursChart component
 
-## Detailed Todo List
-- [x] Replace the placeholder in `services/api/src/firebase.place.ts` with actual Firebase Admin SDK initialization using environment variables (e.g., `FIREBASE_ADMIN_*`).
-- [x] Rename `services/api/src/firebase.place.ts` to `services/api/src/firebase.ts`.
-- [x] Replace the placeholder in `apps/web/src/lib/messaging.place.ts` with VAPID key configuration from environment variables.
-- [x] Rename `apps/web/src/lib/messaging.place.ts` to `apps/web/src/lib/messaging.ts`.
-- [x] Update `docs/guides/copilot-project-pack.guide.md` to remove the TODO items for placeholders and update the "9) TODO: Replace placeholders" section.
-- [x] Run the placeholder scanner script to ensure no new placeholders are detected.
-- [x] Execute `pnpm -r build` to verify the project builds successfully.
-- [x] Update any related documentation if necessary (e.g., add env variable examples).
+## Code Structure
+
+- [ ] Organize components into subfolders if needed
+- [ ] Standardize naming and improve type definitions
+
+## API Optimization
+
+- [x] Add middleware for error handling, logging, CORS in services/api/src/index.ts
+- [x] Optimize shifts route in services/api/src/routes/shifts.ts
+
+## Bundle and Build
+
+- [x] Add dynamic imports for wizard steps in ScheduleWizard
+- [x] Update package.json scripts for better performance
+- [x] Ensure tree shaking and minification
+
+## Other Factors
+
+- [x] Update lint script to actual ESLint in package.json
+- [ ] Add service worker caching for static assets
+- [ ] Review Firebase config loading
+
+## Followup
+
+- [x] Run tests and build
+- [x] Measure performance improvements (baseline established)
+- [ ] Test in browser (pending user interaction)

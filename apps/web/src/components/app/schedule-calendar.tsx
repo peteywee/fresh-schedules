@@ -3,6 +3,7 @@
  * It organizes shifts by day and allows for editing if enabled.
  */
 import type { ReactNode } from 'react';
+import { memo, useMemo, useCallback } from 'react';
 
 /**
  * Represents a single shift assignment in the schedule.
@@ -45,7 +46,7 @@ const orderedDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sa
  * @param {string} [locale=navigator.language] - The locale to use for formatting.
  * @returns {string} The abbreviated day name.
  */
-function getLocalizedDayAbbreviation(day: string, locale: string = navigator.language): string {
+function getLocalizedDayAbbreviation(day: string, locale: string = typeof navigator !== 'undefined' ? navigator.language : 'en-US'): string {
   // Find the next date that matches the given day name
   const baseDate = new Date(Date.UTC(2024, 0, 1)); // Monday, Jan 1, 2024
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -77,7 +78,7 @@ function formatRange(start: string, end: string): string {
  * @param {boolean} [props.editable=false] - If true, allows shifts to be edited.
  * @returns {JSX.Element} The rendered schedule calendar component.
  */
-export function ScheduleCalendar({
+export const ScheduleCalendar = memo(function ScheduleCalendar({
   schedule,
   onShiftEdit,
   editable = false
@@ -86,16 +87,16 @@ export function ScheduleCalendar({
   onShiftEdit?: (shift: ShiftAssignment) => void;
   editable?: boolean;
 }): JSX.Element {
-  const grouped = orderedDays.map((day) => ({
+  const grouped = useMemo(() => orderedDays.map((day) => ({
     day,
     slots: schedule.shifts.filter((shift) => shift.day === day),
-  }));
+  })), [schedule.shifts]);
 
-  const handleSlotClick = (slot: ShiftAssignment) => {
+  const handleSlotClick = useCallback((slot: ShiftAssignment) => {
     if (editable && onShiftEdit) {
       onShiftEdit(slot);
     }
-  };
+  }, [editable, onShiftEdit]);
 
   return (
     <section className="fs-card">
@@ -140,4 +141,4 @@ export function ScheduleCalendar({
       </div>
     </section>
   );
-}
+});

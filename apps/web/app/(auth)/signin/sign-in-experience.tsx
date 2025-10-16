@@ -13,7 +13,7 @@ export function SignInExperience() {
     <section className="fs-card">
       <header style={{ display: 'grid', gap: '0.75rem' }}>
         <div className="fs-tag">Access</div>
-        <h1 style={{ margin: 0 }}>Sign in to Fresh Schedules</h1>
+  <h1 data-testid="heading-signin" style={{ margin: 0 }}>Sign in to Fresh Schedules</h1>
         <p style={{ color: '#cbd5f5', maxWidth: '48ch' }}>
           Continue with Google for the fastest access. Email link sign-in keeps managers secure without additional
           passwords.
@@ -31,9 +31,9 @@ export function SignInExperience() {
       />
 
       {email && (
-        <div className="fs-card" style={{ marginTop: '1.5rem' }}>
-          <h3>Check your inbox</h3>
-          <p>We sent a magic link to {email}. Open it on the device where you want to manage schedules.</p>
+        <div className="fs-card" data-testid="confirmation-card" style={{ marginTop: '1.5rem' }}>
+          <h3 data-testid="confirmation-heading">Check your inbox</h3>
+          <p data-testid="confirmation-body">We sent a magic link to {email}. Open it on the device where you want to manage schedules.</p>
         </div>
       )}
 

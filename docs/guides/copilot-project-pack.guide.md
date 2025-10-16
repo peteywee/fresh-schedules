@@ -100,14 +100,11 @@ or tenant-specific constants:
 - Manager creates five shifts across a week and publishes in five minutes.
 - Staff sees shifts after publish and receives FCM notifications on changes.
 
-## 9. Environment-Based Configuration
+## 9. Placeholders Replaced
 
-All placeholder files have been replaced with proper implementations:
-
-- `services/api/src/firebase.ts` — Firebase Admin SDK initialized from environment variables (`FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`).
-- `apps/web/src/lib/messaging.ts` — FCM registration with VAPID key from `NEXT_PUBLIC_FIREBASE_VAPID_KEY` environment variable.
-
-No `.place.` files remain in the repository. All sensitive configuration is loaded from environment variables following security best practices.
+All placeholders have been replaced with proper implementations using environment variables.
+- `services/api/src/firebase.ts` — Firebase Admin SDK initialized from env vars.
+- `apps/web/src/lib/messaging.ts` — VAPID key configured from env vars.
 
 ## 10. Prompt Template (use in Copilot Chat)
 

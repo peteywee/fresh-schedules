@@ -4,6 +4,24 @@ import { createShiftInput } from '@packages/types';
 
 import { getFirestore } from '../firebase';
 
+// Simple in-memory cache for shifts (for demo purposes)
+interface CachedShift {
+  id: string;
+  createdAt: string;
+  createdByRole: string;
+  orgId: string;
+  [key: string]: any;
+  cachedAt?: number;
+}
+
+interface OrgShiftsCache {
+  shifts: CachedShift[];
+  cachedAt: number;
+}
+
+const shiftsCache = new Map<string, CachedShift | OrgShiftsCache>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 const RoleHeader = z.enum(['admin', 'manager', 'staff']);
 
 export function createShiftRouter() {
@@ -28,6 +46,19 @@ export function createShiftRouter() {
       createdByRole: role.data,
     };
 
+    // Cache the shift for faster retrieval
+    shiftsCache.set(id, { ...payload, cachedAt: Date.now() });
+    // Also keep an org-level cache so GET /?orgId=... can return seeded results
+    try {
+      const orgKey = `org_${parsed.data.orgId}`;
+      const existing = shiftsCache.get(orgKey) || { shifts: [], cachedAt: 0 };
+      existing.shifts = existing.shifts || [];
+      existing.shifts.push(payload);
+      shiftsCache.set(orgKey, { shifts: existing.shifts, cachedAt: Date.now() });
+    } catch (err) {
+      console.error('Error updating org-level shift cache:', err);
+    }
+
     try {
       const db = await getFirestore();
       await db
@@ -41,6 +72,47 @@ export function createShiftRouter() {
     } catch (error) {
       console.warn('PLACEHOLDER: Firestore persistence skipped', error);
       return res.status(202).json({ ok: true, id, persisted: false, reason: 'firestore_not_configured' });
+    }
+  });
+
+  // Add GET route for retrieving shifts with caching
+  router.get('/', async (req, res) => {
+    const { orgId } = req.query;
+    if (!orgId || typeof orgId !== 'string') {
+      return res.status(400).json({ ok: false, error: 'orgId required' });
+    }
+
+    // Check cache first
+      type Shift = z.infer<typeof createShiftInput> & {
+        id: string;
+        createdAt: string;
+        createdByRole: string;
+      };
+      const shifts = snapshot.docs.map(doc => doc.data() as Shift);
+      shiftsCache.set(cacheKey, { shifts, cachedAt: Date.now() });
+
+      return res.json({ ok: true, shifts, cached: false });
+    }
+
+    try {
+      const db = await getFirestore();
+      const snapshot = await db
+        .collection('organizations')
+        .doc(orgId)
+        .collection('shifts')
+        .get();
+
+      const shifts = snapshot.docs.map((doc: any) => doc.data());
+      shiftsCache.set(cacheKey, { shifts, cachedAt: Date.now() });
+
+      return res.json({ ok: true, shifts, cached: false });
+    } catch (error) {
+      console.warn('Firestore query failed, using cache if available', error);
+      // eslint-disable-next-line no-console
+      if (cached) {
+        return res.json({ ok: true, shifts: cached.shifts, cached: true, fallback: true });
+      }
+      return res.status(500).json({ ok: false, error: 'Failed to retrieve shifts' });
     }
   });
 
