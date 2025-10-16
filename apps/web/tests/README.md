@@ -42,7 +42,7 @@ pnpm --filter @apps/web test:e2e:headed
 Tests are located in `apps/web/tests/e2e/`:
 
 - `signin.spec.ts` - Tests for the sign-in page flow
-- `signin.debug.spec.ts` - Debug version with console logging
+- `signin.debug.spec.ts` - Development/debugging version with console logging and HTML snapshots
 
 ## Configuration
 

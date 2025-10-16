@@ -8,7 +8,7 @@ Features:
 - GET /files?path=... — list directory entries relative to repo root
 - GET /context?path=... — return file contents for a path inside the repo
 
-## How to run locally
+## How to Run Locally
 
 1. From repository root, install dependencies and build the package:
 
