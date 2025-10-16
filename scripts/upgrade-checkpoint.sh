@@ -78,6 +78,7 @@ for cmd in "${COMMANDS[@]}"; do
   if ! eval "$cmd"; then
     echo "Command failed: $cmd" >&2
     ./scripts/critical-failure.sh 120 "upgrade-checkpoint failed on: $cmd"
+    exit 1
   fi
   # commit or tag a checkpoint with the step and the short command
   short_cmd=$(echo "$cmd" | cut -c1-80)
