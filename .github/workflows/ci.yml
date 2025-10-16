@@ -13,6 +13,8 @@ jobs:
         with:
           node-version: "20"
           cache: "pnpm"
+      - name: Enable Corepack and activate pnpm
+        run: corepack enable && corepack prepare pnpm@latest --activate
       - uses: pnpm/action-setup@v2
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
