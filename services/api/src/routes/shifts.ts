@@ -83,15 +83,11 @@ export function createShiftRouter() {
     }
 
     // Check cache first
-      type Shift = z.infer<typeof createShiftInput> & {
-        id: string;
-        createdAt: string;
-        createdByRole: string;
-      };
-      const shifts = snapshot.docs.map(doc => doc.data() as Shift);
-      shiftsCache.set(cacheKey, { shifts, cachedAt: Date.now() });
-
-      return res.json({ ok: true, shifts, cached: false });
+    const cacheKey = `org_${orgId}`;
+    const cached = shiftsCache.get(cacheKey) as OrgShiftsCache | undefined;
+    
+    if (cached && Date.now() - cached.cachedAt < CACHE_TTL) {
+      return res.json({ ok: true, shifts: cached.shifts, cached: true });
     }
 
     try {
@@ -102,7 +98,12 @@ export function createShiftRouter() {
         .collection('shifts')
         .get();
 
-      const shifts = snapshot.docs.map((doc: any) => doc.data());
+      type Shift = z.infer<typeof createShiftInput> & {
+        id: string;
+        createdAt: string;
+        createdByRole: string;
+      };
+      const shifts = snapshot.docs.map(doc => doc.data() as Shift);
       shiftsCache.set(cacheKey, { shifts, cachedAt: Date.now() });
 
       return res.json({ ok: true, shifts, cached: false });
