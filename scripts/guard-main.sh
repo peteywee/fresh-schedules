@@ -1,46 +1,45 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Guard Main Content
 # Usage: scripts/guard-main.sh [target-branch]
-# Example in workflow: bash scripts/guard-main.sh main
+# Called by workflow: .github/workflows/guard-content.yml (ref: 5fe0f9cb61d7197838d84e542eb78ea7b849cf53)
 TARGET_BRANCH="${1:-main}"
 
-echo "Guard: comparing HEAD to origin/${TARGET_BRANCH}"
+echo "Guard: checking changes vs origin/${TARGET_BRANCH}"
 
-# Ensure origin and target are available
-git fetch --no-tags --prune origin "${TARGET_BRANCH}"
+# Ensure we have the target branch ref available
+git fetch --no-tags --prune origin "${TARGET_BRANCH}" || {
+  echo "Warning: git fetch failed; attempting an unshallow fetch"
+  git fetch --no-tags --prune --unshallow origin "${TARGET_BRANCH}" || true
+}
 
-# Determine changed files between current HEAD and the target branch
+# List changed files between PR HEAD and target branch
 CHANGED_FILES=$(git diff --name-only "origin/${TARGET_BRANCH}...HEAD" || true)
 
 if [[ -z "${CHANGED_FILES}" ]]; then
-  echo "No changes detected vs origin/${TARGET_BRANCH}. Nothing to guard."
-  # Fail to surface the situation in CI (adjust if you prefer success)
-  echo "::error::No changes found vs origin/${TARGET_BRANCH} - failing guard to force review."
+  echo "No changed files detected vs origin/${TARGET_BRANCH}."
+  exit 0
+fi
+
+echo "Changed files:"
+printf '%s\n' "${CHANGED_FILES}"
+
+# --- Policy checks ---
+# 1) Disallow any changes that add/modify files under docs/, notes/, or todos/ anywhere in path.
+if printf '%s\n' "${CHANGED_FILES}" | grep -E '(^|/)(docs|notes|todos)(/|$)' >/dev/null; then
+  echo "::error::Push/PR includes files under docs/, notes/, or todos/ — these are forbidden on main."
+  printf '%s\n' "${CHANGED_FILES}" | grep -E '(^|/)(docs|notes|todos)(/|$)'
   exit 1
 fi
 
-echo "Files changed (count: $(wc -w <<<"${CHANGED_FILES}") ):"
-echo "${CHANGED_FILES}"
+# 2) Disallow any file with a .place.* suffix (e.g., secrets.place.json)
+if printf '%s\n' "${CHANGED_FILES}" | grep -E '\.place\.[^/]+$' >/dev/null; then
+  echo "::error::Files with suffix .place.* are forbidden on main (use env or secure storage)."
+  printf '%s\n' "${CHANGED_FILES}" | grep -E '\.place\.[^/]+$'
+  exit 1
+fi
 
-# --- Project-specific checks go here ---
-# Examples (uncomment/adjust to fit policy):
-# 1) Prevent changes that modify protected files:
-# if echo "${CHANGED_FILES}" | grep -E '^package-lock.json|^yarn.lock' >/dev/null; then
-#   echo "::error::Lockfile changes are not allowed in this workflow."
-#   exit 1
-# fi
-#
-# 2) Require at least one change in app/ or features/:
-# if ! echo "${CHANGED_FILES}" | grep -E '^(app|features|packages)/' >/dev/null; then
-#   echo "::error::PR must modify source in app/ or features/."
-#   exit 1
-# fi
-#
-# 3) Run lightweight checks (lint/test) - only if dependencies are installed:
-# if command -v pnpm >/dev/null; then
-#   pnpm -w -s lint || { echo "::error::Lint failed"; exit 1; }
-# fi
-
-echo "Guard checks placeholder passed. Implement needed checks in this script."
+# All checks passed
+echo "Guard: policy checks passed."
 exit 0
