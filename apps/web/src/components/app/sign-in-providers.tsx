@@ -30,9 +30,9 @@ const emailSchema = z.string().email();
  * It handles form submission for the email link, including validation and status updates.
  *
  * @param {SignInProvidersProps} props - The component props.
- * @returns {JSX.Element} The rendered sign-in providers component.
+ * @returns {React.ReactElement} The rendered sign-in providers component.
  */
-export function SignInProviders({ status, onEmailSubmit }: SignInProvidersProps): JSX.Element {
+export function SignInProviders({ status, onEmailSubmit }: SignInProvidersProps): React.ReactElement {
   const [emailInput, setEmailInput] = useState('');
   const [error, setError] = useState<string | null>(null);
 

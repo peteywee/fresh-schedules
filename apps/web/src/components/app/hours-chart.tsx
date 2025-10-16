@@ -40,9 +40,9 @@ function calculateHours(schedule: WeeklySchedule): HoursBreakdown[] {
  * @param {object} props - The component props.
  * @param {HoursBreakdown[]} [props.data] - Pre-calculated hours data to display.
  * @param {WeeklySchedule} [props.schedule] - A weekly schedule to calculate hours data from. If provided, it overrides `data`.
- * @returns {JSX.Element} The rendered hours chart component.
+ * @returns {React.ReactElement} The rendered hours chart component.
  */
-export const HoursChart = memo(function HoursChart({ data, schedule }: { data?: HoursBreakdown[]; schedule?: WeeklySchedule }): JSX.Element {
+export const HoursChart = memo(function HoursChart({ data, schedule }: { data?: HoursBreakdown[]; schedule?: WeeklySchedule }): React.ReactElement {
   const computedData = useMemo(() => schedule ? calculateHours(schedule) : data || [], [data, schedule]);
   if (computedData.length === 0) {
     return (
