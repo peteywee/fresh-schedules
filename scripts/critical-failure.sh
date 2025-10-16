@@ -31,7 +31,7 @@ if command -v git >/dev/null 2>&1; then
   GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)
 fi
 
-ENTRY="{\"ts\":\"$TS\",\"code\":$CODE,\"msg\":\"$(echo "$MSG" | sed -e 's/"/\\"/g')\",\"branch\":\"$GIT_BRANCH\",\"commit\":\"$GIT_COMMIT\"}"
+ENTRY=$(jq -n --arg ts "$TS" --argjson code "$CODE" --arg msg "$MSG" --arg branch "$GIT_BRANCH" --arg commit "$GIT_COMMIT" '{ "ts": $ts, "code": $code, "msg": $msg, "branch": $branch, "commit": $commit }')
 
 # Ensure log dir exists
 mkdir -p "$(dirname "$LOGFILE")"
