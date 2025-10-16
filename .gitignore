@@ -31,6 +31,7 @@ Thumbs.db
 
 # Build artifacts
 *.tsbuildinfo
+next-env.d.ts
 
 # pnpm / package manager
 .pnpm-debug.log*

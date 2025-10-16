@@ -133,8 +133,11 @@ app.get("/context", async (req, res) => {
  * Listens on the port specified by the `PORT` environment variable, or 4002 by default.
  */
 app.listen(PORT, () => {
+  const repoRoot = getRepoRoot();
   // eslint-disable-next-line no-console
   console.log(`MCP server listening on http://localhost:${PORT}`);
+  // eslint-disable-next-line no-console
+  console.log(`Repo root: ${repoRoot}`);
   if (process.env.MCP_REPO_ROOT) {
     // eslint-disable-next-line no-console
     console.log(`Using MCP_REPO_ROOT=${process.env.MCP_REPO_ROOT}`);
