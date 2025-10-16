@@ -31,3 +31,6 @@ Thumbs.db
 
 # Build artifacts
 *.tsbuildinfo
+/firebase-debug.log
+/.idx/
+/.next/
