@@ -1,23 +1,46 @@
+/**
+ * @fileoverview A component that provides different sign-in methods for the user.
+ * It currently supports sign-in with Google (placeholder) and email link.
+ */
 "use client";
 
 import { useState, type FormEvent } from 'react';
+import { z } from "zod";
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
+/**
+ * Props for the `SignInProviders` component.
+ * @property {'idle' | 'sending'} status - The current status of the email submission process.
+ * @property {(email: string) => Promise<void>} onEmailSubmit - A callback function to handle email submission.
+ */
 export type SignInProvidersProps = {
   status: 'idle' | 'sending';
   onEmailSubmit: (email: string) => Promise<void>;
 };
 
-import { z } from "zod";
-
+/**
+ * Zod schema for validating an email address.
+ */
 const emailSchema = z.string().email();
 
-export function SignInProviders({ status, onEmailSubmit }: SignInProvidersProps) {
+/**
+ * A React component that renders sign-in options, including Google OAuth and email link.
+ * It handles form submission for the email link, including validation and status updates.
+ *
+ * @param {SignInProvidersProps} props - The component props.
+ * @returns {JSX.Element} The rendered sign-in providers component.
+ */
+export function SignInProviders({ status, onEmailSubmit }: SignInProvidersProps): JSX.Element {
   const [emailInput, setEmailInput] = useState('');
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Handles the form submission for the email sign-in.
+   * It validates the email and calls the `onEmailSubmit` callback.
+   * @param {FormEvent<HTMLFormElement>} event - The form submission event.
+   */
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!emailSchema.safeParse(emailInput).success) {

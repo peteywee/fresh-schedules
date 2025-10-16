@@ -1,21 +1,31 @@
-name: CI
-on:
-  push:
-    branches: ["main", "develop"]
-  pull_request:
-    branches: ["main", "develop"]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "20"
-          cache: "pnpm"
-      - uses: pnpm/action-setup@v2
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
-      - run: pnpm lint
-      - run: pnpm test
-      - run: pnpm build
+  - name: Setup Node.js
+    uses: actions/setup-node@v3
+    with:
+      node-version: "20"
+      cache: "pnpm"
+
+  - name: Install pnpm (pin via action)
+    uses: pnpm/action-setup@v2
+    with:
+      version: "8.8.0"        # pin to a known pnpm version used by the repo
+
+  - name: Fallback: enable corepack and prepare pnpm (no-op if already active)
+    run: corepack enable && corepack prepare pnpm@8.8.0 --activate
+
+  - name: Verify pnpm
+    run: pnpm -v
+
+  - name: Install dependencies
+    run: pnpm install --frozen-lockfile
+
+  - name: Typecheck
+    run: pnpm typecheck
+
+  - name: Lint
+    run: pnpm lint
+
+  - name: Test
+    run: pnpm test
+
+  - name: Build
+    run: pnpm build
