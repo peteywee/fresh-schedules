@@ -1,0 +1,80 @@
+# .pr_agent.toml — Qodo Merge automation for PRs
+
+[config]
+# Keep responses in US English and add a bit more patch context around diffs.
+response_language = "en-US"
+patch_extra_lines_before = 3
+patch_extra_lines_after  = 1
+log_level = "INFO"
+
+# Ignore trivial PRs by title/labels/authors (adjust as needed).
+ignore_pr_title  = ["^chore\\(deps\\):", "^docs?:", "^ci:"]
+ignore_pr_labels = ["no-ai-review"]
+ignore_pr_authors = ["dependabot[bot]", "renovate[bot]"]
+
+# If you only want automation when app code changes, use allow_only_specific_folders.
+# allow_only_specific_folders = ["app", "src", "packages", "functions"]
+
+# File/folder ignores to cut noise.
+[ignore]
+glob = [
+  "docs/**",
+  ".github/**",
+  "**/*.md",
+  "**/*.svg",
+  "**/*.png",
+  "**/*.jpg",
+  "test/**",
+  "e2e/**",
+  "**/*.spec.*",
+  "**/*.test.*",
+  "coverage/**",
+  "dist/**",
+  "build/**",
+  ".next/**",
+  ".pnpm-store/**"
+]
+
+# --- Automation triggers for GitHub App installations ---
+[github_app]
+# Run on new/reopened/ready PRs and when commits are pushed to an open PR.
+handle_pr_actions   = ["opened", "reopened", "ready_for_review", "review_requested"]
+handle_push_trigger = true
+
+# If you want feedback even on draft PRs, set to true.
+feedback_on_draft_pr = true
+
+# Tools to run automatically when a PR is opened/reopened/ready/review_requested:
+pr_commands = [
+  "/describe --pr_description.final_update_message=false",
+  "/review",
+  "/improve"
+]
+
+# Tools to run automatically on new commits pushed to the PR:
+push_commands = [
+  "/describe --pr_description.final_update_message=false",
+  "/review"
+]
+
+# --- Tool-specific tuning ---
+
+# /describe: avoid label spam; keep output succinct.
+[pr_description]
+publish_labels = false
+
+# /review: add focused guidance for your stack.
+[pr_reviewer]
+extra_instructions = """
+Project is a Next.js App Router + TypeScript + Firebase (Auth/Firestore) PWA.
+Prioritize: security of Firestore rules, auth flow gating (onboarding vs dashboard),
+performance (no blocking I/O on RSC boundaries), and clear diff-scoped suggestions.
+Flag anti-patterns: client-side secrets, missing env guards, unsafe rule conditions,
+and oversized bundles in app/* or /components.
+"""
+
+# /improve (code suggestions): keep suggestions tight and actionable.
+[pr_code_suggestions]
+num_code_suggestions_per_chunk = 3
+max_suggestions = 20
+extra_instructions = "Return minimal, directly-applicable patches with rationale; avoid speculative refactors."

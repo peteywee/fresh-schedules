@@ -73,11 +73,11 @@ export function ScheduleWizard(): JSX.Element {
     if (isNew) {
       const newShift: ShiftAssignment = {
         ...shift,
-        id: `${shift.day}-${crypto.randomUUID()}`,
-        role: DEFAULT_ROLE,
-        start: DEFAULT_START,
-        end: DEFAULT_END,
-        assignee: DEFAULT_ASSIGNEE,
+        id: `${shift.day}-${Date.now()}`,
+        role: 'New Role',
+        start: '09:00',
+        end: '17:00',
+        assignee: 'Unassigned',
       };
       setSchedule((prev) => ({ ...prev, shifts: [...prev.shifts, newShift] }));
     } else {
