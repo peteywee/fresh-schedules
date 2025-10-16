@@ -32,7 +32,7 @@ const emailSchema = z.string().email();
  * @param {SignInProvidersProps} props - The component props.
  * @returns {JSX.Element} The rendered sign-in providers component.
  */
-export function SignInProviders({ status, onEmailSubmit }: SignInProvidersProps): JSX.Element {
+export function SignInProviders({ status, onEmailSubmit }: SignInProvidersProps): React.ReactElement {
   const [emailInput, setEmailInput] = useState('');
   const [error, setError] = useState<string | null>(null);
 

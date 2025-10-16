@@ -37,7 +37,7 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
  * @param {'left' | 'right'} [props.iconPosition='left'] - The position of the icon.
  * @returns {JSX.Element} The rendered button element.
  */
-export function Button({ variant = 'primary', className, children, icon: Icon, iconPosition = 'left', ...props }: ButtonProps): JSX.Element {
+export function Button({ variant = 'primary', className, children, icon: Icon, iconPosition = 'left', ...props }: ButtonProps): React.ReactElement {
   const classes = clsx(
     'fs-button',
     variant === 'secondary' && 'secondary',
