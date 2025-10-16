@@ -12,7 +12,7 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 export function Button({ variant = 'primary', className, children, icon: Icon, iconPosition = 'left', ...props }: ButtonProps) {
   const classes = clsx(
     'fs-button',
-    variant === 'secondary' && 'fs-button--secondary',
+    variant === 'secondary' && 'secondary',
     className
   );
   return (

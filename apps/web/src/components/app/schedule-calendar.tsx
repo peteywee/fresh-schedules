@@ -19,7 +19,7 @@ export type WeeklySchedule = {
 const orderedDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 // Helper to get localized short weekday name
-function getLocalizedDayAbbreviation(day: string, locale: string = navigator.language) {
+function getLocalizedDayAbbreviation(day: string, locale: string = typeof navigator !== 'undefined' ? navigator.language : 'en-US') {
   // Find the next date that matches the given day name
   const baseDate = new Date(Date.UTC(2024, 0, 1)); // Monday, Jan 1, 2024
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -69,9 +69,14 @@ export function ScheduleCalendar({
           <div key={day} className="schedule-column">
             <h3>{getLocalizedDayAbbreviation(day)}</h3>
             {slots.length === 0 ? (
-              <div className="schedule-slot" style={{ opacity: 0.6, cursor: editable ? 'pointer' : 'default' }} onClick={() => editable && onShiftEdit?.({ id: `${day}-new`, day, role: '', start: '', end: '' })}>
+              <button
+                type="button"
+                className="schedule-slot"
+                style={{ opacity: 0.6, cursor: editable ? 'pointer' : 'default' }}
+                onClick={() => editable && onShiftEdit?.({ id: `${day}-new`, day, role: '', start: '', end: '' })}
+              >
                 <small>Add shift</small>
-              </div>
+              </button>
             ) : (
               slots.map((slot) => (
                 <div 

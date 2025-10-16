@@ -10,8 +10,8 @@ test.describe('Sign In Page', () => {
     await expect(signInTitle).toBeVisible();
 
     // Check for sign-in providers (e.g., Google, etc.)
-    const providers = page.getByRole('button', { name: /sign in with/i });
-    await expect(providers).toHaveCount(1); // Assuming at least one provider
+    const providers = page.getByRole('button', { name: /continue with/i });
+    await expect(providers).toBeVisible();
 
     // Mock sending a link if there's a magic link option
     // If there's an email input for magic link, test it

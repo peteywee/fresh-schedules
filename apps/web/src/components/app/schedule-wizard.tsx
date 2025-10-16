@@ -49,7 +49,11 @@ export function ScheduleWizard() {
       };
       setSchedule({ ...schedule, shifts: [...schedule.shifts, newShift] });
     } else {
-      console.log('Edit shift:', shift);
+      // Update the existing shift in the schedule
+      setSchedule({
+        ...schedule,
+        shifts: schedule.shifts.map(s => s.id === shift.id ? { ...s, ...shift } : s),
+      });
     }
   };
 
@@ -71,14 +75,14 @@ export function ScheduleWizard() {
         return (
           <Card title="Add shifts for the week" icon={Users}>
             <p>Click on time slots to add shifts. This step takes about 2 minutes.</p>
-            <ScheduleCalendar schedule={schedule} />
+            <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
           </Card>
         );
       case 'assign-roles':
         return (
           <Card title="Assign roles and staff" icon={CheckCircle}>
             <p>Assign specific roles and staff to each shift.</p>
-            <ScheduleCalendar schedule={schedule} />
+            <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
           </Card>
         );
       case 'review':
