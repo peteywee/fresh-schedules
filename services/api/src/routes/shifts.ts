@@ -24,6 +24,12 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 const RoleHeader = z.enum(['admin', 'manager', 'staff']);
 
+type Shift = z.infer<typeof createShiftInput> & {
+  id: string;
+  createdAt: string;
+  createdByRole: string;
+};
+
 export function createShiftRouter() {
   const router = Router();
 
@@ -97,11 +103,6 @@ export function createShiftRouter() {
         .collection('shifts')
         .get();
 
-      type Shift = z.infer<typeof createShiftInput> & {
-        id: string;
-        createdAt: string;
-        createdByRole: string;
-      };
       const shifts = snapshot.docs.map(doc => doc.data() as Shift);
       shiftsCache.set(cacheKey, { shifts, cachedAt: Date.now() });
 
