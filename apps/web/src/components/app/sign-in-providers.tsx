@@ -58,6 +58,7 @@ export function SignInProviders({ status, onEmailSubmit }: SignInProvidersProps)
         <Button
           variant="primary"
           type="button"
+          data-testid="btn-google"
           onClick={() => {
             // Placeholder for Google OAuth sign-in
             // Implement Google sign-in logic here
@@ -72,6 +73,7 @@ export function SignInProviders({ status, onEmailSubmit }: SignInProvidersProps)
           <label style={{ display: 'grid', gap: '0.35rem' }}>
             <span style={{ fontSize: '0.85rem', fontWeight: 500 }}>Work email</span>
             <input
+              data-testid="input-email"
               type="email"
               value={emailInput}
               onChange={(event) => setEmailInput(event.target.value)}
@@ -87,7 +89,7 @@ export function SignInProviders({ status, onEmailSubmit }: SignInProvidersProps)
             />
           </label>
           {error && <span style={{ color: '#f97316', fontSize: '0.8rem' }}>{error}</span>}
-          <Button type="submit" disabled={status === 'sending'}>
+          <Button data-testid="btn-send-link" type="submit" disabled={status === 'sending'}>
             {status === 'sending' ? 'Sending link…' : 'Send sign-in link'}
           </Button>
         </form>
