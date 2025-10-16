@@ -25,15 +25,18 @@ To get the project up and running on your local machine, follow these steps.
     cd fresh-schedules
     ```
 2.  **Set up environment variables:**
-    Create a `.env.local` file in the `apps/web` directory and add the necessary Firebase configuration keys. You can get these from your Firebase project settings.
-    ```
-    NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
-    NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
-    NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-    NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
+    
+    For detailed environment setup instructions, see [docs/guides/environment-setup.guide.md](docs/guides/environment-setup.guide.md).
+    
+    Quick setup:
+    ```bash
+    # Web app
+    cp apps/web/.env.example apps/web/.env.local
+    # Edit apps/web/.env.local with your Firebase config
+    
+    # API service
+    cp services/api/.env.example services/api/.env
+    # Edit services/api/.env with your Firebase Admin SDK credentials
     ```
 3.  **Install dependencies:**
     ```bash
@@ -55,7 +58,7 @@ This repository is a pnpm monorepo. The code is organized into several packages 
 -   `functions`: Firebase Cloud Functions.
 -   `docs`: Project documentation.
 -   `scripts`: Utility scripts.
--   `services`: External service configurations.
+-   `services/api`: Express API service for backend operations.
 
 ## Testing
 
