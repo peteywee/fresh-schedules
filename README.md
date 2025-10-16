@@ -21,7 +21,7 @@ To get the project up and running on your local machine, follow these steps.
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-repo/fresh-schedules.git
+    git clone https://github.com/peteywee/fresh-schedules.git
     cd fresh-schedules
     ```
 2.  **Set up environment variables:**
