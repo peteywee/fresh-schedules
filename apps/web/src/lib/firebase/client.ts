@@ -1,12 +1,25 @@
 "use client";
+/**
+ * @fileoverview Firebase client-side initialization and utility functions.
+ * This module ensures that the Firebase app is initialized only once and provides
+ * functions to access the Firebase app instance and initialize Analytics.
+ * The "use client" directive indicates that this module is intended for client-side use in a Next.js environment.
+ */
 
-import { getAnalytics, isSupported } from 'firebase/analytics';
+import { getAnalytics, isSupported, type Analytics } from 'firebase/analytics';
 import { getApp, getApps, initializeApp, type FirebaseApp } from 'firebase/app';
 
 import { firebaseConfig } from '@/lib/env';
 
 let cachedApp: FirebaseApp | null = null;
 
+/**
+ * Gets the initialized Firebase app instance.
+ * If the app is already initialized, it returns the cached instance.
+ * Otherwise, it initializes the app and caches it for future use.
+ * This pattern prevents re-initialization on hot reloads and subsequent calls.
+ * @returns {FirebaseApp} The initialized Firebase app instance.
+ */
 export function getFirebaseApp(): FirebaseApp {
   if (cachedApp) {
     return cachedApp;
@@ -16,7 +29,13 @@ export function getFirebaseApp(): FirebaseApp {
   return app;
 }
 
-export async function initAnalytics() {
+/**
+ * Initializes Firebase Analytics if it's supported by the browser.
+ * This function should be called on the client-side. It checks for the availability
+ * of the `window` object and whether Firebase Analytics is supported.
+ * @returns {Promise<Analytics | null>} A promise that resolves to the Analytics instance if initialized, otherwise null.
+ */
+export async function initAnalytics(): Promise<Analytics | null> {
   if (typeof window === 'undefined') {
     return null;
   }

@@ -1,5 +1,20 @@
+/**
+ * @fileoverview A component for displaying a weekly schedule calendar.
+ * It organizes shifts by day and allows for editing if enabled.
+ */
 import type { ReactNode } from 'react';
 
+/**
+ * Represents a single shift assignment in the schedule.
+ * @property {string} id - A unique identifier for the shift.
+ * @property {string} day - The day of the week for the shift (e.g., "Monday").
+ * @property {string} role - The role required for the shift (e.g., "Bartender").
+ * @property {string} start - The start time of the shift (e.g., "09:00").
+ * @property {string} end - The end time of the shift (e.g., "17:00").
+ * @property {string} [assignee] - The name of the person assigned to the shift.
+ * @property {string} [location] - The location of the shift.
+ * @property {ReactNode} [notes] - Any additional notes for the shift.
+ */
 export type ShiftAssignment = {
   id: string;
   day: string; // Monday ... Sunday
@@ -11,6 +26,11 @@ export type ShiftAssignment = {
   notes?: ReactNode;
 };
 
+/**
+ * Represents a full weekly schedule.
+ * @property {string} weekOf - The starting date of the week, typically a Monday in ISO date format.
+ * @property {ShiftAssignment[]} shifts - An array of shift assignments for the week.
+ */
 export type WeeklySchedule = {
   weekOf: string; // ISO date string (Monday)
   shifts: ShiftAssignment[];
@@ -18,8 +38,14 @@ export type WeeklySchedule = {
 
 const orderedDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-// Helper to get localized short weekday name
-function getLocalizedDayAbbreviation(day: string, locale: string = navigator.language) {
+/**
+ * Gets a localized short weekday name.
+ * For example, "Monday" becomes "Mon".
+ * @param {string} day - The full name of the day (e.g., "Monday").
+ * @param {string} [locale=navigator.language] - The locale to use for formatting.
+ * @returns {string} The abbreviated day name.
+ */
+function getLocalizedDayAbbreviation(day: string, locale: string = navigator.language): string {
   // Find the next date that matches the given day name
   const baseDate = new Date(Date.UTC(2024, 0, 1)); // Monday, Jan 1, 2024
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -31,19 +57,35 @@ function getLocalizedDayAbbreviation(day: string, locale: string = navigator.lan
   return new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date);
 }
 
-function formatRange(start: string, end: string) {
+/**
+ * Formats a time range string.
+ * @param {string} start - The start time.
+ * @param {string} end - The end time.
+ * @returns {string} The formatted time range (e.g., "09:00 – 17:00").
+ */
+function formatRange(start: string, end: string): string {
   return `${start} – ${end}`;
 }
 
-export function ScheduleCalendar({ 
-  schedule, 
+/**
+ * A React component that displays a weekly schedule in a calendar grid format.
+ * Shifts are grouped by day, and each shift can be clicked to trigger an edit action.
+ *
+ * @param {object} props - The component props.
+ * @param {WeeklySchedule} props.schedule - The schedule data to display.
+ * @param {(shift: ShiftAssignment) => void} [props.onShiftEdit] - Callback function when a shift is clicked for editing.
+ * @param {boolean} [props.editable=false] - If true, allows shifts to be edited.
+ * @returns {JSX.Element} The rendered schedule calendar component.
+ */
+export function ScheduleCalendar({
+  schedule,
   onShiftEdit,
-  editable = false 
-}: { 
-  schedule: WeeklySchedule; 
+  editable = false
+}: {
+  schedule: WeeklySchedule;
   onShiftEdit?: (shift: ShiftAssignment) => void;
   editable?: boolean;
-}) {
+}): JSX.Element {
   const grouped = orderedDays.map((day) => ({
     day,
     slots: schedule.shifts.filter((shift) => shift.day === day),

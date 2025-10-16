@@ -1,3 +1,7 @@
+/**
+ * @fileoverview A multi-step wizard component for creating a weekly schedule.
+ * It guides the user through selecting a week, adding shifts, assigning roles, and reviewing the schedule.
+ */
 "use client";
 
 import { useState } from 'react';
@@ -7,6 +11,9 @@ import { Card } from '@/components/ui/card';
 import { ScheduleCalendar, type WeeklySchedule, type ShiftAssignment } from './schedule-calendar';
 import { HoursChart } from './hours-chart';
 
+/**
+ * The type of steps in the schedule creation wizard.
+ */
 type WizardStep = 'select-week' | 'add-shifts' | 'assign-roles' | 'review';
 
 // Default values used when creating a new shift
@@ -15,7 +22,12 @@ const DEFAULT_START: string = '09:00';
 const DEFAULT_END: string = '17:00';
 const DEFAULT_ASSIGNEE: string | undefined = undefined;
 
-export function ScheduleWizard() {
+/**
+ * A wizard component that guides the user through the process of creating a schedule.
+ * It manages the state of the schedule and the current step in the wizard.
+ * @returns {JSX.Element} The rendered schedule wizard component.
+ */
+export function ScheduleWizard(): JSX.Element {
   const [currentStep, setCurrentStep] = useState<WizardStep>('select-week');
   const [schedule, setSchedule] = useState<WeeklySchedule>({
     weekOf: new Date().toISOString().slice(0, 10),
@@ -31,18 +43,30 @@ export function ScheduleWizard() {
 
   const currentStepIndex = steps.findIndex(s => s.id === currentStep);
 
+  /**
+   * Navigates to the next step in the wizard.
+   */
   const nextStep = () => {
     if (currentStepIndex < steps.length - 1) {
       setCurrentStep(steps[currentStepIndex + 1].id as WizardStep);
     }
   };
 
+  /**
+   * Navigates to the previous step in the wizard.
+   */
   const prevStep = () => {
     if (currentStepIndex > 0) {
       setCurrentStep(steps[currentStepIndex - 1].id as WizardStep);
     }
   };
 
+  /**
+   * Handles editing or creating a shift.
+   * If the shift ID contains 'new', it creates a new shift with default values.
+   * Otherwise, it updates the existing shift.
+   * @param {ShiftAssignment} shift - The shift to be edited or created.
+   */
   const handleShiftEdit = (shift: ShiftAssignment) => {
     if (shift.id.includes('new')) {
       const newShift: ShiftAssignment = {
@@ -63,6 +87,10 @@ export function ScheduleWizard() {
     }
   };
 
+  /**
+   * Renders the content for the current step of the wizard.
+   * @returns {JSX.Element | null} The JSX element for the current step, or null.
+   */
   const renderStepContent = () => {
     switch (currentStep) {
       case 'select-week':
@@ -81,14 +109,13 @@ export function ScheduleWizard() {
         return (
           <Card title="Add shifts for the week" icon={Users}>
             <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
-            <ScheduleCalendar schedule={schedule} />
           </Card>
         );
       case 'assign-roles':
         return (
           <Card title="Assign roles and staff" icon={CheckCircle}>
             <p>Assign specific roles and staff to each shift.</p>
-            <ScheduleCalendar schedule={schedule} />
+            <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
           </Card>
         );
       case 'review':
