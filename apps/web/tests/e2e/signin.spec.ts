@@ -18,7 +18,8 @@ test.describe('Sign In Page', () => {
     const emailInput = page.getByLabel(/email/i);
     if (await emailInput.isVisible()) {
       await emailInput.fill('test@example.com');
-      await page.getByRole('button', { name: /send link/i }).click();
+      // button text in the app is "Send sign-in link"; use a flexible regex to match variants
+      await page.getByRole('button', { name: /send.*link/i }).click();
       await expect(page.getByText(/check your email/i)).toBeVisible();
     }
   });
