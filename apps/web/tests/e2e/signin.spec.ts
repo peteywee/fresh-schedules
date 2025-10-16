@@ -33,29 +33,23 @@ test.describe('Sign In Page', () => {
       await expect(sendBtn).toBeVisible();
       await sendBtn.click();
 
-      // Wait for explicit confirmation card or fallback to heading/body
-      const confirmationCard = page.getByTestId('confirmation-card');
-      const confirmationHeading = page.getByTestId('confirmation-heading');
-      const confirmationBody = page.getByTestId('confirmation-body');
+  // Wait for explicit confirmation card or fallback to heading/body
 
+      // Prefer explicit confirmation test id first (fast path)
+      const confirmationCard = page.getByTestId('confirmation-card');
       if (await confirmationCard.count()) {
         await expect(confirmationCard.first()).toBeVisible({ timeout: 15_000 });
-      } else if (await confirmationHeading.count()) {
-        await expect(confirmationHeading.first()).toBeVisible({ timeout: 15_000 });
-      } else if (await confirmationBody.count()) {
-        await expect(confirmationBody.first()).toBeVisible({ timeout: 15_000 });
       } else {
-        // last-resort: role=alert or confirmation text
-        const alertRole = page.getByRole('alert').first();
-        try {
-          await alertRole.waitFor({ state: 'visible', timeout: 8_000 });
-        } catch {
-          // fallback to text-based confirmation search
-          const confirmation = page
-            .locator('h1,h2,h3,p,div')
-            .filter({ hasText: /check your (email|inbox)|we sent (you )?a (magic|sign[-\s]?in) link|email (sent|on its way)/i })
-            .first();
-          await expect(confirmation).toBeVisible({ timeout: 10_000 });
+        // Fallbacks: heading or body
+        const confirmationHeading = page.getByTestId('confirmation-heading');
+        const confirmationBody = page.getByTestId('confirmation-body');
+        if (await confirmationHeading.count()) {
+          await expect(confirmationHeading.first()).toBeVisible({ timeout: 8_000 });
+        } else if (await confirmationBody.count()) {
+          await expect(confirmationBody.first()).toBeVisible({ timeout: 8_000 });
+        } else {
+          // If none of the test ids exist for some reason, still assert confirmation text appears
+          await expect(page.locator('body')).toContainText(/check your (email|inbox)|we sent (you )?a (magic|sign[-\s]?in) link|email (sent|on its way)/i, { timeout: 10_000 });
         }
       }
     }

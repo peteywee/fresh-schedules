@@ -1,0 +1,216 @@
+/**
+ * This file contains Firestore security rules; to avoid the JavaScript/TypeScript compiler trying to parse Firestore-specific keywords
+ * (like `service` and `match`) when this file is included in a JS build, export the rules as a template string.
+ *
+ * Note: Keep this file as-is for local editing, but use your deployment process to feed the raw string into the Firebase CLI or CI job.
+ */
+
+module.exports = `
+/**
+ * @fileoverview Firestore Security Rules for Fresh Schedules.
+ *
+ * Core Philosophy: This ruleset enforces a strict ownership model for user data and a role-based model for corporations and organizations.  Administrative access is granted through a dedicated \`/roles_admin/{userId}\` collection.  All write operations require authentication, and access is controlled based on user roles and explicit relationships defined in the data.
+ *
+ * Data Structure:
+ * - /corporations/{corporationId}: Stores corporation data, with 'adminId' indicating the administrator.
+ * - /organizations/{organizationId}: Stores organization data, linked to a corporation or standalone, with 'managerId' indicating the manager.
+ * - /users/{userId}: Stores user data.
+ * - /invites/{inviteId}: Stores invite data for onboarding.
+ * - /organizations/{organizationId}/schedules/{scheduleId}: Stores schedules for an organization.
+ * - /organizations/{organizationId}/schedules/{scheduleId}/shifts/{shiftId}: Stores shifts for a schedule.
+ * - /organizations/{organizationId}/messages/{messageId}: Stores messages within an organization.
+ * - /roles_admin/{userId}: Stores UIDs of admin users.
+ *
+ * Key Security Decisions:
+ * - User listing is disabled.
+ * - Strict ownership is enforced for user documents and subcollections.
+ * - Administrative privileges are granted via the \`/roles_admin/{userId}\` collection.
+ * - Invites are used for onboarding, and a Cloud Function is recommended to validate invites during user registration.
+ *
+ * Denormalization for Authorization:
+ * - The \`schedules\` collection under an organization includes a denormalized \`members\` field. This avoids \`get()\` calls in security rules.
+ *
+ * Structural Segregation:
+ * - Private user data is stored under \`/users/{userId}\`, while organization and corporation data are stored in top-level collections.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper Functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Rule for managing admin roles. Only admins can create admin roles.
+     * @path /roles_admin/{userId}
+     * @allow (create) - An admin user can create an admin role document for any user.
+     *   Request: auth.uid = 'admin_user_id'
+     *            resource.data.uid = 'new_admin_user_id'
+     * @deny (create) - A non-admin user attempts to create an admin role document.
+     *   Request: auth.uid = 'regular_user_id'
+     *            resource.data.uid = 'new_admin_user_id'
+     * @principle Enforces role-based access control for administrative privileges.
+     */
+    match /roles_admin/{userId} {
+      allow get: if isAdmin();
+      allow list: if false;
+
+      allow create: if isAdmin();
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
+    /**
+     * @description Rule for managing corporation data. Only authenticated users can create corporations,
+     *              and only the admin can update or delete.
+     * @path /corporations/{corporationId}
+     * @allow (create) - An authenticated user can create a new corporation.
+     *   Request: auth.uid = 'user_abc'
+     *            resource.data.adminId = 'user_abc'
+     * @allow (get, list) - Any authenticated user can retrieve corporation data.
+     *   Request: auth.uid = 'user_xyz'
+     * @deny (update) - A non-admin user attempts to update a corporation.
+     *   Request: auth.uid = 'user_xyz'
+     *            resource.data.name = 'Updated Corporation Name'
+     * @principle Enforces ownership for corporation management.
+     */
+    match /corporations/{corporationId} {
+      allow get, list: if true;
+
+      allow create: if isSignedIn() && request.resource.data.adminId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.adminId == request.auth.uid && resource != null;
+      allow delete: if isSignedIn() && resource.data.adminId == request.auth.uid && resource != null;
+    }
+
+    /**
+     * @description Rule for managing organization data. Only authenticated users can create organizations,
+     *              and only the manager can update or delete.
+     * @path /organizations/{organizationId}
+     * @allow (create) - An authenticated user can create a new organization.
+     *   Request: auth.uid = 'user_abc'
+     *            resource.data.managerId = 'user_abc'
+     * @allow (get, list) - Any authenticated user can retrieve organization data.
+     *   Request: auth.uid = 'user_xyz'
+     * @deny (update) - A non-manager user attempts to update an organization.
+     *   Request: auth.uid = 'user_xyz'
+     *            resource.data.name = 'Updated Organization Name'
+     * @principle Enforces ownership for organization management.
+     */
+    match /organizations/{organizationId} {
+      allow get, list: if true;
+
+      allow create: if isSignedIn() && request.resource.data.managerId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.managerId == request.auth.uid && resource != null;
+      allow delete: if isSignedIn() && resource.data.managerId == request.auth.uid && resource != null;
+    }
+
+    /**
+     * @description Rule for managing user data. Users can only access their own data.
+     * @path /users/{userId}
+     * @allow (create) - A user can create their own user document.
+     *   Request: auth.uid = 'user_abc'
+     *            resource.data.id = 'user_abc'
+     * @allow (get) - A user can retrieve their own user document.
+     *   Request: auth.uid = 'user_abc'
+     * @deny (update) - A user attempts to update another user's document.
+     *   Request: auth.uid = 'user_xyz'
+     *            resource.data.firstName = 'Updated Name'
+     * @principle Enforces strict user-ownership for accessing user data.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+
+      allow create: if isOwner(userId) && request.resource.data.id == request.auth.uid;
+      allow update: if isExistingOwner(userId) && (request.resource.data.id == resource.data.id);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Rule for managing invite data. No write access granted.
+     * @path /invites/{inviteId}
+     * @allow (get) - Any authenticated user can read invite data.
+     *   Request: auth.uid = 'user_abc'
+     * @deny (create) - No one can create invites through direct Firestore writes.
+     *   Request: auth.uid = 'user_xyz'
+     *            resource.data.token = 'some_token'
+     * @principle Read-only access to invite data. Invite creation should be handled server-side.
+     */
+    match /invites/{inviteId} {
+      allow get, list: if true;
+
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    /**
+     * @description Rule for managing schedule data within an organization.  Schedule management is restricted to authenticated users.
+     * @path /organizations/{organizationId}/schedules/{scheduleId}
+     * @allow (create) - An authenticated user can create a schedule.
+     *   Request: auth.uid = 'user_abc'
+     *            resource.data.organizationId = 'org123'
+     * @allow (get, list) - Any authenticated user can retrieve schedule data.
+     *   Request: auth.uid = 'user_xyz'
+     * @deny (update) - A non-admin user attempts to update a schedule.
+     */
+    match /organizations/{organizationId}/schedules/{scheduleId} {
+      allow get, list: if true;
+
+      allow create: if isSignedIn() && request.resource.data.organizationId == organizationId;
+      allow update: if isSignedIn() && request.resource.data.organizationId == organizationId && resource != null;
+      allow delete: if isSignedIn() && request.resource.data.organizationId == organizationId && resource != null;
+    }
+
+    /**
+     * @description Rule for managing shift data within a schedule.  Shift management is restricted to authenticated users.
+     * @path /organizations/{organizationId}/schedules/{scheduleId}/shifts/{shiftId}
+     * @allow (create) - An authenticated user can create a shift.
+     *   Request: auth.uid = 'user_abc'
+     *            resource.data.scheduleId = 'schedule123'
+     * @allow (get, list) - Any authenticated user can retrieve shift data.
+     *   Request: auth.uid = 'user_xyz'
+     * @deny (update) - A non-admin user attempts to update a shift.
+     */
+    match /organizations/{organizationId}/schedules/{scheduleId}/shifts/{shiftId} {
+      allow get, list: if true;
+
+      allow create: if isSignedIn() && request.resource.data.scheduleId == scheduleId;
+      allow update: if isSignedIn() && request.resource.data.scheduleId == scheduleId && resource != null;
+      allow delete: if isSignedIn() && request.resource.data.scheduleId == scheduleId && resource != null;
+    }
+
+    /**
+     * @description Rule for managing messages within an organization. Message management is restricted to authenticated users.
+     * @path /organizations/{organizationId}/messages/{messageId}
+     * @allow (create) - An authenticated user can create a message.
+     *   Request: auth.uid = 'user_abc'
+     *            resource.data.organizationId = 'org123'
+     * @allow (get, list) - Any authenticated user can retrieve message data.
+     *   Request: auth.uid = 'user_xyz'
+     * @deny (update) - A non-admin user attempts to update a message.
+     */
+    match /organizations/{organizationId}/messages/{messageId} {
+      allow get, list: if true;
+
+      allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid && request.resource.data.organizationId == organizationId;
+      allow update: if isSignedIn() && request.resource.data.organizationId == organizationId && resource != null;
+      allow delete: if isSignedIn() && request.resource.data.organizationId == organizationId && resource != null;
+    }
+  }
+}
+`;

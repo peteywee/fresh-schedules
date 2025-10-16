@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, memo, useMemo, lazy, Suspense } from "react";
 import { Calendar, Users, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,6 +10,13 @@ import {
   type ShiftAssignment,
 } from "./schedule-calendar";
 import { HoursChart } from "./hours-chart";
+import { useScheduleState } from "@/hooks/useScheduleState";
+
+// Lazy load step components for better performance
+const SelectWeekStep = lazy(() => import("./wizard-steps/select-week-step").then(module => ({ default: module.SelectWeekStep })));
+const AddShiftsStep = lazy(() => import("./wizard-steps/add-shifts-step").then(module => ({ default: module.AddShiftsStep })));
+const AssignRolesStep = lazy(() => import("./wizard-steps/assign-roles-step").then(module => ({ default: module.AssignRolesStep })));
+const ReviewStep = lazy(() => import("./wizard-steps/review-step").then(module => ({ default: module.ReviewStep })));
 
 /**
  * The type of steps in the schedule creation wizard.
@@ -26,15 +33,9 @@ const DEFAULT_ASSIGNEE: string | undefined = undefined;
  * A wizard component that guides the user through the process of creating a schedule.
  * It manages the state of the schedule and the current step in the wizard.
  */
-export function ScheduleWizard(): JSX.Element {
-  const [currentStep, setCurrentStep] = useState<WizardStep>("select-week");
-  const [schedule, setSchedule] = useState<WeeklySchedule>({
-    weekOf: new Date().toISOString().slice(0, 10),
-    shifts: [],
-  });
-
-  // transient state for assigning/editing a specific shift (placeholder for modal/form)
-  const [editingShift, setEditingShift] = useState<ShiftAssignment | null>(null);
+export const ScheduleWizard = memo(function ScheduleWizard(): JSX.Element {
+  const { state, dispatch, nextStep, prevStep } = useScheduleState();
+  const { currentStep, schedule, editingShift } = state;
 
   const steps = [
     { id: "select-week", title: "Select Week", icon: Calendar },
@@ -46,29 +47,11 @@ export function ScheduleWizard(): JSX.Element {
   const currentStepIndex = steps.findIndex((s) => s.id === currentStep);
 
   /**
-   * Navigates to the next step in the wizard.
-   */
-  const nextStep = () => {
-    if (currentStepIndex < steps.length - 1) {
-      setCurrentStep(steps[currentStepIndex + 1].id as WizardStep);
-    }
-  };
-
-  /**
-   * Navigates to the previous step in the wizard.
-   */
-  const prevStep = () => {
-    if (currentStepIndex > 0) {
-      setCurrentStep(steps[currentStepIndex - 1].id as WizardStep);
-    }
-  };
-
-  /**
    * Handles editing or creating a shift.
    * If the shift ID contains 'new', it creates a new shift with default values.
    * Otherwise, it updates the existing shift.
    */
-  const handleShiftEdit = (shift: ShiftAssignment) => {
+  const handleShiftEdit = useCallback((shift: ShiftAssignment) => {
     const isNew = typeof shift.id === "string" && shift.id.includes("new");
     if (isNew) {
       const newShift: ShiftAssignment = {
@@ -79,83 +62,70 @@ export function ScheduleWizard(): JSX.Element {
         end: '17:00',
         assignee: 'Unassigned',
       };
-      setSchedule((prev) => ({ ...prev, shifts: [...prev.shifts, newShift] }));
+      dispatch({ type: 'ADD_SHIFT', payload: newShift });
     } else {
-      setSchedule((prev) => ({
-        ...prev,
-        shifts: prev.shifts.map((s) => (s.id === shift.id ? { ...s, ...shift } : s)),
-      }));
+      dispatch({ type: 'UPDATE_SHIFT', payload: shift });
     }
-  };
+  }, [dispatch]);
 
   /**
    * Opens assignment UI for a shift (modal or inline form).
    * Currently stores the editing shift in state; implement UI as needed.
    */
-  const handleShiftAssign = (shift: ShiftAssignment) => {
-    setEditingShift(shift);
+  const handleShiftAssign = useCallback((shift: ShiftAssignment) => {
+    dispatch({ type: 'SET_EDITING_SHIFT', payload: shift });
     // TODO: open modal or inline form to assign role/assignee; after assignment, call handleShiftEdit(updatedShift)
     // For now, this is a placeholder to indicate the intent.
     console.debug("Opening assign UI for shift:", shift);
-  };
+  }, [dispatch]);
 
   /**
    * Renders the content for the current step of the wizard.
    */
-  const renderStepContent = (): JSX.Element | null => {
+  const renderStepContent = useMemo((): JSX.Element | null => {
     switch (currentStep) {
       case "select-week":
         return (
-          <Card title="Choose the week to schedule">
-            <p>Select the starting date for your weekly schedule.</p>
-            <input
-              aria-label="Week start"
-              type="date"
-              value={schedule.weekOf}
-              onChange={(e) => setSchedule({ ...schedule, weekOf: e.target.value })}
+          <Suspense fallback={<div>Loading...</div>}>
+            <SelectWeekStep
+              schedule={schedule}
+              onShiftEdit={handleShiftEdit}
+              onWeekChange={(weekOf) => dispatch({ type: 'UPDATE_SCHEDULE', payload: { weekOf } })}
             />
-            <div className="mt-4">
-              <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
-            </div>
-          </Card>
+          </Suspense>
         );
 
       case "add-shifts":
         return (
-          <Card title="Add shifts for the week">
-            <ScheduleCalendar schedule={schedule} onShiftEdit={handleShiftEdit} editable />
-          </Card>
+          <Suspense fallback={<div>Loading...</div>}>
+            <AddShiftsStep
+              schedule={schedule}
+              onShiftEdit={handleShiftEdit}
+            />
+          </Suspense>
         );
 
       case "assign-roles":
         return (
-          <Card title="Assign roles and staff">
-            <p>Assign specific roles and staff to each shift.</p>
-            <ScheduleCalendar
+          <Suspense fallback={<div>Loading...</div>}>
+            <AssignRolesStep
               schedule={schedule}
               onShiftEdit={handleShiftAssign}
-              editable
             />
-          </Card>
+          </Suspense>
         );
 
       case "review":
         return (
-          <div className="fs-grid">
-            <Card title="Schedule Overview">
-              <ScheduleCalendar schedule={schedule} />
-            </Card>
-
-            <Card title="Hours Summary">
-              <HoursChart schedule={schedule} />
-            </Card>
-          </div>
+          <Suspense fallback={<div>Loading...</div>}>
+            <ReviewStep schedule={schedule} />
+          </Suspense>
         );
 
       default:
         return null;
     }
-  };
+  }, [currentStep, schedule, handleShiftEdit, handleShiftAssign, dispatch]);
 
   return (
     <div className="fs-card" role="region" aria-label="Schedule wizard">
@@ -174,11 +144,11 @@ export function ScheduleWizard(): JSX.Element {
                 className={`wizard-step ${isActive ? "active" : ""} ${
                   isCompleted ? "completed" : ""
                 }`}
-                onClick={() => setCurrentStep(step.id as WizardStep)}
+                onClick={() => dispatch({ type: 'SET_STEP', payload: step.id as WizardStep })}
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
-                    setCurrentStep(step.id as WizardStep);
+                    dispatch({ type: 'SET_STEP', payload: step.id as WizardStep });
                   }
                 }}
               >
@@ -190,7 +160,7 @@ export function ScheduleWizard(): JSX.Element {
         </div>
       </header>
 
-      <div className="wizard-content">{renderStepContent()}</div>
+      <div className="wizard-content">{renderStepContent}</div>
 
       <footer className="wizard-footer">
         <Button
@@ -213,4 +183,4 @@ export function ScheduleWizard(): JSX.Element {
       </footer>
     </div>
   );
-}
+});
