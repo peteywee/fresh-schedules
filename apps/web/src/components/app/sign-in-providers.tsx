@@ -28,10 +28,8 @@ export function SignInProviders({ status, onEmailSubmit }: SignInProvidersProps)
     await onEmailSubmit(emailInput.trim());
   }
 
-  // TODO: This component had malformed JSX that was fixed as part of the dependency update.
-  // This should be addressed in a separate commit.
   return (
-    <div className="fs-grid" style={{ gap: '1rem' }}>
+    <div className="space-y-4">
       <Card title="Continue with Google" description="Single tap sign-in for Google Workspace teams.">
         {/* TODO: Implement Google OAuth flow here */}
         <Button
