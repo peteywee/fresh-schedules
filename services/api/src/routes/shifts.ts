@@ -98,12 +98,7 @@ export function createShiftRouter() {
         .collection('shifts')
         .get();
 
-      type Shift = z.infer<typeof createShiftInput> & {
-        id: string;
-        createdAt: string;
-        createdByRole: string;
-      };
-      const shifts = snapshot.docs.map((doc: any) => doc.data() as Shift);
+      const shifts = snapshot.docs.map((doc: any) => doc.data() as CachedShift);
       shiftsCache.set(cacheKey, { shifts, cachedAt: Date.now() });
 
       return res.json({ ok: true, shifts, cached: false });
