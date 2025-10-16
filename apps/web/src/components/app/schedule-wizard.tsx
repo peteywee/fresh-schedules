@@ -42,10 +42,10 @@ export function ScheduleWizard() {
       const newShift: ShiftAssignment = {
         ...shift,
         id: `${shift.day}-${Date.now()}`,
-        role: DEFAULT_ROLE,
-        start: DEFAULT_START,
-        end: DEFAULT_END,
-        assignee: DEFAULT_ASSIGNEE,
+        role: 'New Role',
+        start: '09:00',
+        end: '17:00',
+        assignee: 'Unassigned',
       };
       setSchedule({ ...schedule, shifts: [...schedule.shifts, newShift] });
     } else {
