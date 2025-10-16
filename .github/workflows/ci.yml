@@ -4,18 +4,38 @@ on:
     branches: ["main", "develop"]
   pull_request:
     branches: ["main", "develop"]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
         with:
           node-version: "20"
           cache: "pnpm"
+
+      # Ensure pnpm is installed and available (pin to a known version)
       - uses: pnpm/action-setup@v2
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
-      - run: pnpm lint
-      - run: pnpm test
-      - run: pnpm build
+        with:
+          version: "8"                # pin major version; change if project requires a different version
+
+      # Fail fast if pnpm is not available
+      - name: Verify pnpm
+        run: pnpm -v
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
