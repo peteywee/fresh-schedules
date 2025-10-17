@@ -83,15 +83,20 @@ export function createShiftRouter() {
     }
 
     // Check cache first
-      type Shift = z.infer<typeof createShiftInput> & {
-        id: string;
-        createdAt: string;
-        createdByRole: string;
-      };
-      const shifts = snapshot.docs.map(doc => doc.data() as Shift);
-      shiftsCache.set(cacheKey, { shifts, cachedAt: Date.now() });
-
-      return res.json({ ok: true, shifts, cached: false });
+    const cacheKey = `org_${orgId}`;
+    const cached = shiftsCache.get(cacheKey);
+    
+    // Type guard: OrgShiftsCache has required 'shifts' array and required 'cachedAt'
+    const isOrgCache = (val: CachedShift | OrgShiftsCache | undefined): val is OrgShiftsCache => {
+      return val !== undefined && 
+             'shifts' in val && 
+             Array.isArray(val.shifts) && 
+             'cachedAt' in val && 
+             typeof val.cachedAt === 'number';
+    };
+    
+    if (isOrgCache(cached) && Date.now() - cached.cachedAt < CACHE_TTL) {
+      return res.json({ ok: true, shifts: cached.shifts, cached: true });
     }
 
     try {
@@ -102,14 +107,19 @@ export function createShiftRouter() {
         .collection('shifts')
         .get();
 
-      const shifts = snapshot.docs.map((doc: any) => doc.data());
+      type Shift = z.infer<typeof createShiftInput> & {
+        id: string;
+        createdAt: string;
+        createdByRole: string;
+      };
+      const shifts = snapshot.docs.map(doc => doc.data() as Shift);
       shiftsCache.set(cacheKey, { shifts, cachedAt: Date.now() });
 
       return res.json({ ok: true, shifts, cached: false });
     } catch (error) {
       console.warn('Firestore query failed, using cache if available', error);
       // eslint-disable-next-line no-console
-      if (cached) {
+      if (isOrgCache(cached)) {
         return res.json({ ok: true, shifts: cached.shifts, cached: true, fallback: true });
       }
       return res.status(500).json({ ok: false, error: 'Failed to retrieve shifts' });
