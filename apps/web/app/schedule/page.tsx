@@ -1,6 +1,10 @@
-import { ScheduleWizard } from '@/components/app/schedule-wizard';
+"use client"
+import dynamic from 'next/dynamic'
 
-export const metadata = { title: 'Schedule · Fresh Schedules' };
+const ScheduleWizard = dynamic(
+  () => import('@/components/app/schedule-wizard').then(mod => mod.ScheduleWizard),
+  { ssr: false }
+)
 
 export default function SchedulePage() {
   return <ScheduleWizard />;
