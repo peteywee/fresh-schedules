@@ -86,7 +86,7 @@ export const ScheduleCalendar = memo(function ScheduleCalendar({
   schedule: WeeklySchedule;
   onShiftEdit?: (shift: ShiftAssignment) => void;
   editable?: boolean;
-}): JSX.Element {
+}): React.ReactElement {
   const grouped = useMemo(() => orderedDays.map((day) => ({
     day,
     slots: schedule.shifts.filter((shift) => shift.day === day),
