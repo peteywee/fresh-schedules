@@ -29,7 +29,7 @@ export type CardProps = {
  * a main content area, and an optional footer.
  *
  * @param {CardProps} props - The component props.
- * @returns {JSX.Element} The rendered card component.
+ * @returns {React.ReactElement} The rendered card component.
  */
 export function Card({ title, description, children, footer, icon: Icon, loading }: CardProps): React.ReactElement {
   return (

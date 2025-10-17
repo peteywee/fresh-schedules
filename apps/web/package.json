@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "clsx": "^2.1.1",
+<<<<<<< HEAD
     "firebase": "12.4.0",
     "lucide-react": "^0.545.0",
     "next": "15.5.5",
@@ -26,5 +27,19 @@
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "typescript": "5.9.3"
+=======
+    "firebase": "^12.4.0",
+    "lucide-react": "^0.545.0",
+    "next": "^15.5.5",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "@types/node": "20.11.30",
+    "@types/react": "^19.2.2",
+    "typescript": "5.5.4"
+>>>>>>> 80dd05779e17e22bd0ad69918b9637bf74c31010
   }
 }

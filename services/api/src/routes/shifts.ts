@@ -96,8 +96,18 @@ export function createShiftRouter() {
 
     // Check cache first
     const cacheKey = `org_${orgId}`;
-    const cached = shiftsCache.get(cacheKey) as OrgShiftsCache | undefined;
-    if (cached && (Date.now() - cached.cachedAt) < CACHE_TTL) {
+    const cached = shiftsCache.get(cacheKey);
+    
+    // Type guard: OrgShiftsCache has required 'shifts' array and required 'cachedAt'
+    const isOrgCache = (val: CachedShift | OrgShiftsCache | undefined): val is OrgShiftsCache => {
+      return val !== undefined && 
+             'shifts' in val && 
+             Array.isArray(val.shifts) && 
+             'cachedAt' in val && 
+             typeof val.cachedAt === 'number';
+    };
+    
+    if (isOrgCache(cached) && Date.now() - cached.cachedAt < CACHE_TTL) {
       return res.json({ ok: true, shifts: cached.shifts, cached: true });
     }
 
@@ -120,7 +130,8 @@ export function createShiftRouter() {
       return res.json({ ok: true, shifts, cached: false });
     } catch (error) {
       console.warn('Firestore query failed, using cache if available', error);
-      if (cached) {
+      // eslint-disable-next-line no-console
+      if (isOrgCache(cached)) {
         return res.json({ ok: true, shifts: cached.shifts, cached: true, fallback: true });
       }
       return res.status(500).json({ ok: false, error: 'Failed to retrieve shifts' });

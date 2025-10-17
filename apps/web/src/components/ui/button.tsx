@@ -35,7 +35,7 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
  * @param {ReactNode} props.children - The content to be displayed inside the button.
  * @param {LucideIcon} [props.icon] - The icon to be displayed.
  * @param {'left' | 'right'} [props.iconPosition='left'] - The position of the icon.
- * @returns {JSX.Element} The rendered button element.
+ * @returns {React.ReactElement} The rendered button element.
  */
 export function Button({ variant = 'primary', className, children, icon: Icon, iconPosition = 'left', ...props }: ButtonProps): React.ReactElement {
   const classes = clsx(
