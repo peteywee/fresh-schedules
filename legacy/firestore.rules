@@ -1,0 +1,58 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthed() {
+      return request.auth != null;
+    }
+
+    function isOrgMember(orgId) {
+      return isAuthed() &&
+        exists(/databases/$(database)/documents/orgs/$(orgId)/members/$(request.auth.uid));
+    }
+
+    function roleOf(orgId) {
+      return get(/databases/$(database)/documents/orgs/$(orgId)/members/$(request.auth.uid)).data.role;
+    }
+
+    function hasOrgRole(orgId, roles) {
+      return isOrgMember(orgId) && roleOf(orgId) in roles;
+    }
+    
+    // Weeks (publish state)
+    match /orgs/{orgId}/weeks/{weekKey} {
+      allow read: if isOrgMember(orgId);
+      allow create, update: if hasOrgRole(orgId, ['admin','manager']);
+      allow delete: if false;
+    }
+
+    // Org Alerts
+    match /orgs/{orgId}/alerts/{alertId} {
+      allow read: if isOrgMember(orgId);
+      allow create, update: if hasOrgRole(orgId, ['admin','manager']);
+      allow delete: if false; // resolved flag only
+    }
+
+    // Shift Templates
+    match /orgs/{orgId}/shiftTemplates/{tid} {
+      allow read: if isOrgMember(orgId);
+      allow create, update, delete: if hasOrgRole(orgId, ['admin','manager']);
+    }
+
+    // Shifts
+    match /orgs/{orgId}/shifts/{sid} {
+      allow read: if isOrgMember(orgId);
+      allow create, update: if hasOrgRole(orgId, ['admin','manager']);
+      allow delete: if hasOrgRole(orgId, ['admin','manager']);
+    }
+
+    // Timesheets
+    match /orgs/{orgId}/timesheets/{tsId} {
+      // Staff can create their own clock-ins; manager/admin can update/approve
+      allow read: if isOrgMember(orgId);
+      allow create: if isOrgMember(orgId) && request.resource.data.uid == request.auth.uid;
+      allow update: if hasOrgRole(orgId, ['admin','manager']) || // manager adjustments
+                    (isOrgMember(orgId) && request.resource.data.uid == request.auth.uid && !resource.data.approved);
+      allow delete: if false;
+    }
+  }
+}

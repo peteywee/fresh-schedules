@@ -1,0 +1,39 @@
+# Node / Tooling
+node_modules/
+.pnpm-store/
+dist/
+build/
+.next/
+.cache/
+coverage/
+*.log
+
+# Env
+.env
+.env.local
+.env.*.local
+*.env
+.firebase/
+.firebaserc
+
+# IDE/OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# We DO track docs/notes/todos on develop. Main is protected by guard script/CI.
+# Allow essentials
+!README.md
+!CHANGELOG.md
+
+# Build artifacts
+*.tsbuildinfo
+/firebase-debug.log
+/.idx/
+/.next/
+/firebase-debug.log
+/.idx/
+/.next/

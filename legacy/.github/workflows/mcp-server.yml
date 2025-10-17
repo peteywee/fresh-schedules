@@ -1,0 +1,28 @@
+name: MCP Server CI
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'packages/mcp-server/**'
+  schedule:
+    - cron: '0 6 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - name: Install pnpm
+        run: npm install -g pnpm@9
+      - name: Install workspace deps
+        run: pnpm -w install --frozen-lockfile
+      - name: Build mcp-server
+        run: pnpm --filter @packages/mcp-server build
+      - name: Run typecheck for mcp-server
+        run: pnpm --filter @packages/mcp-server exec tsc --noEmit
