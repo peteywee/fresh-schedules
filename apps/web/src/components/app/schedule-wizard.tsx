@@ -3,13 +3,7 @@
 import { useCallback, memo, useMemo, lazy, Suspense, type ComponentType } from "react";
 import { Calendar, Users, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import {
-  ScheduleCalendar,
-  type WeeklySchedule,
-  type ShiftAssignment,
-} from "./schedule-calendar";
-import { HoursChart } from "./hours-chart";
+import type { ShiftAssignment } from "./schedule-calendar";
 import { useScheduleState } from "@/hooks/useScheduleState";
 import { Calendar, Users, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -55,19 +49,13 @@ const ReviewStep = lazy(() =>
  */
 type WizardStep = "select-week" | "add-shifts" | "assign-roles" | "review";
 
-// Default values used when creating a new shift
-const DEFAULT_ROLE = "Staff";
-const DEFAULT_START = "09:00";
-const DEFAULT_END = "17:00";
-const DEFAULT_ASSIGNEE: string | undefined = undefined;
-
 /**
  * A wizard component that guides the user through the process of creating a schedule.
  * It manages the state of the schedule and the current step in the wizard.
  */
 export const ScheduleWizard = memo(function ScheduleWizard(): React.ReactElement {
   const { state, dispatch, nextStep, prevStep } = useScheduleState();
-  const { currentStep, schedule, editingShift } = state;
+  const { currentStep, schedule } = state;
 
   const steps = [
     { id: "select-week", title: "Select Week", icon: Calendar },
