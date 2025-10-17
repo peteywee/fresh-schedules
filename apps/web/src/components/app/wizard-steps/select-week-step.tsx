@@ -29,3 +29,5 @@ export const SelectWeekStep = memo(function SelectWeekStep({
     </Card>
   );
 });
+
+export default SelectWeekStep;

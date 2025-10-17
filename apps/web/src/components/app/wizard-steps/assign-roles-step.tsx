@@ -23,3 +23,5 @@ export const AssignRolesStep = memo(function AssignRolesStep({
     </Card>
   );
 });
+
+export default AssignRolesStep;

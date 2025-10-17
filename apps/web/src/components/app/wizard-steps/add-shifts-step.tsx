@@ -18,3 +18,5 @@ export const AddShiftsStep = memo(function AddShiftsStep({
     </Card>
   );
 });
+
+export default AddShiftsStep;

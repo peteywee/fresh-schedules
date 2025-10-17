@@ -23,3 +23,5 @@ export const ReviewStep = memo(function ReviewStep({
     </div>
   );
 });
+
+export default ReviewStep;

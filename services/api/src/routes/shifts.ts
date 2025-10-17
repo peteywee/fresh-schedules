@@ -20,7 +20,10 @@ interface OrgShiftsCache {
 }
 
 const shiftsCache = new Map<string, CachedShift | OrgShiftsCache>();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+// Allow cache TTL to be configured via environment variable, defaulting to 5 minutes
+const CACHE_TTL = process.env.SHIFTS_CACHE_TTL_MS
+  ? parseInt(process.env.SHIFTS_CACHE_TTL_MS, 10)
+  : 5 * 60 * 1000; // 5 minutes
 
 const RoleHeader = z.enum(['admin', 'manager', 'staff']);
 
@@ -50,7 +53,7 @@ export function createShiftRouter() {
     shiftsCache.set(id, { ...payload, cachedAt: Date.now() });
     // Also keep an org-level cache so GET /?orgId=... can return seeded results
     try {
-      const orgKey = `org_${parsed.data.orgId}`;
+      const orgKey = `shifts:org:${parsed.data.orgId}`;
       const existing = shiftsCache.get(orgKey) || { shifts: [], cachedAt: 0 };
       existing.shifts = existing.shifts || [];
       existing.shifts.push(payload);
@@ -81,17 +84,13 @@ export function createShiftRouter() {
     if (!orgId || typeof orgId !== 'string') {
       return res.status(400).json({ ok: false, error: 'orgId required' });
     }
+    // Build a cache key for org-level shifts
+    const cacheKey = `shifts:org:${orgId}`;
+    const cached = shiftsCache.get(cacheKey) as OrgShiftsCache | undefined;
 
-    // Check cache first
-      type Shift = z.infer<typeof createShiftInput> & {
-        id: string;
-        createdAt: string;
-        createdByRole: string;
-      };
-      const shifts = snapshot.docs.map(doc => doc.data() as Shift);
-      shiftsCache.set(cacheKey, { shifts, cachedAt: Date.now() });
-
-      return res.json({ ok: true, shifts, cached: false });
+    // If we have a fresh cache entry, return it
+    if (cached && Date.now() - cached.cachedAt < CACHE_TTL) {
+      return res.json({ ok: true, shifts: cached.shifts, cached: true });
     }
 
     try {
@@ -102,13 +101,18 @@ export function createShiftRouter() {
         .collection('shifts')
         .get();
 
-      const shifts = snapshot.docs.map((doc: any) => doc.data());
+      type Shift = z.infer<typeof createShiftInput> & {
+        id: string;
+        createdAt: string;
+        createdByRole: string;
+      };
+
+      const shifts: Shift[] = snapshot.docs.map((doc: any) => doc.data() as Shift);
       shiftsCache.set(cacheKey, { shifts, cachedAt: Date.now() });
 
       return res.json({ ok: true, shifts, cached: false });
     } catch (error) {
       console.warn('Firestore query failed, using cache if available', error);
-      // eslint-disable-next-line no-console
       if (cached) {
         return res.json({ ok: true, shifts: cached.shifts, cached: true, fallback: true });
       }

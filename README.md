@@ -19,14 +19,17 @@ To get the project up and running on your local machine, follow these steps.
 
 ### Installation
 
-1.  **Clone the repository:**
+1. **Clone the repository:**
+
     ```bash
     git clone https://github.com/peteywee/fresh-schedules.git
     cd fresh-schedules
     ```
-2.  **Set up environment variables:**
+
+2. **Set up environment variables:**
     Create a `.env.local` file in the `apps/web` directory and add the necessary Firebase configuration keys. You can get these from your Firebase project settings.
-    ```
+
+    ```bash
     NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
     NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
     NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
@@ -35,27 +38,32 @@ To get the project up and running on your local machine, follow these steps.
     NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
     NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
     ```
-3.  **Install dependencies:**
+
+3. **Install dependencies:**
+
     ```bash
     pnpm install
     ```
-4.  **Run the development server:**
+
+4. **Run the development server:**
+
     ```bash
     pnpm dev
     ```
+
     The web application will be available at `http://localhost:3000`.
 
 ## Project Structure
 
 This repository is a pnpm monorepo. The code is organized into several packages and applications:
 
--   `apps/web`: The main Next.js web application.
--   `packages/mcp-server`: A local express server for development purposes.
--   `packages/types`: Shared TypeScript types and Zod schemas.
--   `functions`: Firebase Cloud Functions.
--   `docs`: Project documentation.
--   `scripts`: Utility scripts.
--   `services`: External service configurations.
+- `apps/web`: The main Next.js web application.
+- `packages/mcp-server`: A local express server for development purposes.
+- `packages/types`: Shared TypeScript types and Zod schemas.
+- `functions`: Firebase Cloud Functions.
+- `docs`: Project documentation.
+- `scripts`: Utility scripts.
+- `services`: External service configurations.
 
 ## Testing
 
@@ -77,7 +85,6 @@ The application is deployed to Firebase. The deployment process is managed throu
 
 Contributions are welcome. Please adhere to the following branch policy:
 
--   **main**: Production code only. Protected branch with required green CI.
--   **develop**: Active integration branch. No personal docs, notes, or TODOs.
--   **notes**: Personal branches for documentation, research, and todos.
-
+- **main**: Production code only. Protected branch with required green CI.
+- **develop**: Active integration branch. No personal docs, notes, or TODOs.
+- **notes**: Personal branches for documentation, research, and todos.
