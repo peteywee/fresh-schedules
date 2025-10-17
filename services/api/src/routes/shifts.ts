@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { createShiftInput } from '@packages/types';
 
 import { getFirestore } from '../firebase';
+import { authenticateFirebaseToken, requireRole, AuthenticatedRequest } from '../middleware/auth';
 
 // Simple in-memory cache for shifts (for demo purposes)
 interface CachedShift {
@@ -26,8 +27,6 @@ const CACHE_TTL = process.env.SHIFTS_CACHE_TTL_MS
   ? parseInt(process.env.SHIFTS_CACHE_TTL_MS, 10)
   : 5 * 60 * 1000; // 5 minutes
 
-const RoleHeader = z.enum(['admin', 'manager', 'staff']);
-
 type Shift = z.infer<typeof createShiftInput> & {
   id: string;
   createdAt: string;
@@ -37,15 +36,19 @@ type Shift = z.infer<typeof createShiftInput> & {
 export function createShiftRouter() {
   const router = Router();
 
-  router.post('/', async (req, res) => {
-    const role = RoleHeader.safeParse(req.header('x-role'));
-    if (!role.success || (role.data !== 'admin' && role.data !== 'manager')) {
-      return res.status(403).json({ ok: false, error: 'forbidden' });
-    }
+  // Apply authentication middleware to all routes
+  router.use(authenticateFirebaseToken);
 
+  // POST /api/shifts - Create a new shift (admin and manager only)
+  router.post('/', requireRole('admin', 'manager'), async (req: AuthenticatedRequest, res) => {
     const parsed = createShiftInput.safeParse(req.body);
     if (!parsed.success) {
       return res.status(400).json({ ok: false, error: parsed.error.flatten() });
+    }
+
+    // Ensure the user can only create shifts for their own organization
+    if (req.user?.orgId && parsed.data.orgId !== req.user.orgId) {
+      return res.status(403).json({ ok: false, error: 'Cannot create shifts for other organizations' });
     }
 
     const id = `sh_${Date.now()}`;
@@ -53,7 +56,8 @@ export function createShiftRouter() {
       ...parsed.data,
       id,
       createdAt: new Date().toISOString(),
-      createdByRole: role.data,
+      createdByRole: req.user!.role!,
+      createdBy: req.user!.uid,
     };
 
     // Cache the shift for faster retrieval
@@ -85,18 +89,20 @@ export function createShiftRouter() {
     }
   });
 
-  // Add GET route for retrieving shifts with caching
-  router.get('/', async (req, res) => {
+  // GET /api/shifts - Retrieve shifts for an organization
+  router.get('/', async (req: AuthenticatedRequest, res) => {
     const { orgId } = req.query;
     if (!orgId || typeof orgId !== 'string') {
       return res.status(400).json({ ok: false, error: 'orgId required' });
     }
+
+    // Ensure the user can only query shifts for their own organization
+    if (req.user?.orgId && orgId !== req.user.orgId) {
+      return res.status(403).json({ ok: false, error: 'Cannot query shifts for other organizations' });
+    }
+
     // Build a cache key for org-level shifts
     const cacheKey = `shifts:org:${orgId}`;
-    const cached = shiftsCache.get(cacheKey) as OrgShiftsCache | undefined;
-
-    // Check cache first
-    const cacheKey = `org_${orgId}`;
     const cached = shiftsCache.get(cacheKey) as OrgShiftsCache | undefined;
     
     if (cached && Date.now() - cached.cachedAt < CACHE_TTL) {

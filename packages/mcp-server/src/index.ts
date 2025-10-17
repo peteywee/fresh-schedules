@@ -2,18 +2,33 @@
  * @fileoverview A simple express server to provide file system access to a repository.
  * It's designed to be a local helper service for development tools.
  * It exposes endpoints to list files and read file contents.
- * Access can be restricted by a token.
+ * Access is restricted by a token in production environments.
  */
 import express from "express";
 import cors from "cors";
 import fs from "fs";
 import path from "path";
+import rateLimit from "express-rate-limit";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4002;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const IS_PRODUCTION = NODE_ENV === 'production';
+
+// Rate limiting configuration
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: IS_PRODUCTION ? 100 : 1000, // Limit each IP to 100 requests per windowMs in production
+  message: { error: 'Too many requests, please try again later' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply rate limiting to all routes
+app.use(limiter);
 
 /**
  * Resolves the repository root directory.
@@ -32,8 +47,8 @@ const REPO_ROOT = getRepoRoot();
 
 /**
  * Checks for authorization based on a token.
- * If the `MCP_TOKEN` environment variable is set, it requires the request
- * to have a matching `x-mcp-token` header.
+ * In production, always requires authentication via the `MCP_TOKEN` environment variable.
+ * In development, authentication is optional unless `MCP_TOKEN` is explicitly set.
  * If auth fails, it sends a 401 response.
  * @param {express.Request} req - The express request object.
  * @param {express.Response} res - The express response object.
@@ -41,9 +56,24 @@ const REPO_ROOT = getRepoRoot();
  */
 function checkAuth(req: express.Request, res: express.Response): boolean {
   const token = process.env.MCP_TOKEN;
-  if (!token) return true; // auth not enforced
+  
+  // In production, always require a token
+  if (IS_PRODUCTION && !token) {
+    console.error('SECURITY WARNING: MCP_TOKEN must be set in production');
+    res.status(500).json({ error: 'Server misconfigured - authentication required' });
+    return false;
+  }
+
+  // If no token is set (dev only), allow access
+  if (!token && !IS_PRODUCTION) {
+    console.warn('WARNING: Running without authentication in development mode');
+    return true;
+  }
+
+  // Verify the token
   const header = String(req.headers['x-mcp-token'] || '');
   if (header === token) return true;
+  
   res.status(401).json({ error: 'unauthorized' });
   return false;
 }
@@ -139,9 +169,23 @@ app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`MCP server listening on http://localhost:${PORT}`);
   // eslint-disable-next-line no-console
+  console.log(`Environment: ${NODE_ENV}`);
+  // eslint-disable-next-line no-console
   console.log(`Repo root: ${REPO_ROOT}`);
   if (process.env.MCP_REPO_ROOT) {
     // eslint-disable-next-line no-console
     console.log(`Using MCP_REPO_ROOT=${process.env.MCP_REPO_ROOT}`);
+  }
+  if (!process.env.MCP_TOKEN) {
+    if (IS_PRODUCTION) {
+      // eslint-disable-next-line no-console
+      console.error('ERROR: MCP_TOKEN is not set in production - server will reject all requests');
+    } else {
+      // eslint-disable-next-line no-console
+      console.warn('WARNING: MCP_TOKEN is not set - running without authentication');
+    }
+  } else {
+    // eslint-disable-next-line no-console
+    console.log('Authentication enabled');
   }
 });
