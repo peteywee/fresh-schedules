@@ -1,8 +1,4 @@
-import { SignInExperience } from './sign-in-experience';
-
-export const metadata = {
-  title: 'Sign in · Fresh Schedules',
-};
+import { SignInExperience } from "./sign-in-experience";
 
 export default function SignInPage() {
   return <SignInExperience />;

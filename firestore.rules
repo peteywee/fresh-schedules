@@ -17,7 +17,7 @@ service cloud.firestore {
     function hasOrgRole(orgId, roles) {
       return isOrgMember(orgId) && roleOf(orgId) in roles;
     }
-
+    
     // Weeks (publish state)
     match /orgs/{orgId}/weeks/{weekKey} {
       allow read: if isOrgMember(orgId);
@@ -28,7 +28,7 @@ service cloud.firestore {
     // Org Alerts
     match /orgs/{orgId}/alerts/{alertId} {
       allow read: if isOrgMember(orgId);
-      allow create, update: if hasOrgRole(orgId, ['admin','manager']); // backward-compatible
+      allow create, update: if hasOrgRole(orgId, ['admin','manager']);
       allow delete: if false; // resolved flag only
     }
 

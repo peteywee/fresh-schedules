@@ -19,7 +19,7 @@
 
 ## API Service Patterns
 - `services/api/src/index.ts` boots Express with CORS + JSON and mounts routers under `/api/*`; add new routes via factory functions similar to `createShiftRouter`.
-- Input validation must use Zod schemas from `@packages/types`; enforce role-based access with the `x-role` header pattern shown in `routes/shifts.ts`.
+- Input validation must use Zod schemas from `@fresh-schedules/schemas`; enforce role-based access with the `x-role` header pattern shown in `routes/shifts.ts`.
 - Firestore access is currently a placeholder (`firebase.place.ts`); wrap real Admin SDK wiring behind that module and return friendly `{ ok, persisted }` responses.
 
 ## Shared Packages & Tooling

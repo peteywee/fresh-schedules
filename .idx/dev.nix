@@ -37,7 +37,7 @@
       enable = true;
       previews = {
         web = {
-          command = ["pnpm" "--filter"  "@apps/web" "dev" "--" "--port" "$PORT"];
+          command = ["pnpm" "--filter"  "@apps/web" "dev" "-p" "$PORT"];
           manager = "web";
         };
       };

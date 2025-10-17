@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { createShiftInput } from '@packages/types';
+import { createShiftInput } from '@fresh-schedules/schemas';
 
 import { getFirestore } from '../firebase.place';
 

@@ -1,10 +1,20 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+let withPWA = (config) => config;
+try {
+  const nextPWA = require('next-pwa');
+  withPWA = nextPWA({
+    dest: 'public',
+    register: true,
+    skipWaiting: true,
+    disable: process.env.NODE_ENV === 'development',
+  });
+} catch (e) {
+  console.warn('next-pwa not installed; PWA disabled');
+}
+
+module.exports = withPWA({
   reactStrictMode: true,
-  // Allow Firebase Studio Cloud Workstations to access /_next/* in dev.
-  // This prevents cross-origin warnings when previewing in that environment.
-  allowedDevOrigins: [
-    'https://*.cloudworkstations.dev',
-  ],
-};
-module.exports = nextConfig;
+  swcMinify: true,
+  experimental: {
+    allowedDevOrigins: ["*.cloudworkstations.dev"],
+  },
+});
