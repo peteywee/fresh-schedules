@@ -86,7 +86,7 @@ export const ScheduleCalendar = memo(function ScheduleCalendar({
   schedule: WeeklySchedule;
   onShiftEdit?: (shift: ShiftAssignment) => void;
   editable?: boolean;
-}): JSX.Element {
+}): React.ReactElement {
   const grouped = useMemo(() => orderedDays.map((day) => ({
     day,
     slots: schedule.shifts.filter((shift) => shift.day === day),
@@ -116,24 +116,28 @@ export const ScheduleCalendar = memo(function ScheduleCalendar({
                 type="button"
                 className="schedule-slot"
                 style={{ opacity: 0.6, cursor: editable ? 'pointer' : 'default' }}
-                onClick={() => editable && onShiftEdit?.({ id: `${day}-new`, day, role: '', start: '', end: '' })}
+                onClick={() => editable && onShiftEdit?.({ id: `${day}-new`, day, role: 'Staff', start: '09:00', end: '17:00' })}
+                aria-label={`Add shift for ${day}`}
               >
                 <small>Add shift</small>
               </button>
             ) : (
               slots.map((slot) => (
-                <div
+                <button
                   key={slot.id}
+                  type="button"
                   className="schedule-slot"
                   onClick={() => handleSlotClick(slot)}
-                  style={{ cursor: editable ? 'pointer' : 'default' }}
+                  style={{ cursor: editable ? 'pointer' : 'default', textAlign: 'left' }}
+                  disabled={!editable}
+                  aria-label={`${editable ? 'Edit' : 'View'} shift: ${slot.role} from ${slot.start} to ${slot.end}`}
                 >
                   <strong>{slot.role}</strong>
                   <small>{formatRange(slot.start, slot.end)}</small>
                   {slot.assignee && <small>Assigned: {slot.assignee}</small>}
                   {slot.location && <small>Location: {slot.location}</small>}
                   {slot.notes}
-                </div>
+                </button>
               ))
             )}
           </div>

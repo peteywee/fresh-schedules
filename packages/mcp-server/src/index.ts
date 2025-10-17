@@ -27,6 +27,9 @@ function getRepoRoot() {
   return path.resolve(__dirname, "..", "..", "..");
 }
 
+// Cache the repo root at module level to avoid redundant path resolution
+const REPO_ROOT = getRepoRoot();
+
 /**
  * Checks for authorization based on a token.
  * If the `MCP_TOKEN` environment variable is set, it requires the request
@@ -75,7 +78,7 @@ app.get("/health", (req, res) => {
  */
 app.get("/files", (req, res) => {
   if (!checkAuth(req, res)) return;
-  const repoRoot = getRepoRoot();
+  const repoRoot = REPO_ROOT;
   const rel = String(req.query.path || ".");
   const target = path.resolve(repoRoot, rel);
 
@@ -111,7 +114,7 @@ app.get("/files", (req, res) => {
  */
 app.get("/context", async (req, res) => {
   if (!checkAuth(req, res)) return;
-  const repoRoot = getRepoRoot();
+  const repoRoot = REPO_ROOT;
   const rel = String(req.query.path || "");
   const target = path.resolve(repoRoot, rel);
 
@@ -135,6 +138,8 @@ app.get("/context", async (req, res) => {
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`MCP server listening on http://localhost:${PORT}`);
+  // eslint-disable-next-line no-console
+  console.log(`Repo root: ${REPO_ROOT}`);
   if (process.env.MCP_REPO_ROOT) {
     // eslint-disable-next-line no-console
     console.log(`Using MCP_REPO_ROOT=${process.env.MCP_REPO_ROOT}`);

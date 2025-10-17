@@ -65,7 +65,7 @@ const DEFAULT_ASSIGNEE: string | undefined = undefined;
  * A wizard component that guides the user through the process of creating a schedule.
  * It manages the state of the schedule and the current step in the wizard.
  */
-export const ScheduleWizard = memo(function ScheduleWizard(): JSX.Element {
+export const ScheduleWizard = memo(function ScheduleWizard(): React.ReactElement {
   const { state, dispatch, nextStep, prevStep } = useScheduleState();
   const { currentStep, schedule, editingShift } = state;
 
@@ -89,10 +89,10 @@ export const ScheduleWizard = memo(function ScheduleWizard(): JSX.Element {
       const newShift: ShiftAssignment = {
         ...shift,
         id: `${shift.day}-${Date.now()}`,
-        role: 'New Role',
-        start: '09:00',
-        end: '17:00',
-        assignee: 'Unassigned',
+        role: shift.role || DEFAULT_ROLE,
+        start: shift.start || DEFAULT_START,
+        end: shift.end || DEFAULT_END,
+        assignee: shift.assignee || DEFAULT_ASSIGNEE,
       };
       dispatch({ type: 'ADD_SHIFT', payload: newShift });
     } else {
@@ -114,7 +114,7 @@ export const ScheduleWizard = memo(function ScheduleWizard(): JSX.Element {
   /**
    * Renders the content for the current step of the wizard.
    */
-  const renderStepContent = useMemo((): JSX.Element | null => {
+  const renderStepContent = useMemo((): React.ReactElement | null => {
     switch (currentStep) {
       case "select-week":
         return (
