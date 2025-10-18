@@ -2,13 +2,18 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "CommonJS",
+    "lib": ["ES2020"],
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "moduleResolution": "Node"
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
   },
   "include": ["src/**/*"]
 }

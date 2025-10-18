@@ -7,7 +7,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
+    "start:stdio": "node dist/stdio-server.js",
     "dev": "ts-node src/index.ts",
+    "dev:stdio": "ts-node src/stdio-server.ts",
     "test": "jest --color --runInBand"
   },
   "dependencies": {
