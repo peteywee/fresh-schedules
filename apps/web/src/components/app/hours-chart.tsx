@@ -1,10 +1,25 @@
+/**
+ * @fileoverview A component to display a chart of hours worked by each staff member.
+ * It can either take pre-calculated hours breakdown or calculate it from a weekly schedule.
+ */
+import { memo, useMemo } from 'react';
 import type { WeeklySchedule } from './schedule-calendar';
 
+/**
+ * Represents the data structure for the hours breakdown of a single person.
+ * @property {string} label - The name of the person (e.g., staff member's name).
+ * @property {number} hours - The total number of hours assigned to this person.
+ */
 export type HoursBreakdown = {
   label: string;
   hours: number;
 };
 
+/**
+ * Calculates the total hours for each assignee from a weekly schedule.
+ * @param {WeeklySchedule} schedule - The weekly schedule containing shifts with assignees.
+ * @returns {HoursBreakdown[]} An array of objects, each containing the assignee's name and their total hours.
+ */
 function calculateHours(schedule: WeeklySchedule): HoursBreakdown[] {
   const hoursMap: Record<string, number> = {};
   schedule.shifts.forEach((shift) => {
@@ -18,8 +33,17 @@ function calculateHours(schedule: WeeklySchedule): HoursBreakdown[] {
   return Object.entries(hoursMap).map(([label, hours]) => ({ label, hours }));
 }
 
-export function HoursChart({ data, schedule }: { data?: HoursBreakdown[]; schedule?: WeeklySchedule }) {
-  const computedData = schedule ? calculateHours(schedule) : data || [];
+/**
+ * A React component that renders a bar chart showing the distribution of hours.
+ * It provides a visual snapshot of staff allocation to help managers avoid over-scheduling.
+ *
+ * @param {object} props - The component props.
+ * @param {HoursBreakdown[]} [props.data] - Pre-calculated hours data to display.
+ * @param {WeeklySchedule} [props.schedule] - A weekly schedule to calculate hours data from. If provided, it overrides `data`.
+ * @returns {React.ReactElement} The rendered hours chart component.
+ */
+export const HoursChart = memo(function HoursChart({ data, schedule }: { data?: HoursBreakdown[]; schedule?: WeeklySchedule }): React.ReactElement {
+  const computedData = useMemo(() => schedule ? calculateHours(schedule) : data || [], [data, schedule]);
   if (computedData.length === 0) {
     return (
       <section className="fs-card">
@@ -63,4 +87,4 @@ export function HoursChart({ data, schedule }: { data?: HoursBreakdown[]; schedu
       </div>
     </section>
   );
-}
+});

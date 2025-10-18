@@ -73,7 +73,7 @@ or tenant-specific constants:
   - `src/lib/messaging.ts` — FCM token + foreground listener
 - `services/api/`
   - `src/index.ts` — Express app (health, `/api/shifts`)
-  - `src/firebase.place.ts` — Admin init placeholders, replace via env
+  - `src/firebase.ts` — Admin SDK initialization using environment variables
   - `src/routes/shifts.ts` — Create shift (Zod validated); Firestore write TODO
 - `packages/types/`
   - `src/index.ts` — Zod schemas: Org, Event, Shift, Timesheet
@@ -103,7 +103,6 @@ or tenant-specific constants:
 ## 9. Placeholders Replaced
 
 All placeholders have been replaced with proper implementations using environment variables.
-
 - `services/api/src/firebase.ts` — Firebase Admin SDK initialized from env vars.
 - `apps/web/src/lib/messaging.ts` — VAPID key configured from env vars.
 

@@ -1,3 +1,4 @@
+````markdown
 ```markdown
 # Zencoder (Brightcove) Developer Guide
 
@@ -34,9 +35,9 @@ pnpm dlx tsx ./scripts/zencoder/submit-job.ts
 3. Or use the VS Code task: `Terminal -> Run Task... -> Zencoder: Submit job (ts-node)`
 
 ## Notes
-
 - Payload in `scripts/zencoder/submit-job.ts` is an example. Consult Zencoder API docs for fields and authentication.
 - If you prefer not to add a dev dependency, `pnpm dlx tsx` runs the script transiently.
 - Keep API keys out of source control. Add `.env` to `.gitignore` when used locally.
 
 ```
+````

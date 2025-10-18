@@ -7,6 +7,7 @@
       "DOM.Iterable"
     ],
     "jsx": "preserve",
+    "jsxImportSource": "react",
     "esModuleInterop": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -22,13 +23,16 @@
       }
     ],
     "types": [
-      "node"
+      "node",
+      "react",
+      "react-dom"
     ],
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["src/components/*"],
       "@/lib/*": ["src/lib/*"],
+      "@/hooks/*": ["src/hooks/*"],
       "@/app/*": ["app/*"]
     }
   },

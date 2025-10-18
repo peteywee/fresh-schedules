@@ -2,11 +2,16 @@ import { Router } from 'express';
 import { createShiftInput, roleEnum } from '@packages/types';
 import { getFirestore } from '../firebase';
 
+import { getFirestore } from '../firebase';
+import { authenticateFirebaseToken, requireRole, AuthenticatedRequest } from '../middleware/auth';
+
+// Simple in-memory cache for shifts (for demo purposes)
 interface CachedShift {
   id: string;
   createdAt: string;
   createdByRole: string;
   orgId: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
   cachedAt?: number;
 }
@@ -16,83 +21,55 @@ interface OrgShiftsCache {
   cachedAt: number;
 }
 
-class ShiftCache {
-  private cache = new Map<string, CachedShift | OrgShiftsCache>();
-  private readonly ttl: number;
+const shiftsCache = new Map<string, CachedShift | OrgShiftsCache>();
+// Allow cache TTL to be configured via environment variable, defaulting to 5 minutes
+const CACHE_TTL = process.env.SHIFTS_CACHE_TTL_MS
+  ? parseInt(process.env.SHIFTS_CACHE_TTL_MS, 10)
+  : 5 * 60 * 1000; // 5 minutes
 
-  constructor() {
-    const ttlEnv = Number(process.env.SHIFTS_CACHE_TTL_MS);
-    this.ttl = Number.isFinite(ttlEnv) && ttlEnv > 0 ? ttlEnv : 5 * 60 * 1000;
-  }
-
-  private getOrgKey(orgId: string): string {
-    return `shifts:org:${orgId}`;
-  }
-
-  private isOrgCache(value: CachedShift | OrgShiftsCache | undefined): value is OrgShiftsCache {
-    return !!value && 'shifts' in value;
-  }
-
-  setShift(shift: CachedShift): void {
-    this.cache.set(shift.id, { ...shift, cachedAt: Date.now() });
-  }
-
-  addToOrgCache(shift: CachedShift): void {
-    const orgKey = this.getOrgKey(shift.orgId);
-    const existing = this.cache.get(orgKey);
-    const shiftWithCache = { ...shift, cachedAt: Date.now() };
-
-    if (this.isOrgCache(existing)) {
-      existing.shifts.push(shiftWithCache);
-      existing.cachedAt = Date.now();
-    } else {
-      this.cache.set(orgKey, { shifts: [shiftWithCache], cachedAt: Date.now() });
-    }
-  }
-
-  getOrgShifts(orgId: string): OrgShiftsCache | null {
-    const cached = this.cache.get(this.getOrgKey(orgId));
-    if (this.isOrgCache(cached) && Date.now() - cached.cachedAt < this.ttl) {
-      return cached;
-    }
-    return null;
-  }
-
-  setOrgShifts(orgId: string, shifts: CachedShift[]): void {
-    this.cache.set(this.getOrgKey(orgId), { shifts, cachedAt: Date.now() });
-  }
-
-  getStaleOrgShifts(orgId: string): CachedShift[] | null {
-    const cached = this.cache.get(this.getOrgKey(orgId));
-    return this.isOrgCache(cached) ? cached.shifts : null;
-  }
-}
+type Shift = z.infer<typeof createShiftInput> & {
+  id: string;
+  createdAt: string;
+  createdByRole: string;
+};
 
 export function createShiftRouter() {
   const router = Router();
   const cache = new ShiftCache();
 
-  router.post('/', async (req, res) => {
-    const role = roleEnum.safeParse(req.header('x-role'));
-    if (!role.success || (role.data !== 'admin' && role.data !== 'manager')) {
-      return res.status(403).json({ ok: false, error: 'forbidden' });
-    }
+  // Apply authentication middleware to all routes
+  router.use(authenticateFirebaseToken);
 
+  // POST /api/shifts - Create a new shift (admin and manager only)
+  router.post('/', requireRole('admin', 'manager'), async (req: AuthenticatedRequest, res) => {
     const parsed = createShiftInput.safeParse(req.body);
     if (!parsed.success) {
       return res.status(400).json({ ok: false, error: parsed.error.flatten() });
     }
 
-    const shift: CachedShift = {
+    // Ensure the user can only create shifts for their own organization
+    if (req.user?.orgId && parsed.data.orgId !== req.user.orgId) {
+      return res.status(403).json({ ok: false, error: 'Cannot create shifts for other organizations' });
+    }
+
+    const id = `sh_${Date.now()}`;
+    const payload = {
       ...parsed.data,
       id: `sh_${Date.now()}`,
       createdAt: new Date().toISOString(),
-      createdByRole: role.data,
+      createdByRole: req.user!.role!,
+      createdBy: req.user!.uid,
     };
 
-    cache.setShift(shift);
+    // Cache the shift for faster retrieval
+    shiftsCache.set(id, { ...payload, cachedAt: Date.now() });
+    // Also keep an org-level cache so GET /?orgId=... can return seeded results
     try {
-      cache.addToOrgCache(shift);
+      const orgKey = `shifts:org:${parsed.data.orgId}`;
+      const existing = shiftsCache.get(orgKey) || { shifts: [], cachedAt: 0 };
+      existing.shifts = existing.shifts || [];
+      existing.shifts.push(payload);
+      shiftsCache.set(orgKey, { shifts: existing.shifts, cachedAt: Date.now() });
     } catch (err) {
       console.error('Error updating org-level shift cache:', err);
     }
@@ -144,6 +121,47 @@ export function createShiftRouter() {
       const staleShifts = cache.getStaleOrgShifts(orgId);
       if (staleShifts) {
         return res.json({ ok: true, shifts: staleShifts, cached: true, fallback: true });
+      }
+      return res.status(500).json({ ok: false, error: 'Failed to retrieve shifts' });
+    }
+  });
+
+  // GET /api/shifts - Retrieve shifts for an organization
+  router.get('/', async (req: AuthenticatedRequest, res) => {
+    const { orgId } = req.query;
+    if (!orgId || typeof orgId !== 'string') {
+      return res.status(400).json({ ok: false, error: 'orgId required' });
+    }
+
+    // Ensure the user can only query shifts for their own organization
+    if (req.user?.orgId && orgId !== req.user.orgId) {
+      return res.status(403).json({ ok: false, error: 'Cannot query shifts for other organizations' });
+    }
+
+    // Build a cache key for org-level shifts
+    const cacheKey = `shifts:org:${orgId}`;
+    const cached = shiftsCache.get(cacheKey) as OrgShiftsCache | undefined;
+    
+    if (cached && Date.now() - cached.cachedAt < CACHE_TTL) {
+      return res.json({ ok: true, shifts: cached.shifts, cached: true });
+    }
+
+    try {
+      const db = await getFirestore();
+      const snapshot = await db
+        .collection('organizations')
+        .doc(orgId)
+        .collection('shifts')
+        .get();
+
+      const shifts = snapshot.docs.map((doc: any) => doc.data() as CachedShift);
+      shiftsCache.set(cacheKey, { shifts, cachedAt: Date.now() });
+
+      return res.json({ ok: true, shifts, cached: false });
+    } catch (error) {
+      console.warn('Firestore query failed, using cache if available', error);
+      if (cached) {
+        return res.json({ ok: true, shifts: cached.shifts, cached: true, fallback: true });
       }
       return res.status(500).json({ ok: false, error: 'Failed to retrieve shifts' });
     }

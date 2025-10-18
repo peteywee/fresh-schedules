@@ -1,32 +1,38 @@
 /**
- * Import function triggers from their respective submodules:
+ * @fileoverview Main entrypoint for Firebase Functions.
+ * This file is the primary location for defining and exporting cloud functions.
+ * It is pre-configured with global options for cost control and includes examples
+ * of how to import and structure function triggers.
  *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
+ * To add new functions, import the required triggers from `firebase-functions`
+ * and export them from this file.
  *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
+ * @example
+ * ```typescript
+ * import { onCall } from "firebase-functions/v2/https";
+ *
+ * export const myFunction = onCall((request) => {
+ *   // Function logic here
+ * });
+ * ```
+ *
+ * @see https://firebase.google.com/docs/functions
  */
-
-import {setGlobalOptions} from "firebase-functions";
-import {onRequest} from "firebase-functions/https";
+import { setGlobalOptions } from "firebase-functions";
+import { onRequest } from "firebase-functions/v1"; // Corrected import for v1
 import * as logger from "firebase-functions/logger";
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
-
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
+// Set global options for all functions, such as the maximum number of instances.
+// This is a cost-control measure to prevent unexpected traffic from scaling up
+// too many function instances. This can be overridden on a per-function basis.
+// Note: This applies to v2 functions. For v1 functions, use `runWith()`.
 setGlobalOptions({ maxInstances: 10 });
 
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+// Example of a simple HTTP-triggered function (currently commented out).
+// To enable it, uncomment the code block.
+/*
+export const helloWorld = onRequest((request, response) => {
+  logger.info("Hello logs!", { structuredData: true });
+  response.send("Hello from Firebase!");
+});
+*/

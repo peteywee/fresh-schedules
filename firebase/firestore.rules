@@ -5,6 +5,7 @@
  * Note: Keep this file as-is for local editing, but use your deployment process to feed the raw string into the Firebase CLI or CI job.
  */
 
+module.exports = `
 /**
  * @fileoverview Firestore Security Rules for Fresh Schedules.
  *
@@ -212,3 +213,4 @@ service cloud.firestore {
     }
   }
 }
+`;

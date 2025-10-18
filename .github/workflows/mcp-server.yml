@@ -22,7 +22,11 @@ jobs:
         run: npm install -g pnpm@9
       - name: Install workspace deps
         run: pnpm -w install --frozen-lockfile
+      - name: Install mcp-server deps
+        run: pnpm --filter @packages/mcp-server install
       - name: Build mcp-server
         run: pnpm --filter @packages/mcp-server build
       - name: Run typecheck for mcp-server
         run: pnpm --filter @packages/mcp-server exec tsc --noEmit
+      - name: Run tests for mcp-server
+        run: pnpm --filter @packages/mcp-server test
