@@ -157,7 +157,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
             throw new Error("Invalid URI scheme");
         }
 
-        const filePath = uri.replace("file://", "");
+        const filePath = fileURLToPath(uri);
         const rel = path.relative(repoRoot, filePath);
         const result = readFile(rel);
 
