@@ -60,10 +60,9 @@ app.get("/files", (req, res) => {
 });
 
 // Return file contents for a path inside the repo
-app.get("/context", (req, res) => {
-  if (!checkAuth(req, res)) return;
 app.get("/context", async (req, res) => {
-  const repoRoot = path.resolve(__dirname, "..", "..", "..");
+  if (!checkAuth(req, res)) return;
+  const repoRoot = process.env.MCP_REPO_ROOT || path.resolve(__dirname, "..", "..", "..");
   const rel = String(req.query.path || "");
   const target = path.resolve(repoRoot, rel);
 
@@ -74,6 +73,7 @@ app.get("/context", async (req, res) => {
   try {
     const content = await fs.promises.readFile(target, "utf-8");
     res.setHeader("content-type", "text/plain; charset=utf-8");
+    res.send(content);
   } catch (err: any) {
     res.status(404).json({ error: "not found", detail: String(err.message) });
   }

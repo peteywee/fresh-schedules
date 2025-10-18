@@ -23,6 +23,7 @@
     "@playwright/test": "^1.51.1",
     "@types/node": "20.11.30",
     "@types/react": "18.2.64",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "5.5.4"
   }
 }
