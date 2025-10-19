@@ -4,11 +4,12 @@ import React, { useCallback, memo, useMemo, Suspense, type ComponentType, type D
 import { Calendar, Users, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useScheduleState } from "@/hooks/useScheduleState";
-import type { WeeklySchedule, ShiftAssignment } from "./schedule-calendar";
-import { SelectWeekStep } from "./wizard-steps/select-week-step";
-import { AddShiftsStep } from "./wizard-steps/add-shifts-step";
-import { AssignRolesStep } from "./wizard-steps/assign-roles-step";
-import { ReviewStep } from "./wizard-steps/review-step";
+
+// Lazy load step components for better performance
+// Consistent placeholder pattern for all missing lazy-loaded components
+function PlaceholderComponent({ message }: { message: string }) {
+  return <div>{message}</div>;
+}
 
 
 type WizardStep = "select-week" | "add-shifts" | "assign-roles" | "review";
@@ -38,6 +39,12 @@ interface UseScheduleStateReturn {
   nextStep: () => void;
   prevStep: () => void;
 }
+
+// Default values used when creating a new shift
+const DEFAULT_ROLE = "Staff";
+const DEFAULT_START = "09:00";
+const DEFAULT_END = "17:00";
+const DEFAULT_ASSIGNEE: string | undefined = undefined;
 
 /**
  * A wizard component that guides the user through the process of creating a schedule.
@@ -104,7 +111,11 @@ export const ScheduleWizard = memo(function ScheduleWizard() {
       case "select-week":
         return (
           <Suspense fallback={<div>Loading...</div>}>
-            <SelectWeekStep {...stepProps} />
+            <SelectWeekStep
+              schedule={schedule}
+              onShiftEdit={handleShiftEdit}
+              onWeekChange={(weekOf: string) => dispatch({ type: 'UPDATE_SCHEDULE', payload: { weekOf } })}
+            />
           </Suspense>
         );
 
@@ -173,17 +184,19 @@ export const ScheduleWizard = memo(function ScheduleWizard() {
         <Button
           onClick={prevStep}
           disabled={currentStepIndex === 0}
+          aria-disabled={currentStepIndex === 0}
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
+          <ArrowLeft size={16} />
+          <span>Back</span>
         </Button>
 
         <Button
           onClick={nextStep}
           disabled={currentStepIndex === steps.length - 1}
+          aria-disabled={currentStepIndex === steps.length - 1}
         >
-          Next
-          <ArrowRight className="ml-2 h-4 w-4" />
+          <span>Next</span>
+          <ArrowRight size={16} />
         </Button>
       </footer>
     </div>

@@ -7,23 +7,26 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
+    "start:stdio": "node dist/stdio-server.js",
     "dev": "ts-node src/index.ts",
+    "dev:stdio": "ts-node src/stdio-server.ts",
     "test": "jest --color --runInBand"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^5.1.0",
-    "cors": "^2.8.5"
+    "express-rate-limit": "^8.1.0"
   },
   "devDependencies": {
-    "ts-node": "^10.9.1",
-    "typescript": "5.9.3",
-    "@types/express": "^5.0.3",
-    "@types/node": "24.7.1",
     "@types/cors": "^2.8.13",
-    "jest": "^29.6.1",
-    "ts-jest": "^29.1.0",
+    "@types/express": "^5.0.3",
     "@types/jest": "^29.5.3",
+    "@types/node": "24.7.1",
+    "@types/supertest": "^2.0.12",
+    "jest": "^29.6.1",
     "supertest": "^7.1.4",
-    "@types/supertest": "^2.0.12"
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "5.9.3"
   }
 }

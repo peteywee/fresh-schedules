@@ -1,0 +1,31 @@
+{
+  "$schema": "https://spec.modelcontextprotocol.io/schema/config.schema.json",
+  "description": "MCP Configuration for Fresh Schedules",
+  "mcpServers": {
+    "fresh-schedules-stdio": {
+      "command": "node",
+      "args": [
+        "${workspaceRoot}/packages/mcp-server/dist/stdio-server.js"
+      ],
+      "env": {
+        "MCP_REPO_ROOT": "${workspaceRoot}",
+        "NODE_ENV": "production"
+      },
+      "disabled": false,
+      "description": "Fresh Schedules repository context via MCP (stdio)"
+    },
+    "fresh-schedules-http": {
+      "command": "node",
+      "args": [
+        "${workspaceRoot}/packages/mcp-server/dist/index.js"
+      ],
+      "env": {
+        "MCP_REPO_ROOT": "${workspaceRoot}",
+        "PORT": "4002",
+        "NODE_ENV": "production"
+      },
+      "disabled": true,
+      "description": "Fresh Schedules repository context via HTTP (on port 4002)"
+    }
+  }
+}
