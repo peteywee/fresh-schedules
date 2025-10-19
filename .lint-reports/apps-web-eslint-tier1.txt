@@ -1,0 +1,3 @@
+undefined
+/home/patrick/fresh-schedules/fresh-root/apps/web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: next lint --no-cache

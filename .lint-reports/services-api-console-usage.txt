@@ -1,0 +1,4 @@
+services/api/src/seed.ts:16:    console.log('Using Firestore emulator at', process.env.FIRESTORE_EMULATOR_HOST);
+services/api/src/seed.ts:72:  console.log('Seeding', sampleShifts.length, 'shifts to organizations/seed-org/shifts');
+services/api/src/seed.ts:76:    console.log('Wrote', id);
+services/api/src/seed.ts:79:  console.log('Done seeding');
