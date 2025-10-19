@@ -254,10 +254,12 @@ For Cloud Functions:
 
 ```bash
 # Set in Firebase Functions config
+# This generates a 32-byte (256-bit) salt as a 64-character hex string
 firebase functions:config:set ledger.hash_salt="$(openssl rand -hex 32)"
 
 # Or in .env for local development
-LEDGER_HASH_SALT=your-64-character-secure-random-string
+# Use a 64-character hex string (32 bytes)
+LEDGER_HASH_SALT=your-64-character-hex-string-here
 ```
 
 ### Verifying Configuration
@@ -414,14 +416,27 @@ describe('Shift Self-Assignment', () => {
 ### Sample Monitoring Query
 
 ```typescript
-// Get failed authentication attempts
+// Example: Monitor failed invite redemptions using Cloud Functions logs
+// Note: This is a hypothetical example. In production, you would:
+// 1. Set up Cloud Functions logging
+// 2. Use Firebase Console or Cloud Logging to query function executions
+// 3. Optionally create an audit_logs collection for tracking
+
+// If you implement an audit_logs collection, queries would look like:
+const last24Hours = new Date();
+last24Hours.setHours(last24Hours.getHours() - 24);
+
 const failedAttempts = await db
   .collection('audit_logs')
   .where('type', '==', 'invite_redemption_failed')
-  .where('timestamp', '>', last24Hours)
+  .where('timestamp', '>', Timestamp.fromDate(last24Hours))
   .get();
 
 console.log(`Failed redemptions in last 24h: ${failedAttempts.size}`);
+
+// For now, use Firebase Console > Functions > Logs to monitor:
+// - redeemJoinToken failures
+// - autoClockOutWorker execution
 ```
 
 For more details, see [SECURITY.md](./SECURITY.md).
