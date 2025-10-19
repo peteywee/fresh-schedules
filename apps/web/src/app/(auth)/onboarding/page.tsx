@@ -18,7 +18,7 @@ export default function OnboardingPage() {
     setBusy(true);
     try {
       await createOrgAndMembership(uid!, orgName || "New Organization");
-      router.push("/(app)/schedule/month");
+      router.push("/schedule/month");
     } finally { setBusy(false); }
   };
 
