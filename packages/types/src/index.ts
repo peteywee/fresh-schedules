@@ -98,7 +98,7 @@ export type Event = z.infer<typeof eventSchema>;
 export const shiftSchema = z.object({
   id: z.string(),
   orgId: z.string(),
-  day: z.any(), // Timestamp
+  day: z.date(), // Date object
   dayStr: z.string(),
   weekKey: z.string(),
   start: z.string(),
