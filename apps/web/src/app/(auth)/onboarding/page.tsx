@@ -26,7 +26,7 @@ export default function OnboardingPage() {
     setBusy(true);
     try {
       await redeemJoinToken(uid!, token);
-      router.push("/(app)/schedule/month");
+      router.push("/schedule/month");
     } finally { setBusy(false); }
   };
 
