@@ -19,8 +19,6 @@
  * @see https://firebase.google.com/docs/functions
  */
 import { setGlobalOptions } from "firebase-functions";
-import { onRequest } from "firebase-functions/v1"; // Corrected import for v1
-import * as logger from "firebase-functions/logger";
 
 // Set global options for all functions, such as the maximum number of instances.
 // This is a cost-control measure to prevent unexpected traffic from scaling up
@@ -28,11 +26,8 @@ import * as logger from "firebase-functions/logger";
 // Note: This applies to v2 functions. For v1 functions, use `runWith()`.
 setGlobalOptions({ maxInstances: 10 });
 
-// Example of a simple HTTP-triggered function (currently commented out).
-// To enable it, uncomment the code block.
-/*
-export const helloWorld = onRequest((request, response) => {
-  logger.info("Hello logs!", { structuredData: true });
-  response.send("Hello from Firebase!");
-});
-*/
+// Export invite management functions
+export { redeemJoinToken } from "./invites";
+
+// Export attendance tracking functions
+export { autoClockOutWorker } from "./attendance";

@@ -163,3 +163,88 @@ export const timesheetSchema = z.object({
  * @property {boolean} [approved=false] - Whether the timesheet has been approved.
  */
 export type Timesheet = z.infer<typeof timesheetSchema>;
+
+/**
+ * Schema for an invite token.
+ * Invite tokens are server-managed, single-use tokens for onboarding users to organizations.
+ * @property {string} id - The unique identifier for the invite token.
+ * @property {string} organizationId - The organization this invite is for.
+ * @property {('admin'|'manager'|'staff')} role - The role to be granted.
+ * @property {string} createdBy - UID of the user who created the invite.
+ * @property {string} createdAt - ISO timestamp when the invite was created.
+ * @property {string} expiresAt - ISO timestamp when the invite expires.
+ * @property {boolean} [used=false] - Whether the invite has been redeemed.
+ * @property {string} [usedBy] - UID of the user who redeemed the invite.
+ * @property {string} [usedAt] - ISO timestamp when the invite was redeemed.
+ */
+export const inviteTokenSchema = z.object({
+  id: z.string(),
+  organizationId: z.string(),
+  role: roleEnum,
+  createdBy: z.string(),
+  createdAt: z.string(),
+  expiresAt: z.string(),
+  used: z.boolean().default(false),
+  usedBy: z.string().optional(),
+  usedAt: z.string().optional()
+});
+
+/**
+ * Represents an invite token.
+ * @typedef {object} InviteToken
+ */
+export type InviteToken = z.infer<typeof inviteTokenSchema>;
+
+/**
+ * Schema for an organization member.
+ * Members can only be added via Cloud Functions using validated invite tokens.
+ * @property {string} userId - The UID of the member.
+ * @property {string} organizationId - The organization this membership is for.
+ * @property {('admin'|'manager'|'staff')} role - The member's role in the organization.
+ * @property {string} joinedAt - ISO timestamp when the member joined.
+ * @property {string} invitedBy - UID of the user who created the invite.
+ */
+export const orgMemberSchema = z.object({
+  userId: z.string(),
+  organizationId: z.string(),
+  role: roleEnum,
+  joinedAt: z.string(),
+  invitedBy: z.string()
+});
+
+/**
+ * Represents an organization member.
+ * @typedef {object} OrgMember
+ */
+export type OrgMember = z.infer<typeof orgMemberSchema>;
+
+/**
+ * Schema for an attendance ledger entry.
+ * Attendance ledger is strictly managed by Cloud Functions with no client access.
+ * @property {string} shiftId - The shift ID.
+ * @property {string} organizationId - The organization ID.
+ * @property {string} staffUid - The staff member's UID.
+ * @property {string} scheduleId - The schedule ID.
+ * @property {string} clockInAt - ISO timestamp when the staff member clocked in.
+ * @property {string} clockOutAt - ISO timestamp when the staff member clocked out.
+ * @property {boolean} autoClockOut - Whether this was an automatic clock-out.
+ * @property {string} recordedAt - ISO timestamp when the ledger entry was created.
+ * @property {string} hash - Secure hash of the attendance record for integrity.
+ */
+export const attendanceLedgerSchema = z.object({
+  shiftId: z.string(),
+  organizationId: z.string(),
+  staffUid: z.string(),
+  scheduleId: z.string(),
+  clockInAt: z.string(),
+  clockOutAt: z.string(),
+  autoClockOut: z.boolean(),
+  recordedAt: z.string(),
+  hash: z.string()
+});
+
+/**
+ * Represents an attendance ledger entry.
+ * @typedef {object} AttendanceLedger
+ */
+export type AttendanceLedger = z.infer<typeof attendanceLedgerSchema>;

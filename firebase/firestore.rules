@@ -54,6 +54,22 @@ service cloud.firestore {
         return isOwner(userId) && resource != null;
     }
 
+    function isMemberOfOrg(orgId) {
+      return exists(/databases/$(database)/documents/organizations/$(orgId)/members/$(request.auth.uid));
+    }
+
+    function getMemberRole(orgId) {
+      return get(/databases/$(database)/documents/organizations/$(orgId)/members/$(request.auth.uid)).data.role;
+    }
+
+    function isOrgManager(orgId) {
+      return isMemberOfOrg(orgId) && getMemberRole(orgId) in ['admin', 'manager'];
+    }
+
+    function onlyFieldsChanged(allowedFields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(allowedFields);
+    }
+
     /**
      * @description Rule for managing admin roles. Only admins can create admin roles.
      * @path /roles_admin/{userId}
@@ -116,6 +132,21 @@ service cloud.firestore {
       allow create: if isSignedIn() && request.resource.data.managerId == request.auth.uid;
       allow update: if isSignedIn() && resource.data.managerId == request.auth.uid && resource != null;
       allow delete: if isSignedIn() && resource.data.managerId == request.auth.uid && resource != null;
+
+      /**
+       * @description Rule for managing organization members. Members can only be added via Cloud Functions.
+       * @path /organizations/{organizationId}/members/{memberId}
+       * @allow (get) - A user can read their own membership or managers can read all members.
+       * @deny (write) - Direct writes are prohibited; use Cloud Functions for member management.
+       * @principle Enforces server-side validation for member onboarding via invite tokens.
+       */
+      match /members/{memberId} {
+        allow get: if isSignedIn() && (isOwner(memberId) || isOrgManager(organizationId));
+        allow list: if isSignedIn() && isOrgManager(organizationId);
+
+        // No direct writes allowed - must use Cloud Functions
+        allow create, update, delete: if false;
+      }
     }
 
     /**
@@ -149,13 +180,14 @@ service cloud.firestore {
      *   Request: auth.uid = 'user_xyz'
      *            resource.data.token = 'some_token'
      * @principle Read-only access to invite data. Invite creation should be handled server-side.
+     * @security Invites should be single-use tokens with expiry, validated by Cloud Functions.
      */
     match /invites/{inviteId} {
-      allow get, list: if true;
+      allow get: if isSignedIn();
+      allow list: if false;
 
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      // Invites can only be created/managed by Cloud Functions
+      allow create, update, delete: if false;
     }
 
     /**
@@ -184,14 +216,32 @@ service cloud.firestore {
      *            resource.data.scheduleId = 'schedule123'
      * @allow (get, list) - Any authenticated user can retrieve shift data.
      *   Request: auth.uid = 'user_xyz'
-     * @deny (update) - A non-admin user attempts to update a shift.
+     * @allow (update) - Manager can update any field, or staff can self-assign to unassigned shifts (only assignedUid field).
+     * @security Staff self-assignment only allows changing assignedUid from null to their own UID.
+     *           All other fields must remain unchanged to prevent privilege escalation.
      */
     match /organizations/{organizationId}/schedules/{scheduleId}/shifts/{shiftId} {
       allow get, list: if true;
 
       allow create: if isSignedIn() && request.resource.data.scheduleId == scheduleId;
-      allow update: if isSignedIn() && request.resource.data.scheduleId == scheduleId && resource != null;
-      allow delete: if isSignedIn() && request.resource.data.scheduleId == scheduleId && resource != null;
+      
+      // Managers can update any field
+      allow update: if isSignedIn() && 
+                       request.resource.data.scheduleId == scheduleId && 
+                       resource != null &&
+                       isOrgManager(organizationId);
+      
+      // Staff can self-assign to unassigned shifts (only assignedUid field can change)
+      allow update: if isSignedIn() &&
+                       resource != null &&
+                       resource.data.assignedUid == null &&
+                       request.resource.data.assignedUid == request.auth.uid &&
+                       onlyFieldsChanged(['assignedUid', 'updatedAt']);
+      
+      allow delete: if isSignedIn() && 
+                       request.resource.data.scheduleId == scheduleId && 
+                       resource != null &&
+                       isOrgManager(organizationId);
     }
 
     /**
@@ -210,6 +260,17 @@ service cloud.firestore {
       allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid && request.resource.data.organizationId == organizationId;
       allow update: if isSignedIn() && request.resource.data.organizationId == organizationId && resource != null;
       allow delete: if isSignedIn() && request.resource.data.organizationId == organizationId && resource != null;
+    }
+
+    /**
+     * @description Rule for attendance ledger. Strictly managed by Cloud Functions only.
+     * @path /attendance_ledger/{entryId}
+     * @deny (read, write) - No direct client access allowed.
+     * @security Attendance records contain sensitive data and must only be accessed via
+     *           authenticated Cloud Functions with proper LEDGER_HASH_SALT validation.
+     */
+    match /attendance_ledger/{entryId} {
+      allow read, write: if false;
     }
   }
 }
