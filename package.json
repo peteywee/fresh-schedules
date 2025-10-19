@@ -1,7 +1,7 @@
 {
   "name": "fresh-schedules",
   "private": true,
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@10.18.3",
   "scripts": {
     "dev:web": "pnpm --filter @apps/web dev",
     "dev:api": "pnpm --filter @services/api dev",
@@ -14,6 +14,7 @@
     "@types/node": "24.7.1",
     "@types/react": "19.2.2",
     "@types/react-dom": "^19.2.1",
+    "eslint": "^8",
     "typescript": "5.9.3"
   },
   "version": "0.1.1",
