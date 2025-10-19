@@ -96,8 +96,6 @@ export function createShiftRouter() {
     const cached = shiftsCache.get(cacheKey) as OrgShiftsCache | undefined;
 
     // Check cache first
-    const cacheKey = `org_${orgId}`;
-    const cached = shiftsCache.get(cacheKey) as OrgShiftsCache | undefined;
     
     if (cached && Date.now() - cached.cachedAt < CACHE_TTL) {
       return res.json({ ok: true, shifts: cached.shifts, cached: true });

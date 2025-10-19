@@ -54,6 +54,18 @@ service cloud.firestore {
         return isOwner(userId) && resource != null;
     }
 
+    function isOrgMember(orgId) {
+      return isSignedIn() && exists(/databases/$(database)/documents/orgs/$(orgId)/members/$(request.auth.uid));
+    }
+
+    function getRole(orgId) {
+      return get(/databases/$(database)/documents/orgs/$(orgId)/members/$(request.auth.uid)).data.role;
+    }
+
+    function hasOrgRole(orgId, roles) {
+      return isOrgMember(orgId) && getRole(orgId) in roles;
+    }
+
     /**
      * @description Rule for managing admin roles. Only admins can create admin roles.
      * @path /roles_admin/{userId}
@@ -96,26 +108,62 @@ service cloud.firestore {
       allow delete: if isSignedIn() && resource.data.adminId == request.auth.uid && resource != null;
     }
 
-    /**
-     * @description Rule for managing organization data. Only authenticated users can create organizations,
-     *              and only the manager can update or delete.
-     * @path /organizations/{organizationId}
-     * @allow (create) - An authenticated user can create a new organization.
-     *   Request: auth.uid = 'user_abc'
-     *            resource.data.managerId = 'user_abc'
-     * @allow (get, list) - Any authenticated user can retrieve organization data.
-     *   Request: auth.uid = 'user_xyz'
-     * @deny (update) - A non-manager user attempts to update an organization.
-     *   Request: auth.uid = 'user_xyz'
-     *            resource.data.name = 'Updated Organization Name'
-     * @principle Enforces ownership for organization management.
-     */
-    match /organizations/{organizationId} {
-      allow get, list: if true;
+    match /orgs/{orgId} {
+      allow create: if isSignedIn();
+      allow read: if isOrgMember(orgId);
+      allow update, delete: if hasOrgRole(orgId, ['owner']);
 
-      allow create: if isSignedIn() && request.resource.data.managerId == request.auth.uid;
-      allow update: if isSignedIn() && resource.data.managerId == request.auth.uid && resource != null;
-      allow delete: if isSignedIn() && resource.data.managerId == request.auth.uid && resource != null;
+      match /members/{uid} {
+         allow read: if isOrgMember(orgId);
+         allow write: if hasOrgRole(orgId, ['owner', 'admin']);
+         allow create: if isOwner(uid);
+      }
+
+      match /shifts/{shiftId} {
+      allow read: if isOrgMember(orgId);
+      allow create, delete: if hasOrgRole(orgId, ['owner', 'admin', 'manager']);
+      allow update: if hasOrgRole(orgId, ['owner', 'admin', 'manager']) ||
+                    (request.resource.data.assignedUid == request.auth.uid && resource.data.assignedUid == null);
+      }
+
+      match /shiftTemplates/{templateId} {
+      allow read: if isOrgMember(orgId);
+      allow create, update, delete: if hasOrgRole(orgId, ['owner', 'admin', 'manager']);
+      }
+
+      match /weeks/{weekKey} {
+      allow read: if isOrgMember(orgId);
+      allow create, update: if hasOrgRole(orgId, ['owner', 'admin', 'manager']);
+      }
+
+      match /settings/defaults {
+      allow read: if isOrgMember(orgId);
+      allow write: if hasOrgRole(orgId, ['owner', 'admin', 'manager']);
+      }
+
+      match /alerts/{alertId} {
+      allow read: if isOrgMember(orgId);
+      allow create, update: if hasOrgRole(orgId, ['owner', 'admin', 'manager']);
+      allow delete: if false;
+      }
+
+      match /timesheets/{tsId} {
+      allow read: if isOrgMember(orgId);
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow update: if (hasOrgRole(orgId, ['owner', 'admin', 'manager'])) ||
+                      (request.resource.data.uid == request.auth.uid && resource.data.approved != true);
+      allow delete: if false;
+      }
+
+      match /attendance_records/{recordId} {
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow read: if isOrgMember(orgId);
+      allow update, delete: if false;
+      }
+
+      match /attendance_ledger/{ledgerId} {
+      allow read, write: if false;
+      }
     }
 
     /**
@@ -158,58 +206,20 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    /**
-     * @description Rule for managing schedule data within an organization.  Schedule management is restricted to authenticated users.
-     * @path /organizations/{organizationId}/schedules/{scheduleId}
-     * @allow (create) - An authenticated user can create a schedule.
-     *   Request: auth.uid = 'user_abc'
-     *            resource.data.organizationId = 'org123'
-     * @allow (get, list) - Any authenticated user can retrieve schedule data.
-     *   Request: auth.uid = 'user_xyz'
-     * @deny (update) - A non-admin user attempts to update a schedule.
-     */
-    match /organizations/{organizationId}/schedules/{scheduleId} {
-      allow get, list: if true;
-
-      allow create: if isSignedIn() && request.resource.data.organizationId == organizationId;
-      allow update: if isSignedIn() && request.resource.data.organizationId == organizationId && resource != null;
-      allow delete: if isSignedIn() && request.resource.data.organizationId == organizationId && resource != null;
+    match /parents/{parentId}/events/{eventId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+    match /events/{eventId}/booths/{boothId} {
+      allow read: if isSignedIn();
+      allow write: if false;
     }
 
-    /**
-     * @description Rule for managing shift data within a schedule.  Shift management is restricted to authenticated users.
-     * @path /organizations/{organizationId}/schedules/{scheduleId}/shifts/{shiftId}
-     * @allow (create) - An authenticated user can create a shift.
-     *   Request: auth.uid = 'user_abc'
-     *            resource.data.scheduleId = 'schedule123'
-     * @allow (get, list) - Any authenticated user can retrieve shift data.
-     *   Request: auth.uid = 'user_xyz'
-     * @deny (update) - A non-admin user attempts to update a shift.
-     */
-    match /organizations/{organizationId}/schedules/{scheduleId}/shifts/{shiftId} {
-      allow get, list: if true;
-
-      allow create: if isSignedIn() && request.resource.data.scheduleId == scheduleId;
-      allow update: if isSignedIn() && request.resource.data.scheduleId == scheduleId && resource != null;
-      allow delete: if isSignedIn() && request.resource.data.scheduleId == scheduleId && resource != null;
+    match /parents/{parentId}/invoices/{invoiceId} {
+        allow read, write: if false;
     }
-
-    /**
-     * @description Rule for managing messages within an organization. Message management is restricted to authenticated users.
-     * @path /organizations/{organizationId}/messages/{messageId}
-     * @allow (create) - An authenticated user can create a message.
-     *   Request: auth.uid = 'user_abc'
-     *            resource.data.organizationId = 'org123'
-     * @allow (get, list) - Any authenticated user can retrieve message data.
-     *   Request: auth.uid = 'user_xyz'
-     * @deny (update) - A non-admin user attempts to update a message.
-     */
-    match /organizations/{organizationId}/messages/{messageId} {
-      allow get, list: if true;
-
-      allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid && request.resource.data.organizationId == organizationId;
-      allow update: if isSignedIn() && request.resource.data.organizationId == organizationId && resource != null;
-      allow delete: if isSignedIn() && request.resource.data.organizationId == organizationId && resource != null;
+    match /parents/{parentId}/payments/{paymentId} {
+        allow read, write: if false;
     }
   }
 }

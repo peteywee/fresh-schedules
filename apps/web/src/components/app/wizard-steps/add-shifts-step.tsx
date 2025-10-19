@@ -1,22 +1,5 @@
-import { memo } from "react";
-import { Card } from "@/components/ui/card";
-import { ScheduleCalendar } from "../schedule-calendar";
-import type { ShiftAssignment } from "../schedule-calendar";
+import React from 'react';
 
-interface AddShiftsStepProps {
-  schedule: { weekOf: string; shifts: ShiftAssignment[] };
-  onShiftEdit: (shift: ShiftAssignment) => void;
+export function AddShiftsStep(props: any) {
+  return <div className="text-sm text-gray-600">Placeholder for Add Shifts Step</div>;
 }
-
-export const AddShiftsStep = memo(function AddShiftsStep({
-  schedule,
-  onShiftEdit
-}: AddShiftsStepProps) {
-  return (
-    <Card title="Add shifts for the week">
-      <ScheduleCalendar schedule={schedule} onShiftEdit={onShiftEdit} editable />
-    </Card>
-  );
-});
-
-export default AddShiftsStep;
