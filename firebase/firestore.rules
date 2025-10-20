@@ -114,9 +114,9 @@ service cloud.firestore {
       allow update, delete: if hasOrgRole(orgId, ['owner']);
 
       match /members/{uid} {
-         allow read: if isOrgMember(orgId);
-         allow write: if hasOrgRole(orgId, ['owner', 'admin']);
-         allow create: if isOwner(uid);
+        allow read: if isOrgMember(orgId);
+        // Only org owner/admin can create or write member docs
+        allow create, write: if hasOrgRole(orgId, ['owner', 'admin']);
       }
 
       match /shifts/{shiftId} {
