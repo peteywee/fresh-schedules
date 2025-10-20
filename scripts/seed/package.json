@@ -1,0 +1,13 @@
+{
+  "name": "fresh-seed-script",
+  "private": true,
+  "devDependencies": {
+    "zod": "^4.1.12",
+    "firebase-admin": "^13.5.0",
+    "@faker-js/faker": "^10.1.0",
+    "date-fns": "^3.6.0",
+    "ts-node": "^10.9.2",
+    "@types/node": "^22.5.2",
+    "dotenv": "^17.2.3"
+  }
+}
