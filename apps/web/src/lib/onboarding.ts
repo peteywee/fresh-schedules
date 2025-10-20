@@ -13,15 +13,5 @@ export async function createOrgAndMembership(uid: string, name: string): Promise
 }
 
 export async function redeemJoinToken(uid: string, token: string): Promise<{orgId:string}> {
-  // MVP: interpret token as orgId (replace with secure token service later)
-  // SECURITY: This is insecure. A proper one-time token system is required.
-  throw new Error("Secure token redemption is not yet implemented.");
-  /*
-  const orgId = token.trim();
-  await setDoc(doc(db(), "orgs", orgId, "members", uid), {
-    role: "staff", status: "active", joinedAt: serverTimestamp()
-  }, { merge: true });
-  if (typeof window !== "undefined") localStorage.setItem("primaryOrgId", orgId);
-  return { orgId };
-  */
+  return Promise.reject(new Error("Secure token redemption is not yet implemented."));
 }
