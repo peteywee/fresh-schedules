@@ -98,13 +98,17 @@ export type Event = z.infer<typeof eventSchema>;
 export const shiftSchema = z.object({
   id: z.string(),
   orgId: z.string(),
-  eventId: z.string().optional(),
-  role: z.string(),
-  staffUid: z.string().optional(),
-  startTime: z.string(), // ISO
-  endTime: z.string(),   // ISO
-  breakMinutes: z.number().int().min(0).default(0),
-  published: z.boolean().default(false)
+  day: z.date(), // Date object
+  dayStr: z.string(),
+  weekKey: z.string(),
+  start: z.string(),
+  end: z.string(),
+  roleTag: z.string(),
+  status: z.enum(["draft", "published", "cancelled"]),
+  eventId: z.string().nullable().optional(),
+  boothId: z.string().nullable().optional(),
+  assignedUid: z.string().nullable().optional(),
+  createdAt: z.any(), // Timestamp
 });
 
 /**
@@ -127,7 +131,17 @@ export type Shift = z.infer<typeof shiftSchema>;
  * This is a subset of the main shift schema, containing only the fields required for creation.
  */
 export const createShiftInput = shiftSchema.pick({
-  orgId: true, eventId: true, role: true, staffUid: true, startTime: true, endTime: true, breakMinutes: true
+  orgId: true,
+  day: true,
+  dayStr: true,
+  weekKey: true,
+  start: true,
+  end: true,
+  roleTag: true,
+  status: true,
+  eventId: true,
+  boothId: true,
+  assignedUid: true,
 });
 
 /**
