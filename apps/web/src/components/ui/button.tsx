@@ -10,7 +10,7 @@ import type { LucideIcon } from 'lucide-react';
  * @property {'primary'} primary - The main button style for primary actions.
  * @property {'secondary'} secondary - The secondary button style for less prominent actions.
  */
-export type ButtonVariant = 'primary' | 'secondary';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'link' | 'default';
 
 /**
  * Props for the Button component.
