@@ -15,12 +15,12 @@ import { Card } from '@/components/ui/card';
  * Props for the `SignInProviders` component.
  * @property {'idle' | 'sending'} status - The current status of the email submission process.
  * @property {(email: string) => Promise<void>} onEmailSubmit - A callback function to handle email submission.
- * @property {(user: any) => void} onGoogleSignIn - A callback function to handle Google sign-in success.
+ * @property {(user: User) => void} onGoogleSignIn - A callback function to handle Google sign-in success.
  */
 export type SignInProvidersProps = {
   status: 'idle' | 'sending';
   onEmailSubmit: (email: string) => Promise<void>;
-  onGoogleSignIn: (user: any) => void;
+  onGoogleSignIn: (user: User) => void;
 };
 
 /**
