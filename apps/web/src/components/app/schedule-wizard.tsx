@@ -15,29 +15,29 @@ function PlaceholderComponent({ message }: { message: string }) {
 const SelectWeekStep = lazy(() =>
   (import("./wizard-steps/select-week-step")
     .then(module => ({ default: module.SelectWeekStep }))
-    .catch(() => ({ default: (props: any) => <PlaceholderComponent message="Select week step is not implemented yet." /> }))
-  ) as Promise<{ default: ComponentType<any> }>
+    .catch(() => ({ default: (_props: unknown) => <PlaceholderComponent message="Select week step is not implemented yet." /> }))
+  ) as Promise<{ default: ComponentType<unknown> }>
 );
 
 const AddShiftsStep = lazy(() =>
   (import("./wizard-steps/add-shifts-step")
     .then(module => ({ default: module.AddShiftsStep }))
-    .catch(() => ({ default: (props: any) => <PlaceholderComponent message="Adding shifts is not implemented yet." /> }))
-  ) as Promise<{ default: ComponentType<any> }>
+    .catch(() => ({ default: (_props: unknown) => <PlaceholderComponent message="Adding shifts is not implemented yet." /> }))
+  ) as Promise<{ default: ComponentType<unknown> }>
 );
 
 const AssignRolesStep = lazy(() =>
   (import("./wizard-steps/assign-roles-step")
     .then(module => ({ default: module.AssignRolesStep }))
-    .catch(() => ({ default: (props: any) => <PlaceholderComponent message="Assign roles step is not implemented yet." /> }))
-  ) as Promise<{ default: ComponentType<any> }>
+    .catch(() => ({ default: (_props: unknown) => <PlaceholderComponent message="Assign roles step is not implemented yet." /> }))
+  ) as Promise<{ default: ComponentType<unknown> }>
 );
 
 const ReviewStep = lazy(() =>
   (import("./wizard-steps/review-step")
     .then(module => ({ default: module.ReviewStep }))
-    .catch(() => ({ default: (props: any) => <PlaceholderComponent message="Review step is not implemented yet." /> }))
-  ) as Promise<{ default: ComponentType<any> }>
+    .catch(() => ({ default: (_props: unknown) => <PlaceholderComponent message="Review step is not implemented yet." /> }))
+  ) as Promise<{ default: ComponentType<unknown> }>
 );
 
 /**
