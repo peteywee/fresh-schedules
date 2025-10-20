@@ -81,7 +81,12 @@ service cloud.firestore {
       allow get: if isAdmin();
       allow list: if false;
 
-      allow create: if isAdmin();
+      // Only existing admins can grant admin, and they cannot grant it to themselves.
+      // Ensure the document path aligns with the intended target UID.
+      allow create: if isAdmin()
+                    && userId == request.resource.data.uid
+                    && request.resource.data.uid != request.auth.uid;
+
       allow update: if false;
       allow delete: if isAdmin();
     }

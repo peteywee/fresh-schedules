@@ -1,7 +1,5 @@
 import { Router } from 'express';
-import { createShiftInput, roleEnum } from '@packages/types';
-import { getFirestore } from '../firebase';
-
+import { createShiftInput } from '@packages/types';
 import { getFirestore } from '../firebase';
 import { authenticateFirebaseToken, requireRole, AuthenticatedRequest } from '../middleware/auth';
 
@@ -27,15 +25,14 @@ const CACHE_TTL = process.env.SHIFTS_CACHE_TTL_MS
   ? parseInt(process.env.SHIFTS_CACHE_TTL_MS, 10)
   : 5 * 60 * 1000; // 5 minutes
 
-type Shift = z.infer<typeof createShiftInput> & {
-  id: string;
-  createdAt: string;
-  createdByRole: string;
-};
+// Maximum number of shifts to cache per organization
+const envMaxShifts = Number(process.env.SHIFTS_CACHE_MAX);
+const MAX_ORG_SHIFTS = Number.isFinite(envMaxShifts) && envMaxShifts > 0
+  ? envMaxShifts
+  : 1000;
 
 export function createShiftRouter() {
   const router = Router();
-  const cache = new ShiftCache();
 
   // Apply authentication middleware to all routes
   router.use(authenticateFirebaseToken);
@@ -55,7 +52,7 @@ export function createShiftRouter() {
     const id = `sh_${Date.now()}`;
     const payload = {
       ...parsed.data,
-      id: `sh_${Date.now()}`,
+      id,
       createdAt: new Date().toISOString(),
       createdByRole: req.user!.role!,
       createdBy: req.user!.uid,
@@ -66,10 +63,23 @@ export function createShiftRouter() {
     // Also keep an org-level cache so GET /?orgId=... can return seeded results
     try {
       const orgKey = `shifts:org:${parsed.data.orgId}`;
-      const existing = shiftsCache.get(orgKey) || { shifts: [], cachedAt: 0 };
-      existing.shifts = existing.shifts || [];
-      existing.shifts.push(payload);
-      shiftsCache.set(orgKey, { shifts: existing.shifts, cachedAt: Date.now() });
+      const existing = shiftsCache.get(orgKey) as OrgShiftsCache | undefined;
+      if (existing) {
+        // Deduplicate by id
+        const idx = existing.shifts.findIndex(s => s.id === payload.id);
+        if (idx >= 0) {
+          existing.shifts[idx] = payload;
+        } else {
+          existing.shifts.push(payload);
+          // Enforce max size (drop oldest)
+          if (existing.shifts.length > MAX_ORG_SHIFTS) {
+            existing.shifts.splice(0, existing.shifts.length - MAX_ORG_SHIFTS);
+          }
+        }
+        shiftsCache.set(orgKey, { shifts: existing.shifts, cachedAt: Date.now() });
+      } else {
+        shiftsCache.set(orgKey, { shifts: [payload], cachedAt: Date.now() });
+      }
     } catch (err) {
       console.error('Error updating org-level shift cache:', err);
     }
@@ -78,51 +88,15 @@ export function createShiftRouter() {
       const db = await getFirestore();
       await db
         .collection('organizations')
-        .doc(shift.orgId)
+        .doc(payload.orgId)
         .collection('shifts')
-        .doc(shift.id)
-        .set(shift);
+        .doc(payload.id)
+        .set(payload);
 
-      return res.status(201).json({ ok: true, id: shift.id, persisted: true });
+      return res.status(201).json({ ok: true, id: payload.id, persisted: true });
     } catch (error) {
       console.warn('PLACEHOLDER: Firestore persistence skipped', error);
-      return res.status(202).json({ ok: true, id: shift.id, persisted: false, reason: 'firestore_not_configured' });
-    }
-  });
-
-  router.get('/', async (req, res) => {
-    const { orgId } = req.query;
-    if (!orgId || typeof orgId !== 'string') {
-      return res.status(400).json({ ok: false, error: 'orgId required' });
-    }
-
-    const cached = cache.getOrgShifts(orgId);
-    if (cached) {
-      return res.json({ ok: true, shifts: cached.shifts, cached: true });
-    }
-
-    try {
-      const db = await getFirestore();
-      const snapshot = await db
-        .collection('organizations')
-        .doc(orgId)
-        .collection('shifts')
-        .get();
-
-      const shifts: CachedShift[] = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      } as CachedShift));
-
-      cache.setOrgShifts(orgId, shifts);
-      return res.json({ ok: true, shifts, cached: false });
-    } catch (error) {
-      console.warn('Firestore query failed, using cache if available', error);
-      const staleShifts = cache.getStaleOrgShifts(orgId);
-      if (staleShifts) {
-        return res.json({ ok: true, shifts: staleShifts, cached: true, fallback: true });
-      }
-      return res.status(500).json({ ok: false, error: 'Failed to retrieve shifts' });
+      return res.status(202).json({ ok: true, id: payload.id, persisted: false, reason: 'firestore_not_configured' });
     }
   });
 
@@ -154,7 +128,29 @@ export function createShiftRouter() {
         .collection('shifts')
         .get();
 
-      const shifts = snapshot.docs.map((doc: any) => doc.data() as CachedShift);
+      // Validate the structure of data returned from Firestore before casting
+      const shifts: CachedShift[] = snapshot.docs
+        .map((doc) => {
+          const data = doc.data() as Record<string, unknown>;
+          const orgIdFromDoc = typeof data.orgId === 'string' ? data.orgId : orgId;
+          if (
+            typeof doc.id !== 'string' ||
+            typeof orgIdFromDoc !== 'string' ||
+            typeof data.createdAt !== 'string' ||
+            typeof data.createdByRole !== 'string'
+          ) {
+            return null;
+          }
+          return {
+            ...data,
+            id: doc.id,
+            orgId: orgIdFromDoc,
+            createdAt: data.createdAt as string,
+            createdByRole: data.createdByRole as string,
+          } as CachedShift;
+        })
+        .filter((s): s is CachedShift => s !== null);
+
       shiftsCache.set(cacheKey, { shifts, cachedAt: Date.now() });
 
       return res.json({ ok: true, shifts, cached: false });
