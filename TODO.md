@@ -1,39 +1,55 @@
-# Refactoring Plan for Speed and Optimization
+# TODO: Fix Settings Conflict and Deprecated Dependencies
 
-## React Components Optimization (Speed Focus)
+## Steps to Complete
 
-- [x] Create custom hooks (e.g., useScheduleState) in apps/web/src/hooks/
-- [x] Refactor ScheduleWizard to use useReducer for state management
-- [x] Add React.memo, useMemo, useCallback to ScheduleWizard steps
-- [x] Memoize calculations in ScheduleCalendar (grouped shifts, format functions)
-- [x] Add React.memo, useMemo to ScheduleCalendar component
-- [x] Memoize hours calculation in HoursChart
-- [x] Add React.memo to HoursChart component
+- [x] Merge settings.json into one valid JSON object, resolving duplicates and combining arrays/objects.
+  - Acceptance: settings.json is valid JSON without syntax errors.
+  - Success: File loads in VSCode without conflicts.
+  - Constraints: Preserve all unique settings; for duplicates, keep the latest or merge logically (e.g., combine serverSampling objects).
 
-## Code Structure
+- [x] Check git status in fresh-root/apps/web and stash changes if any.
+  - Acceptance: No uncommitted changes that could interfere with migration.
+  - Success: Git status shows clean or changes stashed.
+  - Constraints: Use git stash if needed; avoid force operations.
 
-- [ ] Organize components into subfolders if needed
-- [ ] Standardize naming and improve type definitions
+- [x] Run ESLint migration codemod: npx @next/codemod@canary next-lint-to-eslint-cli in fresh-root/apps/web.
+  - Acceptance: Migration completes without errors.
+  - Success: ESLint config updated to use CLI instead of next lint.
+  - Constraints: Ensure Node.js and npm are available; handle any prompts automatically.
 
-## API Optimization
+- [x] Fix ESLint warnings in schedule-wizard.tsx: Remove unused props or prefix with _, replace 'any' with proper types.
+  - Acceptance: No unused vars or explicit any warnings in the file.
+  - Success: pnpm lint passes for this file.
+  - Constraints: Maintain component functionality; use TypeScript best practices for types.
 
-- [x] Add middleware for error handling, logging, CORS in services/api/src/index.ts
-- [x] Optimize shifts route in services/api/src/routes/shifts.ts
+- [x] Fix ESLint warnings in messaging.place.ts: Remove unused imports.
+  - Acceptance: No unused imports warnings in the file.
+  - Success: pnpm lint passes for this file.
+  - Constraints: Ensure removed imports are not needed elsewhere; check for side effects.
 
-## Bundle and Build
+- [x] Run pnpm lint to verify all fixes.
+  - Acceptance: No ESLint warnings or errors.
+  - Success: Command exits with code 0.
+  - Constraints: Run in fresh-root/apps/web directory.
 
-- [x] Add dynamic imports for wizard steps in ScheduleWizard
-- [x] Update package.json scripts for better performance
-- [x] Ensure tree shaking and minification
+- [ ] Test the app if needed (optional: run dev server and check for runtime errors).
+  - Acceptance: App starts without errors.
+  - Success: No console errors in browser.
+  - Constraints: Use browser_action if visual verification is required.
 
-## Other Factors
+## Overall Acceptance Criteria
+- settings.json is valid and conflict-free.
+- ESLint migration is complete and deprecated deps are fixed.
+- All ESLint warnings are resolved.
+- No breaking changes to existing functionality.
 
-- [x] Update lint script to actual ESLint in package.json
-- [ ] Add service worker caching for static assets
-- [ ] Review Firebase config loading
+## Success Criteria
+- pnpm lint passes without warnings.
+- VSCode settings load without errors.
+- Git status is clean or changes are properly managed.
 
-## Followup
-
-- [x] Run tests and build
-- [x] Measure performance improvements (baseline established)
-- [ ] Test in browser (pending user interaction)
+## Constraints
+- Operate within /home/patrick/fresh-schedules CWD.
+- Do not overwrite files without confirmation (but plan is approved).
+- Follow best practices for code edits.
+- If any step fails, stop and ask for guidance.
