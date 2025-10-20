@@ -5,7 +5,6 @@ const SIGNIN_PATH = '/signin';
 test('debug: signin flow with console log capture', async ({ page }) => {
   page.on('console', (msg) => {
     // Print console messages so they appear in the test runner output
-    // @ts-expect-error msg.type() is not typed in Playwright
     console.log(`[page console:${msg.type()}] ${msg.text()}`);
   });
 

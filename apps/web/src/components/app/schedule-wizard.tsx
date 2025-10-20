@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, memo, useMemo, lazy, Suspense, type ComponentType } from "react";
-import { Calendar, Users, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
+import { Calendar, Users, CheckCircle, ArrowLeft, ArrowRight, ArrowRightCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ShiftAssignment } from "./schedule-calendar";
 import { useScheduleState } from "@/hooks/useScheduleState";
@@ -15,29 +15,29 @@ function PlaceholderComponent({ message }: { message: string }) {
 const SelectWeekStep = lazy(() =>
   (import("./wizard-steps/select-week-step")
     .then(module => ({ default: module.SelectWeekStep }))
-    .catch(() => ({ default: (_props: unknown) => <PlaceholderComponent message="Select week step is not implemented yet." /> }))
-  ) as Promise<{ default: ComponentType<unknown> }>
+    .catch(() => ({ default: (_props: Record<string, unknown>) => <PlaceholderComponent message="Select week step is not implemented yet." /> }))
+  ) as Promise<{ default: ComponentType<Record<string, unknown>> }>
 );
 
 const AddShiftsStep = lazy(() =>
   (import("./wizard-steps/add-shifts-step")
     .then(module => ({ default: module.AddShiftsStep }))
-    .catch(() => ({ default: (_props: unknown) => <PlaceholderComponent message="Adding shifts is not implemented yet." /> }))
-  ) as Promise<{ default: ComponentType<unknown> }>
+    .catch(() => ({ default: (_props: Record<string, unknown>) => <PlaceholderComponent message="Adding shifts is not implemented yet." /> }))
+  ) as Promise<{ default: ComponentType<Record<string, unknown>> }>
 );
 
 const AssignRolesStep = lazy(() =>
   (import("./wizard-steps/assign-roles-step")
     .then(module => ({ default: module.AssignRolesStep }))
-    .catch(() => ({ default: (_props: unknown) => <PlaceholderComponent message="Assign roles step is not implemented yet." /> }))
-  ) as Promise<{ default: ComponentType<unknown> }>
+    .catch(() => ({ default: (_props: Record<string, unknown>) => <PlaceholderComponent message="Assign roles step is not implemented yet." /> }))
+  ) as Promise<{ default: ComponentType<Record<string, unknown>> }>
 );
 
 const ReviewStep = lazy(() =>
   (import("./wizard-steps/review-step")
     .then(module => ({ default: module.ReviewStep }))
-    .catch(() => ({ default: (_props: unknown) => <PlaceholderComponent message="Review step is not implemented yet." /> }))
-  ) as Promise<{ default: ComponentType<unknown> }>
+    .catch(() => ({ default: (_props: Record<string, unknown>) => <PlaceholderComponent message="Review step is not implemented yet." /> }))
+  ) as Promise<{ default: ComponentType<Record<string, unknown>> }>
 );
 
 /**
@@ -63,7 +63,7 @@ export const ScheduleWizard = memo(function ScheduleWizard(): React.ReactElement
     { id: "select-week", title: "Select Week", icon: Calendar },
     { id: "add-shifts", title: "Add Shifts", icon: Users },
     { id: "assign-roles", title: "Assign Roles", icon: CheckCircle },
-    { id: "review", title: "Review & Publish", icon: CheckCircle },
+    { id: "review", title: "Review & Publish", icon: ArrowRightCircle },
   ];
 
   const currentStepIndex = steps.findIndex((s) => s.id === currentStep);
@@ -88,7 +88,7 @@ export const ScheduleWizard = memo(function ScheduleWizard(): React.ReactElement
     } else {
       dispatch({ type: 'UPDATE_SHIFT', payload: shift });
     }
-  }, [dispatch]);
+  }, [dispatch, DEFAULT_ROLE, DEFAULT_START, DEFAULT_END, DEFAULT_ASSIGNEE]);
 
   /**
    * Opens assignment UI for a shift (modal or inline form).
@@ -103,8 +103,9 @@ export const ScheduleWizard = memo(function ScheduleWizard(): React.ReactElement
 
   /**
    * Renders the content for the current step of the wizard.
+   * Always returns a valid React element or null.
    */
-  const renderStepContent = useMemo((): React.ReactElement | null => {
+  const renderStepContent = useMemo<React.ReactElement | null>(() => {
     switch (currentStep) {
       case "select-week":
         return (
@@ -145,9 +146,14 @@ export const ScheduleWizard = memo(function ScheduleWizard(): React.ReactElement
         );
 
       default:
+        // Always return null if no valid step is matched
         return null;
     }
   }, [currentStep, schedule, handleShiftEdit, handleShiftAssign, dispatch]);
+
+  // Extract repeated checks for clarity
+  const isFirstStep = currentStepIndex === 0;
+  const isLastStep = currentStepIndex === steps.length - 1;
 
   return (
     <div className="fs-card" role="region" aria-label="Schedule wizard">
@@ -187,8 +193,8 @@ export const ScheduleWizard = memo(function ScheduleWizard(): React.ReactElement
       <footer className="wizard-footer">
         <Button
           onClick={prevStep}
-          disabled={currentStepIndex === 0}
-          aria-disabled={currentStepIndex === 0}
+          disabled={isFirstStep}
+          aria-disabled={isFirstStep}
         >
           <ArrowLeft size={16} />
           <span>Back</span>
@@ -196,8 +202,8 @@ export const ScheduleWizard = memo(function ScheduleWizard(): React.ReactElement
 
         <Button
           onClick={nextStep}
-          disabled={currentStepIndex === steps.length - 1}
-          aria-disabled={currentStepIndex === steps.length - 1}
+          disabled={isLastStep}
+          aria-disabled={isLastStep}
         >
           <span>Next</span>
           <ArrowRight size={16} />

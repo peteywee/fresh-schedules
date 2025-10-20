@@ -1,0 +1,915 @@
+{
+  ".env.example": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": "root",
+    "action": "contains"
+  },
+  ".firebaserc": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": "root",
+    "action": "contains"
+  },
+  ".mcp.json": {
+    "language": "json",
+    "scope": "other",
+    "folder": "root",
+    "action": "stores"
+  },
+  ".vscode/extensions.json": {
+    "language": "json",
+    "scope": "other",
+    "folder": ".vscode",
+    "action": "stores"
+  },
+  ".vscode/launch.json": {
+    "language": "json",
+    "scope": "other",
+    "folder": ".vscode",
+    "action": "stores"
+  },
+  ".vscode/settings.json": {
+    "language": "json",
+    "scope": "other",
+    "folder": ".vscode",
+    "action": "stores"
+  },
+  ".vscode/settings.local.json": {
+    "language": "json",
+    "scope": "other",
+    "folder": ".vscode",
+    "action": "stores"
+  },
+  ".vscode/tasks.json": {
+    "language": "json",
+    "scope": "other",
+    "folder": ".vscode",
+    "action": "stores"
+  },
+  ".zencoder/rules/repo.md": {
+    "language": "markdown",
+    "scope": "other",
+    "folder": "rules",
+    "action": "documents"
+  },
+  "MCP_QUICK_START.md": {
+    "language": "markdown",
+    "scope": "other",
+    "folder": "root",
+    "action": "documents"
+  },
+  "PERFORMANCE_BASELINE.md": {
+    "language": "markdown",
+    "scope": "other",
+    "folder": "root",
+    "action": "documents"
+  },
+  "README.md": {
+    "language": "markdown",
+    "scope": "other",
+    "folder": "root",
+    "action": "documents"
+  },
+  "TODO.md": {
+    "language": "markdown",
+    "scope": "other",
+    "folder": "root",
+    "action": "documents"
+  },
+  "apps/web/.env.example": {
+    "language": "unknown",
+    "scope": "frontend",
+    "folder": "web",
+    "action": "contains"
+  },
+  "apps/web/.env.local.example": {
+    "language": "unknown",
+    "scope": "frontend",
+    "folder": "web",
+    "action": "contains"
+  },
+  "apps/web/.eslintrc.json": {
+    "language": "json",
+    "scope": "frontend",
+    "folder": "web",
+    "action": "stores"
+  },
+  "apps/web/app/(auth)/signin/page.tsx": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "signin",
+    "action": "renders"
+  },
+  "apps/web/app/(auth)/signin/sign-in-experience.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "signin",
+    "action": "renders",
+    "attributes": [
+      "scheduling"
+    ]
+  },
+  "apps/web/app/globals.css": {
+    "language": "css",
+    "scope": "frontend",
+    "folder": "app",
+    "action": "contains"
+  },
+  "apps/web/app/layout.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "app",
+    "action": "renders"
+  },
+  "apps/web/app/page.tsx": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "app",
+    "action": "renders",
+    "attributes": [
+      "scheduling"
+    ]
+  },
+  "apps/web/app/schedule/page.tsx": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "schedule",
+    "action": "renders",
+    "attributes": [
+      "wizard",
+      "scheduling"
+    ]
+  },
+  "apps/web/app/schedule/schedule.mock.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "schedule",
+    "action": "contains",
+    "attributes": [
+      "scheduling"
+    ]
+  },
+  "apps/web/app/service-worker-registration.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "app",
+    "action": "renders"
+  },
+  "apps/web/eslint.config.mjs": {
+    "language": "javascript",
+    "scope": "frontend",
+    "folder": "web",
+    "action": "contains",
+    "attributes": [
+      "configuration"
+    ]
+  },
+  "apps/web/next-env.d.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "web",
+    "action": "contains"
+  },
+  "apps/web/next.config.js": {
+    "language": "javascript",
+    "scope": "frontend",
+    "folder": "web",
+    "action": "defines",
+    "attributes": [
+      "configuration"
+    ]
+  },
+  "apps/web/package.json": {
+    "language": "json",
+    "scope": "frontend",
+    "folder": "web",
+    "action": "stores"
+  },
+  "apps/web/pages/_app.tsx": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "pages",
+    "action": "renders"
+  },
+  "apps/web/pages/_document.tsx": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "pages",
+    "action": "contains"
+  },
+  "apps/web/playwright.config.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "web",
+    "action": "configures",
+    "attributes": [
+      "configuration"
+    ]
+  },
+  "apps/web/pnpm-lock.yaml": {
+    "language": "yaml",
+    "scope": "frontend",
+    "folder": "web",
+    "action": "contains"
+  },
+  "apps/web/public/manifest.json": {
+    "language": "json",
+    "scope": "frontend",
+    "folder": "public",
+    "action": "stores"
+  },
+  "apps/web/public/sw.js": {
+    "language": "javascript",
+    "scope": "frontend",
+    "folder": "public",
+    "action": "defines",
+    "attributes": [
+      "scheduling"
+    ]
+  },
+  "apps/web/src/components/app/hours-chart.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "app",
+    "action": "renders",
+    "attributes": [
+      "chart",
+      "scheduling"
+    ]
+  },
+  "apps/web/src/components/app/schedule-calendar.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "app",
+    "action": "renders",
+    "attributes": [
+      "scheduling"
+    ]
+  },
+  "apps/web/src/components/app/schedule-wizard.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "app",
+    "action": "renders",
+    "attributes": [
+      "button",
+      "wizard",
+      "scheduling"
+    ]
+  },
+  "apps/web/src/components/app/sign-in-providers.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "app",
+    "action": "renders",
+    "attributes": [
+      "button"
+    ]
+  },
+  "apps/web/src/components/app/wizard-steps/add-shifts-step.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "wizard-steps",
+    "action": "renders",
+    "attributes": [
+      "scheduling"
+    ]
+  },
+  "apps/web/src/components/app/wizard-steps/assign-roles-step.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "wizard-steps",
+    "action": "renders",
+    "attributes": [
+      "scheduling"
+    ]
+  },
+  "apps/web/src/components/app/wizard-steps/review-step.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "wizard-steps",
+    "action": "renders",
+    "attributes": [
+      "chart",
+      "scheduling"
+    ]
+  },
+  "apps/web/src/components/app/wizard-steps/select-week-step.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "wizard-steps",
+    "action": "renders",
+    "attributes": [
+      "scheduling"
+    ]
+  },
+  "apps/web/src/components/ui/button.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "ui",
+    "action": "renders",
+    "attributes": [
+      "button"
+    ]
+  },
+  "apps/web/src/components/ui/card.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "ui",
+    "action": "renders"
+  },
+  "apps/web/src/hooks/useScheduleState.ts": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "logic",
+    "action": "renders",
+    "attributes": [
+      "wizard",
+      "scheduling"
+    ]
+  },
+  "apps/web/src/lib/env.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "utilities",
+    "action": "defines",
+    "attributes": [
+      "firebase",
+      "authentication"
+    ]
+  },
+  "apps/web/src/lib/firebase/client.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "firebase",
+    "action": "renders",
+    "attributes": [
+      "firebase"
+    ]
+  },
+  "apps/web/src/lib/messaging.place.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "utilities",
+    "action": "renders",
+    "attributes": [
+      "firebase"
+    ]
+  },
+  "apps/web/src/lib/messaging.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "utilities",
+    "action": "renders",
+    "attributes": [
+      "firebase"
+    ]
+  },
+  "apps/web/tests/README.md": {
+    "language": "markdown",
+    "scope": "frontend",
+    "folder": "tests",
+    "action": "documents"
+  },
+  "apps/web/tests/e2e/signin.debug.spec.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "e2e",
+    "action": "defines",
+    "attributes": [
+      "testing"
+    ]
+  },
+  "apps/web/tests/e2e/signin.spec.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "e2e",
+    "action": "defines",
+    "attributes": [
+      "button",
+      "testing"
+    ]
+  },
+  "apps/web/tsconfig.json": {
+    "language": "json",
+    "scope": "frontend",
+    "folder": "web",
+    "action": "stores",
+    "attributes": [
+      "configuration"
+    ]
+  },
+  "config/.editorconfig": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": "config",
+    "action": "contains",
+    "attributes": [
+      "configuration"
+    ]
+  },
+  "config/.nvmrc": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": "config",
+    "action": "contains"
+  },
+  "config/.pr_agent.toml": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": "config",
+    "action": "contains"
+  },
+  "docs/AUTHENTICATION.md": {
+    "language": "markdown",
+    "scope": "documentation",
+    "folder": "docs",
+    "action": "documents"
+  },
+  "docs/CLAUDE_DESKTOP_CONFIG.md": {
+    "language": "markdown",
+    "scope": "documentation",
+    "folder": "docs",
+    "action": "documents"
+  },
+  "docs/FIREBASE_SETUP.md": {
+    "language": "markdown",
+    "scope": "documentation",
+    "folder": "docs",
+    "action": "documents"
+  },
+  "docs/FIRESTORE_EMULATOR.md": {
+    "language": "markdown",
+    "scope": "documentation",
+    "folder": "docs",
+    "action": "documents"
+  },
+  "docs/MCP_SERVER_SETUP.md": {
+    "language": "markdown",
+    "scope": "documentation",
+    "folder": "docs",
+    "action": "documents"
+  },
+  "docs/MCP_SETUP_SUMMARY.md": {
+    "language": "markdown",
+    "scope": "documentation",
+    "folder": "docs",
+    "action": "documents"
+  },
+  "docs/dev-zencoder.md": {
+    "language": "markdown",
+    "scope": "documentation",
+    "folder": "docs",
+    "action": "documents"
+  },
+  "docs/fixes/pr-27-code-suggestions-fix.md": {
+    "language": "markdown",
+    "scope": "documentation",
+    "folder": "fixes",
+    "action": "documents"
+  },
+  "docs/guides/copilot-full-context.guide.md": {
+    "language": "markdown",
+    "scope": "documentation",
+    "folder": "guides",
+    "action": "documents"
+  },
+  "docs/guides/copilot-project-pack.guide.md": {
+    "language": "markdown",
+    "scope": "documentation",
+    "folder": "guides",
+    "action": "documents"
+  },
+  "docs/guides/environment-setup.guide.md": {
+    "language": "markdown",
+    "scope": "documentation",
+    "folder": "guides",
+    "action": "documents"
+  },
+  "docs/guides/prevent-large-files.guide.md": {
+    "language": "markdown",
+    "scope": "documentation",
+    "folder": "guides",
+    "action": "documents"
+  },
+  "docs/guides/repo-cleanup.guide.md": {
+    "language": "markdown",
+    "scope": "documentation",
+    "folder": "guides",
+    "action": "documents"
+  },
+  "file-metadata.json": {
+    "language": "json",
+    "scope": "other",
+    "folder": "root",
+    "action": "stores"
+  },
+  "firebase/apphosting.emulator.yaml": {
+    "language": "yaml",
+    "scope": "other",
+    "folder": "firebase",
+    "action": "contains"
+  },
+  "firebase/apphosting.yaml": {
+    "language": "yaml",
+    "scope": "other",
+    "folder": "firebase",
+    "action": "contains"
+  },
+  "firebase/firestore.rules": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": "firebase",
+    "action": "contains"
+  },
+  "firebase/storage.rules": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": "firebase",
+    "action": "contains"
+  },
+  "firebase-debug.log": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": "root",
+    "action": "contains"
+  },
+  "firebase.json": {
+    "language": "json",
+    "scope": "other",
+    "folder": "root",
+    "action": "stores"
+  },
+  "functions/.eslintrc.js": {
+    "language": "javascript",
+    "scope": "serverless",
+    "folder": "functions",
+    "action": "contains"
+  },
+  "functions/package-lock.json": {
+    "language": "json",
+    "scope": "serverless",
+    "folder": "functions",
+    "action": "stores"
+  },
+  "functions/package.json": {
+    "language": "json",
+    "scope": "serverless",
+    "folder": "functions",
+    "action": "stores"
+  },
+  "functions/src/index.ts": {
+    "language": "typescript",
+    "scope": "serverless",
+    "folder": "src",
+    "action": "contains",
+    "attributes": [
+      "firebase"
+    ]
+  },
+  "functions/tsconfig.dev.json": {
+    "language": "json",
+    "scope": "serverless",
+    "folder": "functions",
+    "action": "stores",
+    "attributes": [
+      "configuration"
+    ]
+  },
+  "functions/tsconfig.json": {
+    "language": "json",
+    "scope": "serverless",
+    "folder": "functions",
+    "action": "stores",
+    "attributes": [
+      "configuration"
+    ]
+  },
+  "merge-conflicts.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": "root",
+    "action": "contains"
+  },
+  "package-lock.json": {
+    "language": "json",
+    "scope": "other",
+    "folder": "root",
+    "action": "stores"
+  },
+  "package.json": {
+    "language": "json",
+    "scope": "other",
+    "folder": "root",
+    "action": "stores"
+  },
+  "packages/mcp-server/README.md": {
+    "language": "markdown",
+    "scope": "shared",
+    "folder": "mcp-server",
+    "action": "documents"
+  },
+  "packages/mcp-server/jest.config.cjs": {
+    "language": "unknown",
+    "scope": "shared",
+    "folder": "mcp-server",
+    "action": "contains",
+    "attributes": [
+      "configuration"
+    ]
+  },
+  "packages/mcp-server/package.json": {
+    "language": "json",
+    "scope": "shared",
+    "folder": "mcp-server",
+    "action": "stores"
+  },
+  "packages/mcp-server/src/index.ts": {
+    "language": "typescript",
+    "framework": "express",
+    "scope": "shared",
+    "folder": "src",
+    "action": "renders",
+    "attributes": [
+      "authentication"
+    ]
+  },
+  "packages/mcp-server/src/stdio-server.ts": {
+    "language": "typescript",
+    "scope": "shared",
+    "folder": "src",
+    "action": "renders",
+    "attributes": [
+      "scheduling"
+    ]
+  },
+  "packages/mcp-server/test/auth.test.ts": {
+    "language": "typescript",
+    "framework": "express",
+    "scope": "shared",
+    "folder": "test",
+    "action": "defines",
+    "attributes": [
+      "authentication",
+      "testing"
+    ]
+  },
+  "packages/mcp-server/test/files.test.ts": {
+    "language": "typescript",
+    "framework": "express",
+    "scope": "shared",
+    "folder": "test",
+    "action": "renders",
+    "attributes": [
+      "authentication",
+      "scheduling",
+      "testing"
+    ]
+  },
+  "packages/mcp-server/test/health.test.ts": {
+    "language": "typescript",
+    "framework": "express",
+    "scope": "shared",
+    "folder": "test",
+    "action": "renders",
+    "attributes": [
+      "authentication",
+      "testing"
+    ]
+  },
+  "packages/mcp-server/test/repo-root.test.ts": {
+    "language": "typescript",
+    "scope": "shared",
+    "folder": "test",
+    "action": "contains",
+    "attributes": [
+      "testing"
+    ]
+  },
+  "packages/mcp-server/test/run-basic-test.js": {
+    "language": "javascript",
+    "scope": "shared",
+    "folder": "test",
+    "action": "defines",
+    "attributes": [
+      "testing"
+    ]
+  },
+  "packages/mcp-server/tsconfig.json": {
+    "language": "json",
+    "scope": "shared",
+    "folder": "mcp-server",
+    "action": "stores",
+    "attributes": [
+      "configuration"
+    ]
+  },
+  "packages/types/package.json": {
+    "language": "json",
+    "scope": "shared",
+    "folder": "types",
+    "action": "stores"
+  },
+  "packages/types/src/index.ts": {
+    "language": "typescript",
+    "scope": "shared",
+    "folder": "src",
+    "action": "defines",
+    "attributes": [
+      "scheduling"
+    ]
+  },
+  "pnpm-lock.yaml": {
+    "language": "yaml",
+    "scope": "other",
+    "folder": "root",
+    "action": "contains"
+  },
+  "pnpm-workspace.yaml": {
+    "language": "yaml",
+    "scope": "other",
+    "folder": "root",
+    "action": "contains"
+  },
+  "s:": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": "root",
+    "action": "contains"
+  },
+  "scripts/automation.README.md": {
+    "language": "markdown",
+    "scope": "automation",
+    "folder": "scripts",
+    "action": "documents"
+  },
+  "scripts/create-integration-branch.sh": {
+    "language": "shell",
+    "scope": "automation",
+    "folder": "scripts",
+    "action": "executes"
+  },
+  "scripts/critical-failure.md": {
+    "language": "markdown",
+    "scope": "automation",
+    "folder": "scripts",
+    "action": "documents"
+  },
+  "scripts/critical-failure.sh": {
+    "language": "shell",
+    "scope": "automation",
+    "folder": "scripts",
+    "action": "executes"
+  },
+  "scripts/generate-file-metadata.mjs": {
+    "language": "javascript",
+    "framework": "nextjs",
+    "scope": "automation",
+    "folder": "scripts",
+    "action": "contains"
+  },
+  "scripts/guard-main.sh": {
+    "language": "shell",
+    "scope": "automation",
+    "folder": "scripts",
+    "action": "executes"
+  },
+  "scripts/merge-prs-accept-theirs.sh": {
+    "language": "shell",
+    "scope": "automation",
+    "folder": "scripts",
+    "action": "executes"
+  },
+  "scripts/run-integration-and-deploy.sh": {
+    "language": "shell",
+    "scope": "automation",
+    "folder": "scripts",
+    "action": "executes"
+  },
+  "scripts/seed-api.sh": {
+    "language": "shell",
+    "scope": "automation",
+    "folder": "scripts",
+    "action": "executes"
+  },
+  "scripts/seed-dev.sh": {
+    "language": "shell",
+    "scope": "automation",
+    "folder": "scripts",
+    "action": "executes"
+  },
+  "scripts/upgrade-checkpoint.sh": {
+    "language": "shell",
+    "scope": "automation",
+    "folder": "scripts",
+    "action": "executes"
+  },
+  "scripts/zencoder/submit-job.ts": {
+    "language": "typescript",
+    "scope": "automation",
+    "folder": "zencoder",
+    "action": "renders"
+  },
+  "services/api/.env.example": {
+    "language": "unknown",
+    "scope": "backend",
+    "folder": "api",
+    "action": "contains"
+  },
+  "services/api/.eslintrc.json": {
+    "language": "json",
+    "scope": "backend",
+    "folder": "api",
+    "action": "stores"
+  },
+  "services/api/package.json": {
+    "language": "json",
+    "scope": "backend",
+    "folder": "api",
+    "action": "stores"
+  },
+  "services/api/src/firebase.place.ts": {
+    "language": "typescript",
+    "scope": "backend",
+    "folder": "src",
+    "action": "renders",
+    "attributes": [
+      "firebase"
+    ]
+  },
+  "services/api/src/firebase.ts": {
+    "language": "typescript",
+    "scope": "backend",
+    "folder": "src",
+    "action": "renders",
+    "attributes": [
+      "firebase",
+      "authentication"
+    ]
+  },
+  "services/api/src/index.ts": {
+    "language": "typescript",
+    "framework": "express",
+    "scope": "backend",
+    "folder": "src",
+    "action": "defines",
+    "attributes": [
+      "scheduling"
+    ]
+  },
+  "services/api/src/middleware/auth.ts": {
+    "language": "typescript",
+    "framework": "express",
+    "scope": "backend",
+    "folder": "middleware",
+    "action": "renders",
+    "attributes": [
+      "firebase",
+      "authentication"
+    ]
+  },
+  "services/api/src/routes/shifts.ts": {
+    "language": "typescript",
+    "framework": "express",
+    "scope": "backend",
+    "folder": "api",
+    "action": "renders",
+    "attributes": [
+      "firebase",
+      "authentication"
+    ]
+  },
+  "services/api/src/seed.ts": {
+    "language": "typescript",
+    "scope": "backend",
+    "folder": "src",
+    "action": "renders",
+    "attributes": [
+      "firebase"
+    ]
+  },
+  "services/api/tsconfig.json": {
+    "language": "json",
+    "scope": "backend",
+    "folder": "api",
+    "action": "stores",
+    "attributes": [
+      "configuration"
+    ]
+  }
+}
