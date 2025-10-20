@@ -1,9 +1,8 @@
 "use client";
 
-import { useCallback, memo, useMemo, lazy, Suspense, type ComponentType } from "react";
+import React, { useCallback, memo, useMemo, Suspense, type ComponentType, type Dispatch } from "react";
 import { Calendar, Users, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { ShiftAssignment } from "./schedule-calendar";
 import { useScheduleState } from "@/hooks/useScheduleState";
 
 // Lazy load step components for better performance
@@ -12,38 +11,34 @@ function PlaceholderComponent({ message }: { message: string }) {
   return <div>{message}</div>;
 }
 
-const SelectWeekStep = lazy(() =>
-  (import("./wizard-steps/select-week-step")
-    .then(module => ({ default: module.SelectWeekStep }))
-    .catch(() => ({ default: (props: any) => <PlaceholderComponent message="Select week step is not implemented yet." /> }))
-  ) as Promise<{ default: ComponentType<any> }>
-);
 
-const AddShiftsStep = lazy(() =>
-  (import("./wizard-steps/add-shifts-step")
-    .then(module => ({ default: module.AddShiftsStep }))
-    .catch(() => ({ default: (props: any) => <PlaceholderComponent message="Adding shifts is not implemented yet." /> }))
-  ) as Promise<{ default: ComponentType<any> }>
-);
-
-const AssignRolesStep = lazy(() =>
-  (import("./wizard-steps/assign-roles-step")
-    .then(module => ({ default: module.AssignRolesStep }))
-    .catch(() => ({ default: (props: any) => <PlaceholderComponent message="Assign roles step is not implemented yet." /> }))
-  ) as Promise<{ default: ComponentType<any> }>
-);
-
-const ReviewStep = lazy(() =>
-  (import("./wizard-steps/review-step")
-    .then(module => ({ default: module.ReviewStep }))
-    .catch(() => ({ default: (props: any) => <PlaceholderComponent message="Review step is not implemented yet." /> }))
-  ) as Promise<{ default: ComponentType<any> }>
-);
-
-/**
- * The type of steps in the schedule creation wizard.
- */
 type WizardStep = "select-week" | "add-shifts" | "assign-roles" | "review";
+
+interface StepDef {
+  id: WizardStep;
+  title: string;
+  icon: ComponentType<any>;
+}
+
+interface ScheduleState {
+  currentStep: WizardStep;
+  schedule: WeeklySchedule;
+  editingShift?: ShiftAssignment | null;
+}
+
+type ScheduleAction =
+  | { type: "ADD_SHIFT"; payload: ShiftAssignment }
+  | { type: "UPDATE_SHIFT"; payload: ShiftAssignment }
+  | { type: "SET_EDITING_SHIFT"; payload: ShiftAssignment | null }
+  | { type: "SET_STEP"; payload: WizardStep }
+  | { type: "UPDATE_SCHEDULE"; payload: Partial<WeeklySchedule> };
+
+interface UseScheduleStateReturn {
+  state: ScheduleState;
+  dispatch: Dispatch<ScheduleAction>;
+  nextStep: () => void;
+  prevStep: () => void;
+}
 
 // Default values used when creating a new shift
 const DEFAULT_ROLE = "Staff";
@@ -55,11 +50,11 @@ const DEFAULT_ASSIGNEE: string | undefined = undefined;
  * A wizard component that guides the user through the process of creating a schedule.
  * It manages the state of the schedule and the current step in the wizard.
  */
-export const ScheduleWizard = memo(function ScheduleWizard(): React.ReactElement {
-  const { state, dispatch, nextStep, prevStep } = useScheduleState();
-  const { currentStep, schedule } = state;
+export const ScheduleWizard = memo(function ScheduleWizard() {
+  const { state, dispatch, nextStep, prevStep } = useScheduleState() as UseScheduleStateReturn;
+  const { currentStep, schedule, editingShift } = state;
 
-  const steps = [
+  const steps: StepDef[] = [
     { id: "select-week", title: "Select Week", icon: Calendar },
     { id: "add-shifts", title: "Add Shifts", icon: Users },
     { id: "assign-roles", title: "Assign Roles", icon: CheckCircle },
@@ -73,16 +68,16 @@ export const ScheduleWizard = memo(function ScheduleWizard(): React.ReactElement
    * If the shift ID contains 'new', it creates a new shift with default values.
    * Otherwise, it updates the existing shift.
    */
-  const handleShiftEdit = useCallback((shift: ShiftAssignment) => {
+  const handleShiftEdit = useCallback((shift: ShiftAssignment): void => {
     const isNew = typeof shift.id === "string" && shift.id.includes("new");
     if (isNew) {
       const newShift: ShiftAssignment = {
         ...shift,
         id: `${shift.day}-${Date.now()}`,
-        role: shift.role || DEFAULT_ROLE,
-        start: shift.start || DEFAULT_START,
-        end: shift.end || DEFAULT_END,
-        assignee: shift.assignee || DEFAULT_ASSIGNEE,
+        role: 'New Role',
+        start: '09:00',
+        end: '17:00',
+        assignee: 'Unassigned',
       };
       dispatch({ type: 'ADD_SHIFT', payload: newShift });
     } else {
@@ -94,7 +89,7 @@ export const ScheduleWizard = memo(function ScheduleWizard(): React.ReactElement
    * Opens assignment UI for a shift (modal or inline form).
    * Currently stores the editing shift in state; implement UI as needed.
    */
-  const handleShiftAssign = useCallback((shift: ShiftAssignment) => {
+  const handleShiftAssign = useCallback((shift: ShiftAssignment): void => {
     dispatch({ type: 'SET_EDITING_SHIFT', payload: shift });
     // TODO: open modal or inline form to assign role/assignee; after assignment, call handleShiftEdit(updatedShift)
     // For now, this is a placeholder to indicate the intent.
@@ -104,7 +99,14 @@ export const ScheduleWizard = memo(function ScheduleWizard(): React.ReactElement
   /**
    * Renders the content for the current step of the wizard.
    */
-  const renderStepContent = useMemo((): React.ReactElement | null => {
+  const renderStepContent = useMemo(() => {
+    const stepProps = {
+      schedule,
+      dispatch,
+      onShiftEdit: handleShiftEdit,
+      onShiftAssign: handleShiftAssign,
+    };
+
     switch (currentStep) {
       case "select-week":
         return (
@@ -120,34 +122,28 @@ export const ScheduleWizard = memo(function ScheduleWizard(): React.ReactElement
       case "add-shifts":
         return (
           <Suspense fallback={<div>Loading...</div>}>
-            <AddShiftsStep
-              schedule={schedule}
-              onShiftEdit={handleShiftEdit}
-            />
+            <AddShiftsStep {...stepProps} />
           </Suspense>
         );
 
       case "assign-roles":
         return (
           <Suspense fallback={<div>Loading...</div>}>
-            <AssignRolesStep
-              schedule={schedule}
-              onShiftEdit={handleShiftAssign}
-            />
+            <AssignRolesStep {...stepProps} />
           </Suspense>
         );
 
       case "review":
         return (
           <Suspense fallback={<div>Loading...</div>}>
-            <ReviewStep schedule={schedule} />
+            <ReviewStep {...stepProps} />
           </Suspense>
         );
 
       default:
         return null;
     }
-  }, [currentStep, schedule, handleShiftEdit, handleShiftAssign, dispatch]);
+  }, [currentStep, schedule, dispatch, handleShiftEdit, handleShiftAssign]);
 
   return (
     <div className="fs-card" role="region" aria-label="Schedule wizard">

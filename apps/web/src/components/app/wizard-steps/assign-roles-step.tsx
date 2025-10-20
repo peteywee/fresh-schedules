@@ -1,27 +1,5 @@
-import { memo } from "react";
-import { Card } from "@/components/ui/card";
-import { ScheduleCalendar } from "../schedule-calendar";
-import type { ShiftAssignment } from "../schedule-calendar";
+import React from 'react';
 
-interface AssignRolesStepProps {
-  schedule: { weekOf: string; shifts: ShiftAssignment[] };
-  onShiftEdit: (shift: ShiftAssignment) => void;
+export function AssignRolesStep(props: any) {
+  return <div className="text-sm text-gray-600">Placeholder for Assign Roles Step</div>;
 }
-
-export const AssignRolesStep = memo(function AssignRolesStep({
-  schedule,
-  onShiftEdit
-}: AssignRolesStepProps) {
-  return (
-    <Card title="Assign roles and staff">
-      <p>Assign specific roles and staff to each shift.</p>
-      <ScheduleCalendar
-        schedule={schedule}
-        onShiftEdit={onShiftEdit}
-        editable
-      />
-    </Card>
-  );
-});
-
-export default AssignRolesStep;

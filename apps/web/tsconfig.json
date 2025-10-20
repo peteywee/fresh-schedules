@@ -33,7 +33,10 @@
       "@/components/*": ["src/components/*"],
       "@/lib/*": ["src/lib/*"],
       "@/hooks/*": ["src/hooks/*"],
-      "@/app/*": ["app/*"]
+      "@/app/*": ["app/*"],
+      "@packages/types": ["../../packages/types/src"],
+      "some-ui-lib": ["./shims/ui.tsx"],
+      "some-analytics-lib": ["./shims/analytics.ts"]
     }
   },
   "include": [
