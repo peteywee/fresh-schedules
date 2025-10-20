@@ -69,7 +69,12 @@ service cloud.firestore {
       allow get: if isAdmin();
       allow list: if false;
 
-      allow create: if isAdmin();
+      // Only existing admins can grant admin, and they cannot grant it to themselves.
+      // Ensure the document path aligns with the intended target UID.
+      allow create: if isAdmin()
+                    && userId == request.resource.data.uid
+                    && request.resource.data.uid != request.auth.uid;
+
       allow update: if false;
       allow delete: if isAdmin();
     }
@@ -169,11 +174,14 @@ service cloud.firestore {
      * @deny (update) - A non-admin user attempts to update a schedule.
      */
     match /organizations/{organizationId}/schedules/{scheduleId} {
-      allow get, list: if true;
+      // Only authenticated users can read schedules
+      allow get, list: if isSignedIn();
 
       allow create: if isSignedIn() && request.resource.data.organizationId == organizationId;
-      allow update: if isSignedIn() && request.resource.data.organizationId == organizationId && resource != null;
-      allow delete: if isSignedIn() && request.resource.data.organizationId == organizationId && resource != null;
+
+      // Validate against existing resource data, not client-provided request data
+      allow update: if isSignedIn() && resource != null && resource.data.organizationId == organizationId;
+      allow delete: if isSignedIn() && resource != null && resource.data.organizationId == organizationId;
     }
 
     /**
@@ -205,11 +213,16 @@ service cloud.firestore {
      * @deny (update) - A non-admin user attempts to update a message.
      */
     match /organizations/{organizationId}/messages/{messageId} {
-      allow get, list: if true;
+      // Only authenticated users can read messages
+      allow get, list: if isSignedIn();
 
-      allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid && request.resource.data.organizationId == organizationId;
-      allow update: if isSignedIn() && request.resource.data.organizationId == organizationId && resource != null;
-      allow delete: if isSignedIn() && request.resource.data.organizationId == organizationId && resource != null;
+      allow create: if isSignedIn()
+                    && request.resource.data.senderId == request.auth.uid
+                    && request.resource.data.organizationId == organizationId;
+
+      // Validate against stored data instead of client input
+      allow update: if isSignedIn() && resource != null && resource.data.organizationId == organizationId;
+      allow delete: if isSignedIn() && resource != null && resource.data.organizationId == organizationId;
     }
   }
 }
