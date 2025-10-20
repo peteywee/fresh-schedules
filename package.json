@@ -8,12 +8,26 @@
     "lint": "pnpm -r lint || true",
     "typecheck": "pnpm -r typecheck || true",
     "test": "pnpm -r test || echo 'no tests yet'",
+    "seed": "ts-node scripts/seed/seed.ts",
     "deploy:functions": "firebase deploy --only functions",
     "deploy:indexes": "firebase deploy --only firestore:indexes",
     "deploy:rules": "firebase deploy --only firestore:rules"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
+    "@types/node": "^22.5.2",
+    "date-fns": "^3.6.0",
+    "dotenv": "^17.2.3",
+  "firebase-admin": "^13.5.0",
+    "ts-node": "^10.9.2",
+    "turbo": "^2.0.6",
     "typescript": "^5.5.4",
-    "turbo": "^2.0.6"
+    "zod": "^4.1.12",
+    "firebase-tools": "^12.1.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "firebase": "^11.5.0"
+    }
   }
 }

@@ -23,12 +23,12 @@
  */
 
 import 'dotenv/config';
-import { initializeApp, applicationDefault, cert } from 'firebase-admin/app';
-import { getFirestore, FieldValue, Firestore } from 'firebase-admin/firestore';
+import { initializeApp, applicationDefault } from 'firebase-admin/app';
+import { getFirestore, Firestore } from 'firebase-admin/firestore';
 import { z } from 'zod';
 import { createHash } from 'crypto';
 import { faker as fakerFactory } from '@faker-js/faker';
-import { addDays, startOfWeek, formatISO, format as formatTz, parseISO } from 'date-fns';
+import { addDays, startOfWeek, format as formatTz, parseISO } from 'date-fns';
 
 // ---------- Config & CLI ----------
 const args = new Set(process.argv.slice(2));
@@ -195,7 +195,7 @@ async function ensureDoc<T extends z.ZodTypeAny>(
   schema: T
 ) {
   const parsed = schema.parse(data);
-  await db.collection(col).doc(id).set(parsed, { merge: true });
+  await db.collection(col).doc(id).set(parsed as any, { merge: true });
 }
 
 async function maybeWipeOrg(db: Firestore, orgId: string) {
@@ -255,7 +255,7 @@ const db = getFirestore();
         uid,
         email,
         displayName: `${first} ${last}`,
-        phone: faker.phone.number('###-###-####'),
+        phone: faker.phone.number(),
         createdAt: ts,
         updatedAt: ts,
       };
@@ -285,7 +285,7 @@ const db = getFirestore();
         uid,
         email,
         displayName: `${first} ${last}`,
-        phone: faker.phone.number('###-###-####'),
+        phone: faker.phone.number(),
         createdAt: ts,
         updatedAt: ts,
       };
