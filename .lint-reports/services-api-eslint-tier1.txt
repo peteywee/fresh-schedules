@@ -1,0 +1,18 @@
+
+/home/patrick/fresh-schedules/fresh-root/services/api/src/firebase.place.ts
+  10:15  warning  Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+  15:30  warning  Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+  22:5   warning  'placeholderInstance' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  22:5   error    'placeholderInstance' is never reassigned. Use 'const' instead  prefer-const
+
+/home/patrick/fresh-schedules/fresh-root/services/api/src/routes/shifts.ts
+    2:28  warning  'roleEnum' is defined but never used      @typescript-eslint/no-unused-vars
+   30:6   warning  'Shift' is defined but never used         @typescript-eslint/no-unused-vars
+  157:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 7 problems (1 error, 6 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.
+
+undefined
+/home/patrick/fresh-schedules/fresh-root/services/api:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: eslint src --ext .ts

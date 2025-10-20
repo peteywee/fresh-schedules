@@ -33,6 +33,7 @@ const MAX_ORG_SHIFTS = Number.isFinite(envMaxShifts) && envMaxShifts > 0
 
 export function createShiftRouter() {
   const router = Router();
+  const cache = new ShiftCache();
 
   // Apply authentication middleware to all routes
   router.use(authenticateFirebaseToken);
@@ -52,7 +53,7 @@ export function createShiftRouter() {
     const id = `sh_${Date.now()}`;
     const payload = {
       ...parsed.data,
-      id,
+      id: `sh_${Date.now()}`,
       createdAt: new Date().toISOString(),
       createdByRole: req.user!.role!,
       createdBy: req.user!.uid,
