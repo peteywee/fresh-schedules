@@ -26,8 +26,9 @@ const CACHE_TTL = process.env.SHIFTS_CACHE_TTL_MS
   : 5 * 60 * 1000; // 5 minutes
 
 // Maximum number of shifts to cache per organization
-const MAX_ORG_SHIFTS = Number.isFinite(Number(process.env.SHIFTS_CACHE_MAX)) && Number(process.env.SHIFTS_CACHE_MAX) > 0
-  ? Number(process.env.SHIFTS_CACHE_MAX)
+const envMaxShifts = Number(process.env.SHIFTS_CACHE_MAX);
+const MAX_ORG_SHIFTS = Number.isFinite(envMaxShifts) && envMaxShifts > 0
+  ? envMaxShifts
   : 1000;
 
 export function createShiftRouter() {
@@ -141,11 +142,11 @@ export function createShiftRouter() {
             return null;
           }
           return {
+            ...data,
             id: doc.id,
             orgId: orgIdFromDoc,
             createdAt: data.createdAt as string,
             createdByRole: data.createdByRole as string,
-            ...data,
           } as CachedShift;
         })
         .filter((s): s is CachedShift => s !== null);
