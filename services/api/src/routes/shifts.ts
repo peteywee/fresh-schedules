@@ -55,7 +55,7 @@ export function createShiftRouter() {
     const id = `sh_${Date.now()}`;
     const payload = {
       ...parsed.data,
-      id: `sh_${Date.now()}`,
+      id,
       createdAt: new Date().toISOString(),
       createdByRole: req.user!.role!,
       createdBy: req.user!.uid,
