@@ -23,7 +23,15 @@ const eslintConfig = [
     },
   },
   {
-    ignores: [".next/**"],
+    ignores: [
+      ".next/**",
+      "node_modules/**",
+      "out/**",
+      ".vercel/**",
+      "coverage/**",
+      "*.tsbuildinfo",
+      "**/TODO.md"
+    ],
   },
 ];
 
