@@ -29,13 +29,17 @@ export default function NewShiftDialog(props: Props) {
     try {
       const ref = await addDoc(collection(db(), "orgs", props.orgId, "shifts"), {
         orgId: props.orgId,
+        day: new Date(props.dateISO), // Firestore will store as Timestamp
         dayStr: props.dateISO,
         weekKey,
-        start, end, roleTag,
+        start,
+        end,
+        roleTag,
         status: "draft",
         eventId: props.eventId ?? null,
         boothId: props.boothId ?? null,
-        createdAt: serverTimestamp()
+        assignedUid: null,
+        createdAt: serverTimestamp(),
       });
       props.onCreated(ref.id);
     } finally {
