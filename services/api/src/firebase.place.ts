@@ -7,19 +7,19 @@
 
 export type FirestoreDocRef = {
   id: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   set: (data: any) => Promise<void>;
 };
 
 export type FirestoreCollectionRef = {
   doc: (id: string) => FirestoreDocRef;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get: () => Promise<{ docs: any[] }>;
 };
 
 export type FirestoreLike = {
   collection: (path: string) => FirestoreCollectionRef;
 };
-
-let placeholderInstance: FirestoreLike | null = null;
 
 /**
  * Returns a placeholder Firestore instance that simulates basic operations.
