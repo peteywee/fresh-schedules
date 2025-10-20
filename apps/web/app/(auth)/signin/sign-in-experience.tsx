@@ -9,7 +9,7 @@ import { SignInProviders } from '@/components/app/sign-in-providers';
 export function SignInExperience() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending'>('idle');
-  const [signedInUser, setSignedInUser] = useState<any>(null);
+  const [signedInUser, setSignedInUser] = useState<User | null>(null);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-4">
