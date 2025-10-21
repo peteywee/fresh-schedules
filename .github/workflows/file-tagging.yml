@@ -1,0 +1,49 @@
+name: File Tagging and Metadata
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  tag-files:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Fetch full history for git operations
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Generate file metadata
+      run: node scripts/generate-file-metadata.mjs
+
+    - name: Check for metadata changes
+      id: verify-changed-files
+      run: |
+        if [ -n "$(git status --porcelain file-metadata.json)" ]; then
+          echo "metadata_changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "metadata_changed=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Commit metadata updates
+      if: steps.verify-changed-files.outputs.metadata_changed == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add file-metadata.json
+        git commit -m "Update file metadata [automated]"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

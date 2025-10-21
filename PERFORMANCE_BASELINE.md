@@ -39,6 +39,23 @@ This document establishes a baseline for performance metrics after the refactori
 - **Caching**: In-memory cache for shifts (5min TTL) with fallback to cache on Firestore failure
 - **Firebase**: Graceful fallback when not configured
 
+## File Metadata Generation Performance
+
+### Optimized Script Metrics (generate-file-metadata-optimized.mjs)
+- **Total Files Processed**: 2,046 files across 20 Git branches
+- **Processing Time**: 244.03 seconds (~4.07 minutes)
+- **Average Time per File**: 119.27 ms
+- **Accuracy**: 7.38% (needs improvement toward 98% target)
+- **Features**: Multi-branch scanning, parallel processing (10 concurrent), .filetagignore support, enhanced detection patterns
+- **Date**: 2025-01-20
+
+### Original Script Metrics (generate-file-metadata.mjs)
+- **Total Files Processed**: ~73 files (single branch)
+- **Processing Time**: ~2.46 seconds
+- **Average Time per File**: ~33.63 ms
+- **Accuracy**: ~71.23%
+- **Features**: Single-branch scanning, basic detection patterns
+
 ## Future Comparisons
 
 Use this baseline to measure improvements in:
@@ -48,5 +65,6 @@ Use this baseline to measure improvements in:
 - Rendering performance (e.g., Lighthouse scores)
 - API response times
 - Test execution times
+- File metadata generation accuracy and speed
 
-Date: 2025-10-16
+Date: 2025-10-16 (Updated: 2025-01-20)
