@@ -95,3 +95,6 @@ lib/
 # Playwright artifacts under apps/web (in addition to root-level ignores)
 apps/web/playwright-report/
 apps/web/test-results/
+
+# Placeholder files (should be replaced before production)
+*.place.*

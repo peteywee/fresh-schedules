@@ -362,15 +362,7 @@
       "firebase"
     ]
   },
-  "apps/web/src/lib/messaging.place.ts": {
-    "language": "typescript",
-    "scope": "frontend",
-    "folder": "utilities",
-    "action": "renders",
-    "attributes": [
-      "firebase"
-    ]
-  },
+
   "apps/web/src/lib/messaging.ts": {
     "language": "typescript",
     "scope": "frontend",
@@ -843,15 +835,7 @@
     "folder": "api",
     "action": "stores"
   },
-  "services/api/src/firebase.place.ts": {
-    "language": "typescript",
-    "scope": "backend",
-    "folder": "src",
-    "action": "renders",
-    "attributes": [
-      "firebase"
-    ]
-  },
+
   "services/api/src/firebase.ts": {
     "language": "typescript",
     "scope": "backend",
