@@ -12,7 +12,6 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@fresh-schedules/schemas": "workspace:^",
     "firebase-admin": "^13.5.0"
   },
   "devDependencies": {

@@ -27,12 +27,20 @@
     "turbo": "^2.0.6",
     "typescript": "^5.5.4",
     "zod": "^4.1.12",
-    "firebase-tools": "^12.1.0"
+  "firebase-tools": "^14.20.0"
   },
   "version": "0.1.1",
   "pnpm": {
     "overrides": {
       "firebase": "^11.5.0"
     }
+  }
+
+  ,"overrides": {
+    "glob": "^10.4.5",
+    "inflight": "^1.0.6",
+    "node-domexception": "^1.0.0",
+    "rimraf": "^3.0.2",
+    "request": "^2.88.2"
   }
 }
