@@ -40,7 +40,7 @@ function getLanguage(ext) {
 function getFramework(content, ext) {
   if (['.js', '.jsx', '.ts', '.tsx', '.mjs'].includes(ext)) {
     if (content.includes('from \'next\'') || content.includes('from "next"') ||
-        content.includes('import.*next') || content.includes('NextPage') ||
+        /import.*next/.test(content) || content.includes('NextPage') ||
         content.includes('getServerSideProps') || content.includes('getStaticProps')) return 'nextjs';
     if (content.includes('from \'react\'') || content.includes('from "react"') ||
         content.includes('React.') || content.includes('useState') ||
@@ -54,7 +54,7 @@ function getFramework(content, ext) {
     if (content.includes('from \'@radix-ui\'') || content.includes('from "radix-ui"') ||
         content.includes('@radix-ui/')) return 'radix-ui';
     if (content.includes('tailwind') || content.includes('Tailwind') ||
-        content.includes('className=.*bg-') || content.includes('className=.*text-')) return 'tailwind';
+        /className=.*bg-/.test(content) || /className=.*text-/.test(content)) return 'tailwind';
   }
   if (ext === '.json') {
     if (content.includes('"next"') || content.includes('next.config')) return 'nextjs';
