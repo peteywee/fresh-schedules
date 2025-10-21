@@ -7,6 +7,15 @@ build/
 .cache/
 coverage/
 *.log
+# Node / Tooling
+node_modules/
+.pnpm-store/
+dist/
+build/
+.next/
+.cache/
+coverage/
+*.log
 
 # Env
 .env
