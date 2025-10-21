@@ -22,10 +22,7 @@
  * ```
  */
 
-import { getMessaging, getToken, isSupported } from 'firebase/messaging';
-
-import { getFirebaseApp } from '@/lib/firebase/client';
-import { clientEnv } from '@/lib/env';
+import { isSupported } from 'firebase/messaging';
 
 /**
  * Registers the Firebase Cloud Messaging service worker (PLACEHOLDER).
