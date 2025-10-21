@@ -8,7 +8,11 @@
     "lint": "pnpm -r lint || true",
     "typecheck": "pnpm -r typecheck || true",
     "test": "pnpm -r test || echo 'no tests yet'",
-    "seed": "ts-node scripts/seed/seed.ts",
+  "seed": "ts-node scripts/seed/seed.ts",
+  "emulators:start": "bash ./scripts/start-emulators.sh",
+  "emulators:seed": "bash ./scripts/seed-emulator.sh",
+  "init:firebase": "bash ./scripts/init-firebase.sh",
+  "init:env": "cp .env.example .env.local || true",
     "deploy:functions": "firebase deploy --only functions",
     "deploy:indexes": "firebase deploy --only firestore:indexes",
     "deploy:rules": "firebase deploy --only firestore:rules"
