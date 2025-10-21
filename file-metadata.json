@@ -11,6 +11,102 @@
     "folder": "root",
     "action": "contains"
   },
+  ".lint-reports/apps-web-document-usage.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/apps-web-eslint-tier1.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/apps-web-eslint-tier2.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/apps-web-heavy-imports.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/apps-web-prettier-check.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/apps-web-sw-registration-usage.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/apps-web-window-usage.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/root-prettier-check.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/services-api-async-handlers.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/services-api-circular.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/services-api-console-usage.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/services-api-eslint-tier1.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/services-api-pino-usage.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/services-api-prettier-check.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/services-api-tsc-typecheck.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
+  ".lint-reports/services-api-zod-usage.txt": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": ".lint-reports",
+    "action": "contains"
+  },
   ".mcp.json": {
     "language": "json",
     "scope": "other",
@@ -35,12 +131,6 @@
     "folder": ".vscode",
     "action": "stores"
   },
-  ".vscode/settings.local.json": {
-    "language": "json",
-    "scope": "other",
-    "folder": ".vscode",
-    "action": "stores"
-  },
   ".vscode/tasks.json": {
     "language": "json",
     "scope": "other",
@@ -52,6 +142,18 @@
     "scope": "other",
     "folder": "rules",
     "action": "documents"
+  },
+  "IMPLEMENTATION_SUMMARY.md": {
+    "language": "markdown",
+    "scope": "other",
+    "folder": "root",
+    "action": "documents"
+  },
+  "LICENSE": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": "root",
+    "action": "contains"
   },
   "MCP_QUICK_START.md": {
     "language": "markdown",
@@ -66,6 +168,24 @@
     "action": "documents"
   },
   "README.md": {
+    "language": "markdown",
+    "scope": "other",
+    "folder": "root",
+    "action": "documents"
+  },
+  "README_FIREBASE_SETUP.md": {
+    "language": "markdown",
+    "scope": "other",
+    "folder": "root",
+    "action": "documents"
+  },
+  "README_PROJECT_INIT.md": {
+    "language": "markdown",
+    "scope": "other",
+    "folder": "root",
+    "action": "documents"
+  },
+  "SECURITY.md": {
     "language": "markdown",
     "scope": "other",
     "folder": "root",
@@ -94,6 +214,17 @@
     "scope": "frontend",
     "folder": "web",
     "action": "stores"
+  },
+  "apps/web/app/(auth)/onboarding/page.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "onboarding",
+    "action": "renders",
+    "attributes": [
+      "authentication",
+      "scheduling"
+    ]
   },
   "apps/web/app/(auth)/signin/page.tsx": {
     "language": "typescript",
@@ -133,22 +264,40 @@
       "scheduling"
     ]
   },
+  "apps/web/app/schedule/month/page.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "month",
+    "action": "renders",
+    "attributes": [
+      "authentication",
+      "scheduling"
+    ]
+  },
   "apps/web/app/schedule/page.tsx": {
     "language": "typescript",
     "scope": "frontend",
     "folder": "schedule",
     "action": "renders",
     "attributes": [
-      "wizard",
       "scheduling"
     ]
   },
-  "apps/web/app/schedule/schedule.mock.ts": {
+  "apps/web/app/schedule/week/page.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "week",
+    "action": "renders"
+  },
+  "apps/web/app/schedule/wizard/page.tsx": {
     "language": "typescript",
     "scope": "frontend",
-    "folder": "schedule",
-    "action": "contains",
+    "folder": "wizard",
+    "action": "renders",
     "attributes": [
+      "wizard",
       "scheduling"
     ]
   },
@@ -231,6 +380,22 @@
       "scheduling"
     ]
   },
+  "apps/web/shims/analytics.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "shims",
+    "action": "defines"
+  },
+  "apps/web/shims/ui.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "shims",
+    "action": "defines",
+    "attributes": [
+      "button"
+    ]
+  },
   "apps/web/src/components/app/hours-chart.tsx": {
     "language": "typescript",
     "framework": "react",
@@ -271,7 +436,8 @@
     "folder": "app",
     "action": "renders",
     "attributes": [
-      "button"
+      "button",
+      "firebase"
     ]
   },
   "apps/web/src/components/app/wizard-steps/add-shifts-step.tsx": {
@@ -279,40 +445,51 @@
     "framework": "react",
     "scope": "frontend",
     "folder": "wizard-steps",
-    "action": "renders",
-    "attributes": [
-      "scheduling"
-    ]
+    "action": "renders"
   },
   "apps/web/src/components/app/wizard-steps/assign-roles-step.tsx": {
     "language": "typescript",
     "framework": "react",
     "scope": "frontend",
     "folder": "wizard-steps",
-    "action": "renders",
-    "attributes": [
-      "scheduling"
-    ]
+    "action": "renders"
   },
   "apps/web/src/components/app/wizard-steps/review-step.tsx": {
     "language": "typescript",
     "framework": "react",
     "scope": "frontend",
     "folder": "wizard-steps",
-    "action": "renders",
-    "attributes": [
-      "chart",
-      "scheduling"
-    ]
+    "action": "renders"
   },
   "apps/web/src/components/app/wizard-steps/select-week-step.tsx": {
     "language": "typescript",
     "framework": "react",
     "scope": "frontend",
     "folder": "wizard-steps",
+    "action": "renders"
+  },
+  "apps/web/src/components/schedule/DayCell.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "schedule",
+    "action": "renders"
+  },
+  "apps/web/src/components/schedule/MonthGrid.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "schedule",
+    "action": "renders"
+  },
+  "apps/web/src/components/schedule/NewShiftDialog.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "schedule",
     "action": "renders",
     "attributes": [
-      "scheduling"
+      "firebase"
     ]
   },
   "apps/web/src/components/ui/button.tsx": {
@@ -343,6 +520,23 @@
       "scheduling"
     ]
   },
+  "apps/web/src/lib/auth/context.tsx": {
+    "language": "typescript",
+    "framework": "react",
+    "scope": "frontend",
+    "folder": "auth",
+    "action": "renders",
+    "attributes": [
+      "firebase",
+      "authentication"
+    ]
+  },
+  "apps/web/src/lib/auth/permissions.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "auth",
+    "action": "defines"
+  },
   "apps/web/src/lib/env.ts": {
     "language": "typescript",
     "scope": "frontend",
@@ -353,16 +547,32 @@
       "authentication"
     ]
   },
+  "apps/web/src/lib/featureFlags.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "utilities",
+    "action": "defines"
+  },
   "apps/web/src/lib/firebase/client.ts": {
     "language": "typescript",
     "scope": "frontend",
     "folder": "firebase",
     "action": "renders",
     "attributes": [
-      "firebase"
+      "firebase",
+      "authentication"
     ]
   },
-
+  "apps/web/src/lib/firebase.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "utilities",
+    "action": "defines",
+    "attributes": [
+      "firebase",
+      "authentication"
+    ]
+  },
   "apps/web/src/lib/messaging.ts": {
     "language": "typescript",
     "scope": "frontend",
@@ -371,6 +581,30 @@
     "attributes": [
       "firebase"
     ]
+  },
+  "apps/web/src/lib/monthQuery.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "utilities",
+    "action": "renders",
+    "attributes": [
+      "firebase"
+    ]
+  },
+  "apps/web/src/lib/onboarding.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "utilities",
+    "action": "renders",
+    "attributes": [
+      "firebase"
+    ]
+  },
+  "apps/web/src/lib/week.ts": {
+    "language": "typescript",
+    "scope": "frontend",
+    "folder": "utilities",
+    "action": "renders"
   },
   "apps/web/tests/README.md": {
     "language": "markdown",
@@ -463,6 +697,12 @@
     "folder": "docs",
     "action": "documents"
   },
+  "docs/SECURITY_USAGE.md": {
+    "language": "markdown",
+    "scope": "documentation",
+    "folder": "docs",
+    "action": "documents"
+  },
   "docs/dev-zencoder.md": {
     "language": "markdown",
     "scope": "documentation",
@@ -547,6 +787,18 @@
     "folder": "root",
     "action": "stores"
   },
+  "firestore-debug.log": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": "root",
+    "action": "contains"
+  },
+  "firestore.indexes.json": {
+    "language": "json",
+    "scope": "other",
+    "folder": "root",
+    "action": "stores"
+  },
   "functions/.eslintrc.js": {
     "language": "javascript",
     "scope": "serverless",
@@ -565,6 +817,35 @@
     "folder": "functions",
     "action": "stores"
   },
+  "functions/src/attendance.ts": {
+    "language": "typescript",
+    "scope": "serverless",
+    "folder": "src",
+    "action": "renders",
+    "attributes": [
+      "firebase",
+      "scheduling"
+    ]
+  },
+  "functions/src/attendanceReplicator.ts": {
+    "language": "typescript",
+    "scope": "serverless",
+    "folder": "src",
+    "action": "renders",
+    "attributes": [
+      "firebase"
+    ]
+  },
+  "functions/src/autoClockOutWorker.ts": {
+    "language": "typescript",
+    "scope": "serverless",
+    "folder": "src",
+    "action": "renders",
+    "attributes": [
+      "firebase",
+      "scheduling"
+    ]
+  },
   "functions/src/index.ts": {
     "language": "typescript",
     "scope": "serverless",
@@ -572,6 +853,16 @@
     "action": "contains",
     "attributes": [
       "firebase"
+    ]
+  },
+  "functions/src/invites.ts": {
+    "language": "typescript",
+    "scope": "serverless",
+    "folder": "src",
+    "action": "renders",
+    "attributes": [
+      "firebase",
+      "authentication"
     ]
   },
   "functions/tsconfig.dev.json": {
@@ -781,6 +1072,12 @@
     "folder": "scripts",
     "action": "executes"
   },
+  "scripts/init-firebase.sh": {
+    "language": "shell",
+    "scope": "automation",
+    "folder": "scripts",
+    "action": "executes"
+  },
   "scripts/merge-prs-accept-theirs.sh": {
     "language": "shell",
     "scope": "automation",
@@ -793,6 +1090,31 @@
     "folder": "scripts",
     "action": "executes"
   },
+  "scripts/seed/package.json": {
+    "language": "json",
+    "scope": "automation",
+    "folder": "seed",
+    "action": "stores"
+  },
+  "scripts/seed/seed.ts": {
+    "language": "typescript",
+    "scope": "automation",
+    "folder": "seed",
+    "action": "renders",
+    "attributes": [
+      "firebase",
+      "scheduling"
+    ]
+  },
+  "scripts/seed/tsconfig.json": {
+    "language": "json",
+    "scope": "automation",
+    "folder": "seed",
+    "action": "stores",
+    "attributes": [
+      "configuration"
+    ]
+  },
   "scripts/seed-api.sh": {
     "language": "shell",
     "scope": "automation",
@@ -800,6 +1122,18 @@
     "action": "executes"
   },
   "scripts/seed-dev.sh": {
+    "language": "shell",
+    "scope": "automation",
+    "folder": "scripts",
+    "action": "executes"
+  },
+  "scripts/seed-emulator.sh": {
+    "language": "shell",
+    "scope": "automation",
+    "folder": "scripts",
+    "action": "executes"
+  },
+  "scripts/start-emulators.sh": {
     "language": "shell",
     "scope": "automation",
     "folder": "scripts",
@@ -835,7 +1169,6 @@
     "folder": "api",
     "action": "stores"
   },
-
   "services/api/src/firebase.ts": {
     "language": "typescript",
     "scope": "backend",
@@ -895,5 +1228,11 @@
     "attributes": [
       "configuration"
     ]
+  },
+  "ui-debug.log": {
+    "language": "unknown",
+    "scope": "other",
+    "folder": "root",
+    "action": "contains"
   }
 }
