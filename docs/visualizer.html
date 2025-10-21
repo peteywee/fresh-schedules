@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Actionable File Metadata Visualizer</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .stats { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+    .stat { background: #f0f0f0; padding: 10px; border-radius: 5px; min-width: 150px; }
+    .chart { margin: 20px 0; }
+    .bar { height: 20px; margin: 2px 0; background: #007bff; color: white; padding: 2px 5px; border-radius: 3px; }
+    .filter { margin-bottom: 20px; }
+    select { padding: 5px; margin-right: 10px; }
+    .actions { background: #e8f5e8; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+    .action-btn { background: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 3px; cursor: pointer; margin: 2px; }
+  </style>
+</head>
+<body>
+  <h1>Actionable File Metadata Visualizer</h1>
+
+  <div class="actions">
+    <h3>🚀 Actionable Features</h3>
+    <p>Use these buttons to perform automated actions on your codebase:</p>
+    <button class="action-btn" onclick="runAction('find-ui-components')">Find UI Components</button>
+    <button class="action-btn" onclick="runAction('find-api-routes')">Find API Routes</button>
+    <button class="action-btn" onclick="runAction('find-test-files')">Find Test Files</button>
+    <button class="action-btn" onclick="runAction('analyze-dependencies')">Analyze Dependencies</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat">Total Files: 524</div>
+    <div class="stat">Languages: 20</div>
+    <div class="stat">Component Types: 12</div>
+    <div class="stat">Actionable Tags: 0</div>
+  </div>
+
+  <div class="filter">
+    <label>Filter by Language: </label>
+    <select id="langFilter">
+      <option value="">All</option>
+      <option value="json">json</option><option value="react">react</option><option value="nextjs">nextjs</option><option value="markdown">markdown</option><option value="unknown">unknown</option><option value="firebase">firebase</option><option value="typescript">typescript</option><option value="async">async</option><option value="css">css</option><option value="vue">vue</option><option value="logging">logging</option><option value="javascript">javascript</option><option value="nestjs">nestjs</option><option value="endpoint">endpoint</option><option value="yaml">yaml</option><option value="express">express</option><option value="shell">shell</option><option value="flask">flask</option><option value="html">html</option><option value="django">django</option>
+    </select>
+    <label>Filter by Component Type: </label>
+    <select id="typeFilter">
+      <option value="">All</option>
+      <option value="config-file">config-file</option><option value="react-component">react-component</option><option value="entry-point">entry-point</option><option value="react-hook">react-hook</option><option value="style-file">style-file</option><option value="error-handling">error-handling</option><option value="api-route">api-route</option><option value="http-handler">http-handler</option><option value="utility-file">utility-file</option><option value="test-file">test-file</option><option value="model-file">model-file</option><option value="script-file">script-file</option>
+    </select>
+  </div>
+
+  <div class="chart">
+    <h3>Files by Language</h3>
+    <div class="bar" style="width: 12.8%">json: 67</div><div class="bar" style="width: 28.2%">react: 148</div><div class="bar" style="width: 14.9%">nextjs: 78</div><div class="bar" style="width: 8.6%">markdown: 45</div><div class="bar" style="width: 10.1%">unknown: 53</div><div class="bar" style="width: 17.2%">firebase: 90</div><div class="bar" style="width: 60.1%">typescript: 315</div><div class="bar" style="width: 18.7%">async: 98</div><div class="bar" style="width: 0.8%">css: 4</div><div class="bar" style="width: 0.2%">vue: 1</div><div class="bar" style="width: 4.6%">logging: 24</div><div class="bar" style="width: 2.9%">javascript: 15</div><div class="bar" style="width: 2.3%">nestjs: 12</div><div class="bar" style="width: 3.8%">endpoint: 20</div><div class="bar" style="width: 1.3%">yaml: 7</div><div class="bar" style="width: 1.1%">express: 6</div><div class="bar" style="width: 3.1%">shell: 16</div><div class="bar" style="width: 0.2%">flask: 1</div><div class="bar" style="width: 0.4%">html: 2</div><div class="bar" style="width: 0.2%">django: 1</div>
+  </div>
+
+  <div class="chart">
+    <h3>Files by Scope</h3>
+    <div class="bar" style="width: 30.2%">frontend: 158</div><div class="bar" style="width: 2.1%">backend: 11</div><div class="bar" style="width: 1.5%">serverless: 8</div><div class="bar" style="width: 4.2%">shared: 22</div><div class="bar" style="width: 13.5%">documentation: 71</div><div class="bar" style="width: 3.8%">automation: 20</div><div class="bar" style="width: 0.0%">testing: 0</div><div class="bar" style="width: 55.0%">other: 288</div>
+  </div>
+
+  <div class="chart">
+    <h3>Files by Component Type</h3>
+    <div class="bar" style="width: 8.4%">config-file: 44</div><div class="bar" style="width: 26.0%">react-component: 136</div><div class="bar" style="width: 15.8%">entry-point: 83</div><div class="bar" style="width: 4.0%">react-hook: 21</div><div class="bar" style="width: 0.8%">style-file: 4</div><div class="bar" style="width: 14.1%">error-handling: 74</div><div class="bar" style="width: 3.8%">api-route: 20</div><div class="bar" style="width: 3.8%">http-handler: 20</div><div class="bar" style="width: 15.3%">utility-file: 80</div><div class="bar" style="width: 6.1%">test-file: 32</div><div class="bar" style="width: 3.6%">model-file: 19</div><div class="bar" style="width: 3.1%">script-file: 16</div>
+  </div>
+
+  <script>
+    function runAction(action) {
+      alert('To run this action, execute: node scripts/actions/' + action + '.mjs');
+    }
+
+    document.getElementById('langFilter').addEventListener('change', function() {
+      const selected = this.value;
+      const bars = document.querySelectorAll('.bar');
+      bars.forEach(bar => {
+        if (!selected || bar.textContent.startsWith(selected + ':')) {
+          bar.style.display = 'block';
+        } else {
+          bar.style.display = 'none';
+        }
+      });
+    });
+
+    document.getElementById('typeFilter').addEventListener('change', function() {
+      const selected = this.value;
+      const bars = document.querySelectorAll('.bar');
+      bars.forEach(bar => {
+        if (!selected || bar.textContent.startsWith(selected + ':')) {
+          bar.style.display = 'block';
+        } else {
+          bar.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
