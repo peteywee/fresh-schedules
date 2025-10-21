@@ -60,7 +60,38 @@ test-results/
 client secret/
 firebase-adminsdk-*.json
 firebase/*.json
+service_account_key.json
+serviceAccountKey.json
+firebase-debug.log
+firebase-errors.log
+service_account.json
 
 # misc cache
 .cache/
 .next.cache/
+
+# Refactor dry-run workspace (local only)
+.refactor-local/
+.refactor-local/**
+
+# Lint/codemod local outputs (local only)
+.lint-reports/
+.lint-reports/**
+.codemod-reports/
+.codemod-reports/**
+
+# ESLint/Prettier caches
+.eslintcache
+.prettier-cache/
+.prettier-cache/**
+
+# Additional build outputs
+lib/
+.turbo/
+.vercel/
+.tmp/
+.temp/
+
+# Playwright artifacts under apps/web (in addition to root-level ignores)
+apps/web/playwright-report/
+apps/web/test-results/
