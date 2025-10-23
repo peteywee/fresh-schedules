@@ -94,17 +94,17 @@ function getFolder(filePath) {
 // Helper: Get file action from content
 function getAction(content, ext, filename) {
   if (['.js', '.jsx', '.ts', '.tsx'].includes(ext)) {
-    if (content.includes('export default function') || content.includes('function ') && content.includes('return') ||
-        content.includes('const.*=.*=>') || content.includes('return.*<')) return 'renders';
+    if (content.includes('export default function') || (content.includes('function ') && content.includes('return')) ||
+        /const.*=.*=>/.test(content) || /return.*</.test(content)) return 'renders';
     if (content.includes('useState') || content.includes('useEffect') || content.includes('useReducer') ||
         content.includes('useContext') || content.includes('useMemo') || content.includes('useCallback')) return 'manages';
     if (content.includes('const ') && content.includes('=') && !content.includes('function') &&
         !content.includes('=>') && !content.includes('useState')) return 'defines';
     if (content.includes('router.') || content.includes('fetch(') || content.includes('axios') ||
         content.includes('api/') || content.includes('http')) return 'handles';
-    if (filename.includes('config') || filename.includes('setup') || content.includes('export.*config')) return 'configures';
-    if (content.includes('export.*default') || content.includes('export.*const') ||
-        content.includes('export.*function')) return 'exports';
+    if (filename.includes('config') || filename.includes('setup') || /export.*config/.test(content)) return 'configures';
+    if (/export.*default/.test(content) || /export.*const/.test(content) ||
+        /export.*function/.test(content)) return 'exports';
     if (content.includes('import') && content.includes('from')) return 'imports';
     if (content.includes('interface') || content.includes('type ') || content.includes('enum')) return 'types';
     if (content.includes('class ') || content.includes('extends')) return 'classes';
