@@ -1,2 +1,0 @@
-services/api/src/index.ts:3:import pino from "pino";
-services/api/src/index.ts:6:const log = pino({ level: process.env.LOG_LEVEL || "info" });
