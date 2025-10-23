@@ -40,7 +40,7 @@ function getLanguage(ext) {
 function getFramework(content, ext) {
   if (['.js', '.jsx', '.ts', '.tsx', '.mjs'].includes(ext)) {
     if (content.includes('from \'next\'') || content.includes('from "next"') ||
-        /import.*next/.test(content) || content.includes('NextPage') ||
+        content.match(/import.*next/) || content.includes('NextPage') ||
         content.includes('getServerSideProps') || content.includes('getStaticProps')) return 'nextjs';
     if (content.includes('from \'react\'') || content.includes('from "react"') ||
         content.includes('React.') || content.includes('useState') ||
